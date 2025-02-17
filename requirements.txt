@@ -1,0 +1,11 @@
+jupyter
+pandas
+python-dotenv
+langchain
+langchain-ollama
+langchain-community
+langfuse
+jsonlines
+tqdm
+huggingface-hub
+generative-ai-hub-sdk[all]
