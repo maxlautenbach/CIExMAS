@@ -1,0 +1,7 @@
+jupyter
+pandas
+python-dotenv
+langchain
+langchain-ollama
+langchain-community
+langfuse
