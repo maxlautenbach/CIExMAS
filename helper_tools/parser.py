@@ -5,6 +5,10 @@ from huggingface_hub import snapshot_download
 import os
 import zipfile
 
+def add_wikidata_prefix(uri):
+    if "^^" not in uri:
+        return f"http://www.wikidata.org/entity/{uri}"
+    return uri
 
 def babelscape_parser(filename, number_of_samples=10):
 
@@ -39,11 +43,11 @@ def babelscape_parser(filename, number_of_samples=10):
         {
             "docid": datapoint["docid"],
             "subject": triple["subject"]["surfaceform"],
-            "subject_uri": triple["subject"]["uri"],
+            "subject_uri": add_wikidata_prefix(triple["subject"]["uri"]),
             "predicate": triple["predicate"]["surfaceform"],
-            "predicate_uri": triple["predicate"]["uri"],
+            "predicate_uri": add_wikidata_prefix(triple["predicate"]["uri"]),
             "object": triple["object"]["surfaceform"],
-            "object_uri": triple["object"]["uri"]
+            "object_uri": add_wikidata_prefix(triple["object"]["uri"])
         }
         for datapoint in data
         for triple in datapoint[relation_key]
@@ -53,7 +57,7 @@ def babelscape_parser(filename, number_of_samples=10):
         {
             "docid": datapoint["docid"],
             "entity": entity["surfaceform"],
-            "entity_uri": entity["uri"]
+            "entity_uri": add_wikidata_prefix(entity["uri"])
         }
         for datapoint in data
         for entity in datapoint["entities"]
