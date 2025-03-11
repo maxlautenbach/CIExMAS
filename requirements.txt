@@ -9,3 +9,4 @@ jsonlines
 tqdm
 huggingface-hub
 generative-ai-hub-sdk[all]
+sparqlwrapper
