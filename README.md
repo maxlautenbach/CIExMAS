@@ -7,6 +7,11 @@
 /infrastructure - Infrastructure to handle tracing and storage of graphs
 ```
 
+## Table of Contents
+1. [Setup](#setup)
+2. [Infrastructure](#infrastructure)
+3. [Approaches](#approaches)
+
 ## Setup
 
 ### Requirements
