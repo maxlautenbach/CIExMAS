@@ -1,3 +1,5 @@
+import shutil
+
 import jsonlines
 import pandas as pd
 import tqdm
@@ -6,7 +8,7 @@ import os
 import zipfile
 from helper_tools.qdrant_handler import upload_wikidata_entity
 from tqdm import tqdm
-
+import gzip
 
 def add_wikidata_prefix(uri):
     if "^^" not in uri:
@@ -26,11 +28,14 @@ def upload_parsed_data(relation_df, entity_df):
 
 
 def babelscape_parser(filename, number_of_samples=10):
+    doc_id_key = "docid"
+    relation_key = "relations"
     if "rebel" in filename:
         relation_key = "triples"
+    elif "sdg_code_davinci_002" in filename:
+        relation_key = "triplets"
+        doc_id_key = "id"
     elif "redfm" in filename:
-        relation_key = "relations"
-    else:
         relation_key = "relations"
 
     data = []
@@ -47,7 +52,7 @@ def babelscape_parser(filename, number_of_samples=10):
                     break
 
     docs = pd.DataFrame([{
-        "docid": datapoint["docid"],
+        "docid": datapoint[doc_id_key],
         "text": datapoint["text"]
     }
         for datapoint in data
@@ -55,7 +60,7 @@ def babelscape_parser(filename, number_of_samples=10):
 
     relation_df = pd.DataFrame([
         {
-            "docid": datapoint["docid"],
+            "docid": datapoint[doc_id_key],
             "subject": triple["subject"]["surfaceform"],
             "subject_uri": add_wikidata_prefix(triple["subject"]["uri"]),
             "predicate": triple["predicate"]["surfaceform"],
@@ -69,7 +74,7 @@ def babelscape_parser(filename, number_of_samples=10):
 
     entity_df = pd.DataFrame([
         {
-            "docid": datapoint["docid"],
+            "docid": datapoint[doc_id_key],
             "entity": entity["surfaceform"],
             "entity_uri": add_wikidata_prefix(entity["uri"])
         }
@@ -95,12 +100,22 @@ def rebel_parser(split, number_of_samples=10):
     return babelscape_parser(f"{file_path}/rebel_dataset/en_{split}.jsonl", number_of_samples)
 
 
-def redfm_parser(split, lang="en", number_of_samples=10, upload_mode="label"):
+def redfm_parser(split, lang="en", number_of_samples=10):
     file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset")
 
     return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
 
+def synthie_parser(split, number_of_samples=10):
+    file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset")
+    gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
+    filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
+    if not os.path.exists(filename):
+        with gzip.open(gz_filename, 'rb') as f_in:
+            with open(filename, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+    return babelscape_parser(filename, number_of_samples)
 
 if (__name__ == "__main__"):
-    relation_df, entity_df, docs = rebel_parser("train", 2)
+    relation_df, entity_df, docs = synthie_parser("train", 10)
     print("Test Parsing Finished")
