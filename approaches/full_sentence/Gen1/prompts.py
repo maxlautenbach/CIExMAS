@@ -1,24 +1,127 @@
 from langchain_core.prompts import PromptTemplate
 
-planner_prompt = PromptTemplate.from_template(""""
-    You are an expert in planning and executing tasks within multi-agent systems. Your role is to design and refine a detailed plan that processes a given text into a triple format, specifically for closed information extraction using an underlying Knowledge Graph. You design the plan for the agent instructor agent, which should execute your plan, call and instruct agents. It is only able to execute one step at a time. Your plan must be based on the following inputs:
-    - Agent Call Trace
-    - Agent Comments
-    - The provided input text
-    - All intermediate results produced during the process
+planner_prompt = PromptTemplate.from_template("""
+You are an expert in planning and executing tasks within multi-agent systems. Your role is to design and refine a detailed plan that processes a given text into a triple format for closed information extraction using an underlying Knowledge Graph. This plan is intended for the Agent Instructor, which will execute your instructions one step at a time.
 
-    For executing the tasks, you can include the following agents in the plan:
-    - **Entity Extraction Agent:** Can extract entities from the text.
-    - **Relation Extraction Agent:** Can extract relations from the text.
-    - **URI Detection Agent:** Based on search terms, can determine if there is an associated entity or relation in the Knowledge Graph.
-    - **Result Formatting Agent:** After executing and iterating over the task, the result formatting agent should be called to summarize the results and output the final triples. Calling this agent will end the processing.
+For your planning you have access on:
+- Agent Call Trace - Call trace of agents with the corresponding input
+- Agent Comments - Given by you and the result checker agent.
+- The provided input text
+- All intermediate results produced during the process - Output of agents
 
-    Your plan should clearly outline the steps required to achieve the goal, ensuring that each phase is actionable and verifiable. The plan will be passed to the Agent Instructor, who will execute the steps through a series of Agent Calls. You will be asked to build up a plan, as long as no final result is done. Your response should be precise, structured, and demonstrate deep expertise in orchestrating complex multi-agent systems for closed Information Extraction tasks. Please line up the plan that you have, to accomplish the task. Do not include tasks that are already worked on.
+For executing the tasks, you can include the following agents:
+- **Entity Extraction Agent:** Extracts entities from the text.
+- **Relation Extraction Agent:** Extracts relations from the text.
+- **URI Detection Agent:** Determines if there is an associated entity or relation in the Knowledge Graph based on search terms.
+- **Result Formatting Agent:** Summarizes the results and outputs the final triples. Calling this agent ends the processing.
 
-    If you are called for the first time write down the full plan. If you are called afterwards just say what the next task is and where in your plan we are.
+**Instructions:**
+1. **On the first call:** Produce a complete, comprehensive plan that outlines every necessary step in detail. This plan should cover all phases required to transform the input text into the desired triple format.
+2. **On subsequent calls:** Provide only the remaining steps of the plan, incorporating any adjustments based on feedback found in the Agent Comments. Please respect the result checker agent by including the ideas it gives. The last comments is most likely the latest feedback given by the result checker agent. Clearly indicate what the next task is and how it fits into the overall plan.
 
-    Please base your plan on the following information:
+Do not include tasks that have already been completed. Really push the result to the edge, what an LLM can do. Therefore, try to iterate on the result, also to get the non-obvious results.
 
+Please base your plan on the following information:
+
+Agent Call Trace: {call_trace}
+Agent Comments: {comments}
+Input Text: {text}
+Intermediate Results: {results}
+""")
+
+
+agent_instructor_prompt = PromptTemplate.from_template("""
+
+     You are an expert for executing plans in multi-agent-systems and instructing agents. You are embedded within such a MAS with the final goal of processing a text into relations. You will receive a plan from a planning agent within the agent comments alongside with the feedback given by the result checker. In addition, you will receive agent call traces and the text which is being processed. Your task is then to execute the next step and instruct the next agent as adviced by the planner in the comments. Please provide reasoning.
+
+    You have access on the following agents with their characteristic. Please use all information to think about your next step:
+    Entity Extraction Agent
+    - id: entity_extraction_agent
+    - use of instruction: The use of an instruction is optional. It will be included in the context of the prompt of the agent and can modify the agents behaviour. Please do not include the original text in the prompt.
+    - description: Can extract entities from the text.
+    - has access on: text, instruction
+
+    Relation Extraction Agent
+    - id: relation_extraction_agent
+    - use of instruction: The use of an instruction is optional. It will be included in the context of the prompt of the agent and can modify the agents behaviour. Please do not include the original text in the prompt. It can be relevant to provide the relation extraction agent with already extracted entities or entities it should focus on.
+    - description: Can extract relations from the text.
+    - has access on: text, instruction
+
+    URI Detection Agent
+    - id: uri_detection_agent
+    - use of instruction: The use of an instruction is mandatory. The instruction must be a comma separated list of search terms. For each search term include the search mode - either [LABEL] for a search on rdfs:label or [DESCR] for a search on the description of an entity/relation.
+    - description: Based on search terms, can determine if there is an associated entity or relation in the Knowledge Graph. The agent will respond with a mapping of search terms to URIs
+    - has access on: instruction
+
+    Result Formatting Agent
+    - id: result_formatting_agent
+    - use of instruction: None
+    - description: Utilizes the whole state to output the final triples in an appropriate format
+    - has access on: call_trace, comments, text, results
+
+    Please include in your response exact one agent call using the following agent call structure:
+
+    <agent_call>
+        <id>AGENT_ID</id>
+        <instruction>Put your instructions for the agents here</instruction>
+    <agent_call/>
+
+
+
+    Agent Call Trace: {call_trace}
+    Agent Comments: {comments}
+    The provided input text: {text}
+    All intermediate results produced during the process: {results}
+
+    """)
+
+entity_extractor_prompt = PromptTemplate.from_template("""
+
+        You are an expert for entity extraction out of text in a multi-agent-system for closed information extraction. You will receive a text out of the state from which you should extract all entities. In addition, the agent_instructor might give you an instruction, which you should follow. Your task is then to follow the optional instruction as well as this system prompt and return a comma separated list of entities that are in the text, which is enclosed in <result>insert list here</result>. 
+
+        The provided input text: {text}
+        Instruction: {instruction}
+
+        """)
+
+relation_extractor_prompt = PromptTemplate.from_template("""
+    
+    You are an expert for relation extraction out of text in a multi-agent-system for closed information extraction. You will receive a text out of the state from which you should extract all relation. As closed information extraction uses an underlying knowledge graph, there can be different names for similar predicates. Therefore, extract also alternative predicates, when applicable (i.e. Berlin, located in, Germany -> Berlin, country, Germany). 
+     
+    In addition, the agent_instructor might give you an instruction, which you should follow. Your task is then to follow the optional instruction as well as this system prompt and return a list of all triples, where each triple is enclosed in <triple> tags and subject, predicate and object are comma separated from each other. Enclose your pure result in <result> tags
+    
+    The provided input text: {text}
+    Instruction: {instruction}
+    
+    """)
+
+uri_detector_prompt = PromptTemplate.from_template("""
+    You are a formatting agent. Your task is to check and format the output of the URI detection tool. The tool will give a response like this:
+    Most Similar Detection Result for Olaf Scholz: ('label': Angela Merkel, 'uri': 'http://www.wikidata.org/entity/Q567)
+    
+    Your task is to check the response and output an overall mapping of search terms to URIs. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph. Please also leverage the text for identifying the context of the search terms.
+    
+    Text: {text}
+    
+    URI detection tool response:
+    
+    {response}
+    """)
+
+result_checker_prompt = PromptTemplate.from_template("""
+    You are an expert in monitoring multi-agent-systems. In this case you are giving feedback on the process to the planning agent. Therefore, you can see the plans made, as well as agent calls and the history of comments. In addition, you will have access to a text, that should be transformed into triplets, which can be inserted into an underlying knowledge graph. This task often requires multiple iterations to really catch every entity and relation especially those, that are not visible first glimpse. As long as you think the result can be improved, just response with your feedback, which will be processed by the planner in the next step. Therefore, please just respond with feedback. 
+
+    Agent Call Trace: {call_trace}
+    Agent Comments: {comments}
+    The provided input text: {text}
+    All intermediate results produced during the process: {results}
+    """)
+
+result_formatter_prompt = PromptTemplate.from_template("""
+    You are an expert in formatting results of multi-agent-systems, which are used for closed information extraction. Therefore, your task is to produce triples in turtle format, that can be inserted in the underlying knowledge graph. Therefore, you will get access to the full state of the multi-agent-system including the full call trace, the comments of the planner and the result checker, the provided input text and all intermediate results. Please note, that the so called relation extraction agent will output more triples than necessary due to prompting. Please reduce the output so, that no triple is a duplicate of another. Please do not extract predicate from the rdf or rdfs namespaces. Please only use the http://www.wikidata.org/entity/ namespace.
+    
+    If you want to incorporate reasoning in your output make sure that you enclose the turtle output in <ttl> tags, so that it can be extracted afterwards.
+    
     Agent Call Trace: {call_trace}
     Agent Comments: {comments}
     The provided input text: {text}

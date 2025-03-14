@@ -1,10 +1,13 @@
-import importlib
+
+import re
 from typing import Literal
 
 from langgraph.types import Command
 
 from approaches.full_sentence.Gen1.setup import cIEState, model, langfuse_handler
-from approaches.full_sentence.Gen1.prompts import planner_prompt as prompt
+from approaches.full_sentence.Gen1.prompts import entity_extractor_prompt as prompt
+
+import importlib
 import approaches.full_sentence.Gen1.prompts
 importlib.reload(approaches.full_sentence.Gen1.prompts)
 
@@ -19,8 +22,17 @@ def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple
 
     response = response_chain.invoke(state, config=config)
 
+    result_match = re.search(r'<result>(.*?)</result>', response.content, re.DOTALL)
+    if result_match:
+        result = result_match.group(1)
+    else:
+        result = ""
+
+    result = f"Output of entity_extraction_agent: {result}"
+
     if state["debug"]:
-        state["comments"].append("\n-- Planner Agent --\n" + response.content)
+        state["instruction"] = ""
+        state["results"] += [result]
         return state, response.content
 
-    return Command(goto="agent_instructor_agent", update={"comments": state["comments"] + ["\n-- Planner Agent --\n" + response.content]})
+    return Command(goto="result_checker_agent", update={"instruction": "", "results": state["results"] + [result]})

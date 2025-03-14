@@ -1,10 +1,10 @@
 import json
 from typing import TypedDict
 
-from langchain_core.messages import AIMessage
 from langchain_ollama import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
+from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
 import git
 
@@ -18,6 +18,12 @@ load_dotenv(repo.working_dir + "/.env")
 model = ChatOpenAI(model_name="Meta-Llama-3.3-70B-Instruct", base_url="https://api.sambanova.ai/v1",
                    api_key=os.getenv("SAMBANOVA_API_KEY"))
 embeddings = OllamaEmbeddings(model='nomic-embed-text')
+
+langfuse_handler = CallbackHandler(
+    secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+    public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+    host=os.getenv("LANGFUSE_HOST"),
+)
 
 client = QdrantClient("localhost", port=6333)
 label_vector_store = QdrantVectorStore(
@@ -37,5 +43,6 @@ class cIEState(TypedDict):
     text: str
     call_trace: list[tuple[str]]
     results: list[str]
-    comments: list[AIMessage]
+    comments: list[str]
     instruction: str
+    debug: bool

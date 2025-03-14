@@ -1,15 +1,15 @@
-import importlib
 from typing import Literal
 
 from langgraph.types import Command
 
 from approaches.full_sentence.Gen1.setup import cIEState, model, langfuse_handler
-from approaches.full_sentence.Gen1.prompts import planner_prompt as prompt
+from approaches.full_sentence.Gen1.prompts import result_checker_prompt as prompt
+import importlib
 import approaches.full_sentence.Gen1.prompts
 importlib.reload(approaches.full_sentence.Gen1.prompts)
 
 
-def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple[cIEState, str]:
+def agent(state: cIEState) -> Command[Literal["planner"]] | tuple[cIEState, str]:
     response_chain = prompt | model
 
     config = {}
@@ -20,7 +20,7 @@ def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple
     response = response_chain.invoke(state, config=config)
 
     if state["debug"]:
-        state["comments"].append("\n-- Planner Agent --\n" + response.content)
+        state["comments"].append("\n-- Result Checker Agent --\n" + response.content)
         return state, response.content
 
-    return Command(goto="agent_instructor_agent", update={"comments": state["comments"] + ["\n-- Planner Agent --\n" + response.content]})
+    return Command(goto="planner", update={"comments": state["comments"] + ["\n-- Result Checker Agent --\n" + response.content]})
