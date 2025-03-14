@@ -12,3 +12,5 @@ generative-ai-hub-sdk[all]
 sparqlwrapper
 langchain-qdrant
 qdrant-client
+streamlit
+watchdog
