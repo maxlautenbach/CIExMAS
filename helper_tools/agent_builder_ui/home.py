@@ -53,6 +53,8 @@ def update_agent_list():
         agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1/agents/"
         for agent in [file for file in os.listdir(agent_dir) if ".py" in file]:
             stss.agents.append(import_agent(agent, agent_dir))
+        for agent in stss.agents:
+            importlib.reload(agent["module"])
 
 
 st.sidebar.selectbox(

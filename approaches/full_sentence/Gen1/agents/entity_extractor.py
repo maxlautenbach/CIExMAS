@@ -22,17 +22,13 @@ def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple
 
     response = response_chain.invoke(state, config=config)
 
-    result_match = re.search(r'<result>(.*?)</result>', response.content, re.DOTALL)
-    if result_match:
-        result = result_match.group(1)
-    else:
-        result = ""
-
-    result = f"Output of entity_extraction_agent: {result}"
+    response = f"""-- Entity Extraction Agent --
+    
+{response.content} """
 
     if state["debug"]:
         state["instruction"] = ""
-        state["results"] += [result]
-        return state, response.content
+        state["results"] += [response]
+        return state, response
 
-    return Command(goto="result_checker_agent", update={"instruction": "", "results": state["results"] + [result]})
+    return Command(goto="result_checker_agent", update={"instruction": "", "results": state["results"] + [response]})
