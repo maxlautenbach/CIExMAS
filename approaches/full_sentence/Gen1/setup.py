@@ -15,8 +15,20 @@ import os
 
 load_dotenv(repo.working_dir + "/.env")
 
-model = ChatOpenAI(model_name="Meta-Llama-3.3-70B-Instruct", base_url="https://api.sambanova.ai/v1",
-                   api_key=os.getenv("SAMBANOVA_API_KEY"))
+# DeepInfra
+# model = ChatOpenAI(
+#     api_key=os.getenv("DEEPINFRA_API_TOKEN"),
+#     base_url="https://api.deepinfra.com/v1/openai",
+#     model="google/gemma-3-27b-it"
+# )
+
+# SambaNova
+model = ChatOpenAI(
+    api_key=os.getenv("SAMBANOVA_API_KEY"),
+    base_url="https://api.sambanova.ai/v1",
+    model="Meta-Llama-3.3-70B-Instruct"
+)
+
 embeddings = OllamaEmbeddings(model='nomic-embed-text')
 
 langfuse_handler = CallbackHandler(

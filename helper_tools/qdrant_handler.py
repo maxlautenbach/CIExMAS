@@ -44,7 +44,7 @@ def upload_wikidata_entity(uri, label):
 
     description = get_description(uri)
 
-    label_doc = Document(page_content=label, metadata={"uri": uri})
+    label_doc = Document(page_content=label, metadata={"uri": uri, "description": description})
     description_doc = Document(page_content=description, metadata={"uri": uri, "label": label})
     qdrant_wikidata_labels.add_documents([label_doc])
     qdrant_wikidata_descriptions.add_documents([description_doc])
@@ -63,4 +63,4 @@ def clear_collections():
 
 
 if __name__ == "__main__":
-    upload_wikidata_entity("http://www.wikidata.org/entity/Q61053", "Olaf Scholz")
+    clear_collections()

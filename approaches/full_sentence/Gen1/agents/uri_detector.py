@@ -16,9 +16,9 @@ def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple
     description_search_terms = [term.replace("[DESCR]", "") for term in search_terms if "[DESCR]" in term]
     search_response = ""
     for term in label_search_terms:
-        search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"]} for doc in label_vector_store.similarity_search(term, k=3)]}\n\n'
+        search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"], "description": doc.metadata["description"]} for doc in label_vector_store.similarity_search(term, k=3)]}\n\n'
     for term in description_search_terms:
-        search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"]} for doc in description_vector_store.similarity_search(term, k=3)]}\n\n'
+        search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.metadata["label"], "uri": doc.metadata["uri"], "description": doc.page_content} for doc in description_vector_store.similarity_search(term, k=3)]}\n\n'
     search_response = search_response.replace("},", "},\n")
 
     response_chain = prompt | model
