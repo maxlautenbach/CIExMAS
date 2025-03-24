@@ -61,7 +61,7 @@ In addition, you will receive the history of agent call traces and the text whic
 
     URI Detection Agent
     - id: uri_detection_agent
-    - use of instruction: The use of an instruction is mandatory. The instruction must be a comma separated list of search terms. For each search term include the search mode - either [LABEL] for a search on rdfs:label or [DESCR] for a search on the description of an entity/relation.
+    - use of instruction: The use of an instruction is mandatory. The instruction must be a comma separated list of search terms. For each search term include the search mode - either [LABEL] for a similarity search on rdfs:label or [DESCR] for a similarity search on schema:description. Please adapt the search term based on the search type. Single Word -> [LABEL]; Description of entity/relation -> [DESCR]
     - description: Based on search terms, can determine if there is an associated entity or relation in the Knowledge Graph. The agent will respond with a mapping of search terms to URIs
     - has access on: instruction
 
@@ -139,7 +139,7 @@ result_checker_prompt = PromptTemplate.from_template("""
 result_formatter_prompt = PromptTemplate.from_template("""
     You are an expert in formatting results of multi-agent-systems, which are used for closed information extraction. Therefore, your task is to produce triples in turtle format, that can be inserted in the underlying knowledge graph. Therefore, you will get access to the full state of the multi-agent-system including the full call trace, the comments of the planner and the result checker, the provided input text and all intermediate results. Please note, that the so called relation extraction agent will output more triples than necessary due to prompting. Please reduce the output so, that no triple is a duplicate of another. Please do not extract predicate from the rdf or rdfs namespaces. Please only use the http://www.wikidata.org/entity/ namespace and no alternatives like http://www.wikidata.org/prop/direct as all properties can also be mapped into the http://www.wikidata.org/entity/ namespace.
     
-    If you want to incorporate reasoning in your output make sure that you enclose the turtle output in <ttl> tags, so that it can be extracted afterwards. Remember that URIs in ttl must be enclosed in angle brackets. 
+    Please make sure that you enclose a clean turtle (no comments, only rdf) output in <ttl> tags, so that it can be extracted afterwards. Remember that URIs in ttl must be enclosed in angle brackets. 
     
     Agent Call Trace: {call_trace}
     Agent Comments: {comments}

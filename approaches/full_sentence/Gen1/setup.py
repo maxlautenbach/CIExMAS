@@ -29,6 +29,12 @@ model = ChatOpenAI(
     model="Meta-Llama-3.3-70B-Instruct"
 )
 
+# OpenAI
+# model = ChatOpenAI(
+#     api_key=os.getenv("OPENAI_API_KEY"),
+#     model="o3-mini"
+# )
+
 embeddings = OllamaEmbeddings(model='nomic-embed-text')
 
 langfuse_handler = CallbackHandler(

@@ -27,6 +27,7 @@ def reset_state():
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()
+    stss.agent_trace = []
 
 
 if "relation_df" not in stss:
@@ -103,15 +104,17 @@ def import_agent(agent_name, agent_dir):
     return {"id": agent_name.replace(".py", ""), "module": module}
 
 
-def run_agent(module):
+def run_agent(id, module):
     updated_state, response = module.agent(deepcopy(stss.state_history[stss.state_index_sbox]))
     stss.state_history.append(deepcopy(updated_state))
     stss.state_index = len(stss.state_history) - 1
+    stss.agent_trace.append(id)
     return response
 
 
 col1, col2, col3 = st.columns(3)
 col1.header("Agents:")
+st.write(f"Last 3 agents: {stss.agent_trace[-3:]}")
 if col2.button("Refresh Agent List"):
     update_agent_list()
 if col3.button("Reset State"):
@@ -122,7 +125,7 @@ for agent in stss.get("agents", []):
     with st.container(border=True):
         st.write(agent["id"].capitalize())
         if st.button(f"Run {agent['id'].capitalize()}"):
-            stss.last_answers[agent["id"]] = run_agent(agent["module"])
+            stss.last_answers[agent["id"]] = run_agent(agent["id"],agent["module"])
             st.rerun()
         if stss.last_answers.get(agent["id"]):
             with st.expander("Last Answer: "):
