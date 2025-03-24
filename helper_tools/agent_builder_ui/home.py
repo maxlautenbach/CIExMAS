@@ -23,7 +23,7 @@ stss = st.session_state
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
-    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "debug": True}
+    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "debug": True}
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()
@@ -59,6 +59,9 @@ st.subheader("Text:")
 st.write(stss.state["text"])
 
 active_state = stss.state_history[stss.state_index_sbox]
+with st.expander("Messages:"):
+    for result in active_state["messages"]:
+        st.code(result, language=None, wrap_lines=True)
 with st.expander("Results:"):
     for result in active_state["results"]:
         st.code(result, language=None, wrap_lines=True)
@@ -71,9 +74,15 @@ with st.expander("Comments:"):
 
 
 def update_agent_list():
+    agent_dir = None
+    for loaded_agent in stss.get("agents", []):
+        unload_agent(loaded_agent["agent_dir"])
     if stss.option == "Gen1":
-        stss.agents = []
         agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1/agents/"
+    elif stss.option == "Baseline":
+        agent_dir = repo.working_dir + "/approaches/baseline/agents/"
+    if agent_dir:
+        stss.agents = []
         for agent in [file for file in os.listdir(agent_dir) if ".py" in file]:
             stss.agents.append(import_agent(agent, agent_dir))
         for agent in stss.agents:
@@ -82,7 +91,7 @@ def update_agent_list():
 
 st.sidebar.selectbox(
     "Approach",
-    ("Gen1"),
+    ("Gen1", "Baseline"),
     index=None,
     placeholder="Select approach...",
     key="option",
@@ -101,7 +110,11 @@ def import_agent(agent_name, agent_dir):
     sys.path.append(agent_dir)
     module = importlib.import_module(agent_name.replace(".py", ""))
     importlib.reload(module)
-    return {"id": agent_name.replace(".py", ""), "module": module}
+    return {"id": agent_name.replace(".py", ""), "module": module, "agent_dir": agent_dir}
+
+
+def unload_agent(agent_dir):
+    sys.path.remove(agent_dir)
 
 
 def run_agent(id, module):
@@ -125,7 +138,7 @@ for agent in stss.get("agents", []):
     with st.container(border=True):
         st.write(agent["id"].capitalize())
         if st.button(f"Run {agent['id'].capitalize()}"):
-            stss.last_answers[agent["id"]] = run_agent(agent["id"],agent["module"])
+            stss.last_answers[agent["id"]] = run_agent(agent["id"], agent["module"])
             st.rerun()
         if stss.last_answers.get(agent["id"]):
             with st.expander("Last Answer: "):
@@ -134,11 +147,16 @@ for agent in stss.get("agents", []):
 st.header("Evaluation")
 if st.button("Run Evaluation"):
     last_state = stss.state_history[-1]
-    turtle_string = last_state["results"][-1]
-    precision, recall, f1_score = evaluate(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"], relation_df=stss.relation_df)
-    st.write(f'Precision: {round(precision,2)*100}%')
-    st.write(f'Recall: {round(recall,2)*100}%')
-    st.write(f'F1 Score: {round(f1_score,2)*100}%')
+    if stss.option == "Baseline":
+        turtle_string = re.search(r'<ttl>(.*?)</ttl>', last_state["messages"][-1], re.DOTALL).group(1)
+    else:
+        turtle_string = last_state["results"][-1]
+    precision, recall, f1_score = evaluate(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
+                                           relation_df=stss.relation_df)
+    st.write(f'Precision: {round(precision, 2) * 100}%')
+    st.write(f'Recall: {round(recall, 2) * 100}%')
+    st.write(f'F1 Score: {round(f1_score, 2) * 100}%')
     st.write(get_uri_labels(parse_turtle(turtle_string), stss.entity_set, stss.predicate_set_df)[
                  ["subject", "predicate", "object"]])
-    st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][["subject", "predicate", "object"]])
+    st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][
+                 ["subject", "predicate", "object"]])
