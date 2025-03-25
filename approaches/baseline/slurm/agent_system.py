@@ -1,0 +1,56 @@
+import re
+
+from tqdm import tqdm
+
+import helper_tools.parser as parser
+import importlib
+import pandas as pd
+import warnings
+from langgraph.graph import StateGraph, START, END
+from approaches.baseline.setup import cIEState
+from approaches.baseline.agents.supervisor import agent as supervisor_agent
+from approaches.baseline.agents.entity_extractor import agent as entity_extraction_agent
+from approaches.baseline.agents.relation_extractor import agent as relation_extraction_agent
+from approaches.baseline.agents.uri_detector import agent as uri_detection_agent
+from helper_tools.evaluation import evaluate_doc
+
+warnings.filterwarnings("ignore")
+
+importlib.reload(parser)
+
+relation_df, entity_df, docs = parser.synthie_parser("test", 5)
+entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
+predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
+
+builder = StateGraph(cIEState)
+builder.add_node("supervisor", supervisor_agent)
+builder.add_node("entity_extraction_agent", entity_extraction_agent)
+builder.add_node("relation_extraction_agent", relation_extraction_agent)
+builder.add_node("uri_detection_agent", uri_detection_agent)
+
+builder.add_edge(START, "supervisor")
+
+graph = builder.compile()
+
+evaluation_log = []
+
+for i in tqdm(range(len(docs))):
+    target_doc = docs.iloc[i]
+    doc_id = target_doc["docid"]
+    text = target_doc["text"]
+    response = graph.invoke({"text": text, "messages": [], "debug": False}, config={"recursion_limit": 70})
+    evaluation_log.append([*evaluate_doc(re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1),
+                                         doc_id, relation_df)])
+
+evaluation_log_df = pd.DataFrame(
+    evaluation_log,
+    columns=[
+        "Correct Relations", "Gold Standard", "Total Predicted",
+        "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
+        "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+        "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
+        "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities"
+    ]
+)
+
+evaluation_log_df.to_excel("evaluation_log.xlsx")
