@@ -55,3 +55,35 @@ The Gen 1 breaks the Baseline approach down to more simpler task. This especiall
 Characteristic:
 - Full-Senctence
 - Network
+
+## Datasets & Evaluation
+### Performance Metric
+Josifoski et. al. 2022 - GenIE (S. 4639)
+
+A fact is regarded as correct if the relation and the two corresponding entities are all correct.
+
+### synthIE - text_davinci_003
+| Approach             | P (Micro) | R (Micro) | F1 (Micro) | P (Macro) | R (Macro) | F1 (Macro) |
+|----------------------|----------:|----------:|-----------:|----------:|----------:|-----------:|
+| GenIE T5-base        |     49.10 |     26.69 |      34.58 |     29.82 |     11.14 |      13.94 |
+| SynthIE T5-base      |     92.08 |     90.75 |      91.41 |     94.10 |     92.42 |      93.05 |
+| SynthIE T5-base-SC   |     92.79 |     90.50 |      91.63 |     94.35 |     92.39 |      93.15 |
+| **SynthIE T5-large** | **93.38** | **92.69** |  **93.04** | **95.27** | **94.95** |  **94.99** |
+
+
+### synthIE - code_davinci_002
+| Approach             | P (Micro) | R (Micro) | F1 (Micro) | P (Macro) | R (Macro) | F1 (Macro) |
+|----------------------|----------:|----------:|-----------:|----------:|----------:|-----------:|
+| GenIE T5-base        |     41.56 |     23.94 |      30.38 |     25.78 |      9.81 |      12.12 |
+| SynthIE T5-base      |     79.99 |     70.47 |      74.93 |     83.76 |     74.05 |      77.91 |
+| SynthIE T5-base-SC   |     81.58 |     69.48 |      75.05 |     84.32 |     73.57 |      77.88 |
+| **SynthIE T5-large** | **82.60** | **73.15** |  **77.59** | **86.43** | **78.78** |  **81.95** |
+
+### REBEL
+| Approach               | P (Micro) | R (Micro) | F1 (Micro) | P (Macro) | R (Macro) | F1 (Macro) |
+|------------------------|----------:|----------:|-----------:|----------:|----------:|-----------:|
+| SOTA-Pipeline (GenIE)  |     43.30 |     41.73 |      42.50 |     12.20 |     10.44 |       9.48 |
+| GenIE                  |     68.02 |     69.87 |      68.93 | **33.90** | **30.48** |  **30.46** |
+| GenIE - PLM            |     59.32 |     77.78 |      67.31 |         – |         – |          – |
+| DISCIE (F2 calibrated) |     62.13 | **81.93** |      70.67 |         – |         – |          – |
+| DISCIE (F1 calibrated) | **77.41** |     72.68 |  **74.97** |         – |         – |          – |
