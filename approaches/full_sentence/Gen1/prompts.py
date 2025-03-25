@@ -61,9 +61,9 @@ In addition, you will receive the history of agent call traces and the text whic
 
     URI Detection Agent
     - id: uri_detection_agent
-    - use of instruction: The use of an instruction is mandatory. The instruction must be a comma separated list of search terms. For each search term include the search mode - either [LABEL] for a similarity search on rdfs:label or [DESCR] for a similarity search on schema:description. Please adapt the search term based on the search type. Single Word -> [LABEL]; Description of entity/relation -> [DESCR]
-    - description: Based on search terms, can determine if there is an associated entity or relation in the Knowledge Graph. The agent will respond with a mapping of search terms to URIs
-    - has access on: instruction
+    - use of instruction: The use of an instruction is mandatory. The instruction must include a comma separated list of search terms enclosed in <search_terms> tags. For each search term include the search mode - either [LABEL] for a similarity search on rdfs:label or [DESCR] for a similarity search on schema:description. Please adapt the search term based on the search type. Single Word -> [LABEL]; Description of entity/relation -> [DESCR]. If you want to give an additional instruction to the mapper agent, which will process the search results, please enclose them in <additional_instruction> tags.
+    - description: Based on search terms, can map URIs from an underlying Knowledge Graph to search terms.
+    - has access on: text, instruction
 
     Result Formatting Agent
     - id: result_formatting_agent
@@ -111,9 +111,10 @@ uri_detector_prompt = PromptTemplate.from_template("""
     You are a formatting agent. Your task is to check and format the output of the URI detection tool. The tool will give a response like this:
     Most Similar Detection Result for Olaf Scholz: ('label': Angela Merkel, 'uri': 'http://www.wikidata.org/entity/Q567)
     
-    Your task is to check the response and output an overall mapping of search terms to URIs. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph. Please also leverage the text for identifying the context of the search terms.
+    Your task is to check the response and output an overall mapping of search terms to URIs. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph. Please also leverage the text for identifying the context of the search terms. You might also get an additional instruction by the agent instructor, which you have to follow.
     
     Text: {text}
+    Instruction: {instruction}
     
     URI detection tool response:
     
