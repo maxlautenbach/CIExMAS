@@ -38,24 +38,50 @@ def parse_turtle(turtle_string):
         final_result.append([str(subj), str(pred), str(obj)])
 
     return pd.DataFrame(final_result,
-                                    columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates()
+                        columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates()
 
 
-def evaluate(turtle_string, doc_id, relation_df, verbose=False):
+def evaluate_doc(turtle_string, doc_id, relation_df):
     pred_relation_df = parse_turtle(turtle_string)
     doc_relation_df = relation_df[relation_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
     correct_relation_df = pred_relation_df.merge(doc_relation_df[["subject_uri", "predicate_uri", "object_uri"]],
                                                  on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
-    precision = len(correct_relation_df) / len(pred_relation_df)
-    recall = len(correct_relation_df) / len(doc_relation_df)
+
+    # Subjects
+    extracted_subjects = len(set(pred_relation_df["subject_uri"]))
+    gold_standard_subjects = len(set(doc_relation_df["subject_uri"]))
+    correct_extracted_subjects = len(
+        set(pred_relation_df["subject_uri"]).intersection(set(doc_relation_df["subject_uri"])))
+
+    # Predicates
+    extracted_predicates = len(set(pred_relation_df["predicate_uri"]))
+    gold_standard_predicates = len(set(doc_relation_df["predicate_uri"]))
+    correct_extracted_predicates = len(
+        set(pred_relation_df["predicate_uri"]).intersection(set(doc_relation_df["predicate_uri"])))
+
+    # Objects
+    extracted_objects = len(set(pred_relation_df["object_uri"]))
+    gold_standard_objects = len(set(doc_relation_df["object_uri"]))
+    correct_extracted_objects = len(
+        set(pred_relation_df["object_uri"]).intersection(set(doc_relation_df["object_uri"])))
+
+    # Entities (Subjects + Objects)
+    extracted_entities = len(set(pred_relation_df["subject_uri"]).union(set(pred_relation_df["object_uri"])))
+    gold_standard_entities = len(set(doc_relation_df["subject_uri"]).union(set(doc_relation_df["object_uri"])))
+    correct_extracted_entities = len(
+        set(pred_relation_df["subject_uri"]).union(set(pred_relation_df["object_uri"]))
+        .intersection(set(doc_relation_df["subject_uri"]).union(set(doc_relation_df["object_uri"])))
+    )
+
+    return len(correct_relation_df), len(doc_relation_df), len(
+        pred_relation_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
+
+
+def generate_pr_f1_score(correct, gold_standard, total_predicted):
+    precision = correct / total_predicted
+    recall = correct / gold_standard
     if precision + recall == 0:
         f1_score = 0
     else:
-        f1_score = 2 * (precision * recall) / (precision + recall)
-
-    if verbose:
-        print(f"Precision: {precision}")
-        print(f"Recall: {recall}")
-        print(f"F1: {f1_score}")
-
+        f1_score = (2 * precision * recall) / (precision + recall)
     return precision, recall, f1_score
