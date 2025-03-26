@@ -9,3 +9,5 @@ pip install vllm
 pip install -r requirements.txt
 mkdir -p /ceph/$(whoami)/CIExMAS/models
 mkdir -p /ceph/$(whoami)/CIExMAS/datasets
+curl -L https://ollama.com/download/ollama-linux-amd64.tgz -o ollama-linux-amd64.tgz
+sudo tar -C . -xzf ollama-linux-amd64.tgz

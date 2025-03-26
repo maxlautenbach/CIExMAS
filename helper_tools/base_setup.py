@@ -4,6 +4,7 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
 from langchain_community.llms import VLLM
+from langchain_ollama.chat_models import ChatOllama
 from langchain_huggingface import HuggingFaceEmbeddings
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
@@ -15,10 +16,12 @@ repo = git.Repo(search_parent_directories=True)
 from dotenv import load_dotenv
 import os
 
-load_dotenv(repo.working_dir + "/.env")
+load_dotenv(repo.working_dir + "/.env", override=True)
 
 llm_provider = os.getenv("LLM_MODEL_PROVIDER")
 model_id = os.getenv("LLM_MODEL_ID")
+print(llm_provider)
+print(model_id)
 
 if llm_provider == "DeepInfra":
     model = ChatOpenAI(
@@ -44,6 +47,11 @@ elif llm_provider == "vLLM":
     model = VLLM(
         model=model_id,
         download_dir=os.getenv("MODEL_DIR")
+    )
+
+elif llm_provider == "Ollama":
+    model = ChatOllama(
+        model=model_id
     )
 
 embeddings = OllamaEmbeddings(

@@ -19,3 +19,4 @@ langchain-huggingface
 faiss-cpu
 einops
 openpyxl
+gitpython
