@@ -16,3 +16,6 @@ streamlit
 watchdog
 langgraph
 langchain-huggingface
+faiss-cpu
+einops
+openpyxl

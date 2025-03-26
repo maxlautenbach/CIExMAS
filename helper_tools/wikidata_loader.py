@@ -11,7 +11,14 @@ def get_description(uri):
     """
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
+    results = ""
+    retry = 0
+    max_retries = 5
+    while results == "" and retry < max_retries:
+        try:
+            results = sparql.query().convert()
+        except Exception as e:
+            retry += 1
     return results["results"]["bindings"][0]["o"]["value"]
 
 if __name__ == "__main__":

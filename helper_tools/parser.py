@@ -6,12 +6,12 @@ import tqdm
 from huggingface_hub import snapshot_download
 import os
 import zipfile
-from helper_tools.qdrant_handler import upload_wikidata_entity
 from tqdm import tqdm
 import gzip
 from dotenv import load_dotenv
 
 load_dotenv("../.env")
+
 
 def add_wikidata_prefix(uri):
     if "^^" not in uri:
@@ -20,11 +20,15 @@ def add_wikidata_prefix(uri):
 
 
 def upload_parsed_data(relation_df, entity_df):
+    if os.getenv("VECTOR_STORE") == "qdrant":
+        from helper_tools.qdrant_handler import upload_wikidata_entity
+    else:
+        from helper_tools.faiss_handler import upload_wikidata_entity
     entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
-    print("Uploading Entities to Qdrant.")
+    print(f"Uploading Entities to {os.getenv('VECTOR_STORE')}.")
     for i, row in tqdm(entity_set.iterrows(), total=entity_set.shape[0]):
         upload_wikidata_entity(uri=row["entity_uri"], label=row["entity"])
-    print("Uploading Predicates to Qdrant.")
+    print(f"Uploading Predicates to {os.getenv('VECTOR_STORE')}.")
     predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
     for i, row in tqdm(predicate_set_df.iterrows(), total=predicate_set_df.shape[0]):
         upload_wikidata_entity(uri=row["predicate_uri"], label=row["predicate"])
@@ -108,6 +112,7 @@ def redfm_parser(split, lang="en", number_of_samples=10):
 
     return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
 
+
 def synthie_parser(split, number_of_samples=10):
     file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
     gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
@@ -118,6 +123,7 @@ def synthie_parser(split, number_of_samples=10):
                 shutil.copyfileobj(f_in, f_out)
 
     return babelscape_parser(filename, number_of_samples)
+
 
 if (__name__ == "__main__"):
     relation_df, entity_df, docs = synthie_parser("train", 10)

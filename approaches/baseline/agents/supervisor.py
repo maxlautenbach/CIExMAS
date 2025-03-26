@@ -49,4 +49,6 @@ def agent(state: cIEState) -> Command[Literal[
         state["instruction"] = instruction
         return state, response
 
+    print("SUPERVISOR FINISHED")
+
     return Command(goto=goto, update={"messages": state["messages"] + [response], "instruction": instruction})

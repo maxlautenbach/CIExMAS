@@ -1,4 +1,5 @@
 import sys
+from typing import TypedDict
 
 import git
 
