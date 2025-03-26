@@ -15,3 +15,4 @@ qdrant-client
 streamlit
 watchdog
 langgraph
+langchain-huggingface

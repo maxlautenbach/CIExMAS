@@ -3,6 +3,8 @@ from typing import TypedDict
 from langchain_ollama import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
+from langchain_community.llms import VLLM
+from langchain_huggingface import HuggingFaceEmbeddings
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
 import git
@@ -15,7 +17,7 @@ import os
 load_dotenv(repo.working_dir + "/.env")
 
 llm_provider = os.getenv("MODEL_PROVIDER")
-model_id = os.getenv("MODEL_ID")
+model_id = os.getenv("LLM_MODEL_ID")
 
 if llm_provider == "DeepInfra":
     model = ChatOpenAI(
@@ -37,7 +39,16 @@ elif llm_provider == "OpenAI":
         model=model_id
     )
 
-embeddings = OllamaEmbeddings(model='nomic-embed-text')
+elif llm_provider == "vLLM":
+    model = VLLM(
+        model=model_id,
+        download_dir=os.getenv("MODEL_DIR")
+    )
+
+embeddings = hf = HuggingFaceEmbeddings(
+    model_name=os.getenv("EMBEDDING_MODEL_ID"),
+    cache_folder=os.getenv("MODEL_DIR")
+)
 
 langfuse_handler = CallbackHandler(
     secret_key=os.getenv("LANGFUSE_SECRET_KEY"),

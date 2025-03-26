@@ -9,6 +9,9 @@ import zipfile
 from helper_tools.qdrant_handler import upload_wikidata_entity
 from tqdm import tqdm
 import gzip
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 def add_wikidata_prefix(uri):
     if "^^" not in uri:
@@ -88,7 +91,7 @@ def babelscape_parser(filename, number_of_samples=10):
 
 
 def rebel_parser(split, number_of_samples=10):
-    file_path = snapshot_download("Babelscape/rebel-dataset", repo_type="dataset")
+    file_path = snapshot_download("Babelscape/rebel-dataset", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
 
     zip_file_path = f"{file_path}/rebel_dataset.zip"
     target_path = f"{file_path}/rebel_dataset"
@@ -101,12 +104,12 @@ def rebel_parser(split, number_of_samples=10):
 
 
 def redfm_parser(split, lang="en", number_of_samples=10):
-    file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset")
+    file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
 
     return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
 
 def synthie_parser(split, number_of_samples=10):
-    file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset")
+    file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
     gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
     filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
     if not os.path.exists(filename):
