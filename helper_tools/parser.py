@@ -9,8 +9,11 @@ import zipfile
 from tqdm import tqdm
 import gzip
 from dotenv import load_dotenv
+import git
 
-load_dotenv("../.env")
+repo = git.Repo(search_parent_directories=True)
+
+load_dotenv(repo.working_dir + "/.env")
 
 
 def add_wikidata_prefix(uri):
@@ -95,7 +98,7 @@ def babelscape_parser(filename, number_of_samples=10):
 
 
 def rebel_parser(split, number_of_samples=10):
-    file_path = snapshot_download("Babelscape/rebel-dataset", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
+    file_path = snapshot_download("Babelscape/rebel-dataset", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/REBEL")
 
     zip_file_path = f"{file_path}/rebel_dataset.zip"
     target_path = f"{file_path}/rebel_dataset"
@@ -108,13 +111,13 @@ def rebel_parser(split, number_of_samples=10):
 
 
 def redfm_parser(split, lang="en", number_of_samples=10):
-    file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
+    file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/REDFM")
 
     return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
 
 
 def synthie_parser(split, number_of_samples=10):
-    file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR"))
+    file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/synthIE")
     gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
     filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
     if not os.path.exists(filename):

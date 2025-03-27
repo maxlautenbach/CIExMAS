@@ -11,7 +11,7 @@ sys.path.append(repo.working_dir)
 
 import streamlit as st
 import helper_tools.parser as parser
-from helper_tools.evaluation import evaluate, get_uri_labels, parse_turtle
+from helper_tools.evaluation import evaluate_doc, get_uri_labels, parse_turtle, generate_pr_f1_score
 import importlib
 import pandas as pd
 
@@ -151,8 +151,9 @@ if st.button("Run Evaluation"):
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', last_state["messages"][-1], re.DOTALL).group(1)
     else:
         turtle_string = last_state["results"][-1]
-    precision, recall, f1_score = evaluate(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
+    correct_relation, gold_standard_relation, pred_relation, extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
                                            relation_df=stss.relation_df)
+    precision, recall, f1_score = generate_pr_f1_score(correct_relation, gold_standard_relation, pred_relation)
     st.write(f'Precision: {round(precision, 2) * 100}%')
     st.write(f'Recall: {round(recall, 2) * 100}%')
     st.write(f'F1 Score: {round(f1_score, 2) * 100}%')
