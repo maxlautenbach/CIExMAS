@@ -88,3 +88,44 @@ def generate_pr_f1_score(correct, gold_standard, total_predicted):
     else:
         f1_score = (2 * precision * recall) / (precision + recall)
     return precision, recall, f1_score
+
+def generate_report(excel_file_path):
+    evaluation_log_df = pd.read_excel(excel_file_path)
+
+    # Mapping der Spalten zu den jeweiligen Metriken
+    metric_map = {
+        "Relation": ["Correct Relations", "Gold Standard", "Total Predicted"],
+        "Subject": ["Correct Extracted Subjects", "Gold Standard Subjects", "Extracted Subjects"],
+        "Predicate": ["Correct Extracted Predicates", "Gold Standard Predicates", "Extracted Predicates"],
+        "Object": ["Correct Extracted Objects", "Gold Standard Objects", "Extracted Objects"],
+        "Entity": ["Correct Extracted Entities", "Gold Standard Entities", "Extracted Entities"]
+    }
+
+    # Dictionaries für das Aufsummieren der Scores
+    metric_scores = {metric: {"precision": [], "recall": [], "f1": []} for metric in metric_map}
+
+    # Über alle Dokumente iterieren und Einzelwerte sammeln
+    for _, row in evaluation_log_df.iterrows():
+        for metric, (correct_col, gold_col, pred_col) in metric_map.items():
+            precision, recall, f1 = generate_pr_f1_score(
+                row[correct_col], row[gold_col], row[pred_col]
+            )
+            metric_scores[metric]["precision"].append(precision)
+            metric_scores[metric]["recall"].append(recall)
+            metric_scores[metric]["f1"].append(f1)
+
+    # Macro Average berechnen
+    macro_scores = {
+        metric: {
+            "Precision": sum(scores["precision"]) / len(scores["precision"]) if scores["precision"] else 0.0,
+            "Recall": sum(scores["recall"]) / len(scores["recall"]) if scores["recall"] else 0.0,
+            "F1-Score": sum(scores["f1"]) / len(scores["f1"]) if scores["f1"] else 0.0
+        }
+        for metric, scores in metric_scores.items()
+    }
+
+    # DataFrame erstellen
+    macro_scores_df = pd.DataFrame.from_dict(macro_scores, orient="index")
+
+    # Ausgabe (optional)
+    return macro_scores_df

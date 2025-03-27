@@ -1,3 +1,5 @@
+import os
+
 import git
 import sys
 
@@ -19,6 +21,9 @@ from approaches.baseline.agents.entity_extractor import agent as entity_extracti
 from approaches.baseline.agents.relation_extractor import agent as relation_extraction_agent
 from approaches.baseline.agents.uri_detector import agent as uri_detection_agent
 from helper_tools.evaluation import evaluate_doc
+from dotenv import load_dotenv
+
+load_dotenv(repo.working_dir + "/.env", override=True)
 from helper_tools.base_setup import langfuse_handler
 
 warnings.filterwarnings("ignore")
@@ -61,4 +66,4 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-evaluation_log_df.to_excel("evaluation_log.xlsx")
+evaluation_log_df.to_excel(f"evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID')}.xlsx", index=False)
