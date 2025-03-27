@@ -29,16 +29,19 @@ def get_uri_labels(df, entity_set, predicate_set_df):
 
 
 def parse_turtle(turtle_string):
-    # Load the Turtle file into an RDF graph
-    result_graph = Graph()
-    result_graph.parse(data=turtle_string, format="turtle")
+    try:
+        # Load the Turtle file into an RDF graph
+        result_graph = Graph()
+        result_graph.parse(data=turtle_string, format="turtle")
 
-    final_result = []
-    for subj, pred, obj in result_graph:
-        final_result.append([str(subj), str(pred), str(obj)])
+        final_result = []
+        for subj, pred, obj in result_graph:
+            final_result.append([str(subj), str(pred), str(obj)])
 
-    return pd.DataFrame(final_result,
-                        columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates()
+        return pd.DataFrame(final_result,
+                            columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates()
+    except Exception:
+        return pd.DataFrame(columns=["subject_uri", "predicate_uri", "object_uri"])
 
 
 def evaluate_doc(turtle_string, doc_id, relation_df):

@@ -46,7 +46,7 @@ for i in tqdm(range(len(docs))):
     text = target_doc["text"]
     response = graph.invoke({"text": text, "messages": [], "debug": False}, config={"recursion_limit": 70})
     evaluation_log.append([*evaluate_doc(re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1),
-                                         doc_id, relation_df)])
+                                         doc_id, relation_df),response["messages"][-1]])
 
 evaluation_log_df = pd.DataFrame(
     evaluation_log,
@@ -55,7 +55,7 @@ evaluation_log_df = pd.DataFrame(
         "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
         "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
         "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
-        "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities"
+        "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
     ]
 )
 
