@@ -46,7 +46,11 @@ elif llm_provider == "OpenAI":
 elif llm_provider == "vLLM":
     model = VLLM(
         model=model_id,
-        download_dir=os.getenv("MODEL_DIR")
+        trust_remote_code=True,
+        dtype='float16',
+        tensor_parallel_size=2,
+        download_dir=os.getenv("MODEL_DIR"),
+        vllm_kwargs={"quantization": "GPTQ", "distributed_executor_backend":"mp"}
     )
 
 elif llm_provider == "Ollama":

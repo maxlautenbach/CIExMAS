@@ -12,7 +12,7 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 # Start ollama serve in the background
-OLLAMA_MODELS=/ceph/$(whoami)/ollama_models ollama serve &
+OLLAMA_MODELS=/work/$(whoami)/ollama_models OLLAMA_LOAD_TIMEOUT=30m ollama serve &
 # Optionally, capture its PID if needed:
 OLLAMA_PID=$!
 
