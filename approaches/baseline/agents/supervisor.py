@@ -44,6 +44,9 @@ def agent(state: cIEState) -> Command[Literal[
 
     response = "\n-- Supervisor Agent --\n" + response.content
 
+    if goto == "supervisor":
+        response += "SYSTEM MESSAGE: You missed to include a goto."
+
     if state["debug"]:
         state["messages"].append(response)
         state["instruction"] = instruction
