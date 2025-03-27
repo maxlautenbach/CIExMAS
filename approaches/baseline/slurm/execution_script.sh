@@ -11,6 +11,8 @@ cleanup() {
 # Trap SIGINT and SIGTERM signals (like when you press Ctrl+C)
 trap cleanup SIGINT SIGTERM
 
+conda activate CIExMAS
+
 # Start ollama serve in the background
 OLLAMA_MODELS=/work/$(whoami)/ollama_models OLLAMA_LOAD_TIMEOUT=30m ollama serve &
 # Optionally, capture its PID if needed:

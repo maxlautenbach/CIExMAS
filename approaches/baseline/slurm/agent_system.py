@@ -1,8 +1,6 @@
 import git
 import sys
 
-from helper_tools.base_setup import langfuse_handler
-
 repo = git.Repo(search_parent_directories=True)
 sys.path.append(repo.working_dir)
 
@@ -21,6 +19,7 @@ from approaches.baseline.agents.entity_extractor import agent as entity_extracti
 from approaches.baseline.agents.relation_extractor import agent as relation_extraction_agent
 from approaches.baseline.agents.uri_detector import agent as uri_detection_agent
 from helper_tools.evaluation import evaluate_doc
+from helper_tools.base_setup import langfuse_handler
 
 warnings.filterwarnings("ignore")
 

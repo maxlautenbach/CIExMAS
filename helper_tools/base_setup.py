@@ -55,7 +55,8 @@ elif llm_provider == "vLLM":
 
 elif llm_provider == "Ollama":
     model = ChatOllama(
-        model=model_id
+        model=model_id,
+        num_ctx=25600
     )
 
 embeddings = OllamaEmbeddings(
