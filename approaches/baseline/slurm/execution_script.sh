@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#SBATCH --job-name=MAS-CIExMAS-EXEC
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=60G
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --gres=gpu:2
+#SBATCH --time=04:00:00
+#SBATCH --chdir=/home/mlautenb/CIExMAS
+#SBATCH --partition=gpu-vram-48gb
+
 # Function to cleanup background processes
 cleanup() {
     echo "Interrupt received. Killing ollama process..."
@@ -12,6 +22,8 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 conda activate CIExMAS
+
+pip install -r requirements.txt
 
 # Start ollama serve in the background
 OLLAMA_MODELS=/work/$(whoami)/ollama_models OLLAMA_LOAD_TIMEOUT=30m ollama serve &
