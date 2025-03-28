@@ -71,4 +71,4 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-evaluation_log_df.to_excel(f"evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)
+evaluation_log_df.to_excel(f"{repo.working_dir}/approaches/evaluation_logs/baseline/evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)
