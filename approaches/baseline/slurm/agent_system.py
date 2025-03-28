@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-relation_df, entity_df, docs = parser.synthie_parser("train", 5)
+relation_df, entity_df, docs = parser.synthie_parser("test", 50)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
 
