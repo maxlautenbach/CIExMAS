@@ -13,13 +13,16 @@ def get_description(uri):
     sparql.setReturnFormat(JSON)
     results = ""
     retry = 0
-    max_retries = 5
+    max_retries = 10
     while results == "" and retry < max_retries:
         try:
             results = sparql.query().convert()
         except Exception as e:
             retry += 1
-    return results["results"]["bindings"][0]["o"]["value"]
+    try:
+        return results["results"]["bindings"][0]["o"]["value"]
+    except IndexError:
+        return "No Description Found"
 
 if __name__ == "__main__":
     print(get_description("http://www.wikidata.org/entity/Q61053"))
