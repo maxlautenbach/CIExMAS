@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 
 import git
@@ -52,8 +53,12 @@ for i in tqdm(range(len(docs))):
     text = target_doc["text"]
     response = graph.invoke({"text": text, "messages": [], "debug": False},
                             config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
-    evaluation_log.append([*evaluate_doc(re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1),
-                                         doc_id, relation_df), response["messages"][-1]])
+    try:
+        turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
+    except AttributeError:
+        turtle_string = ""
+
+    evaluation_log.append([*evaluate_doc(turtle_string,doc_id, relation_df), response["messages"][-1]])
 
 evaluation_log_df = pd.DataFrame(
     evaluation_log,
@@ -66,4 +71,4 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-evaluation_log_df.to_excel(f"evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID')}.xlsx", index=False)
+evaluation_log_df.to_excel(f"evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)

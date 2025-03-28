@@ -81,13 +81,20 @@ def evaluate_doc(turtle_string, doc_id, relation_df):
 
 
 def generate_pr_f1_score(correct, gold_standard, total_predicted):
-    precision = correct / total_predicted
-    recall = correct / gold_standard
+    try:
+        precision = correct / total_predicted
+    except ZeroDivisionError:
+        precision = 0
+    try:
+        recall = correct / gold_standard
+    except ZeroDivisionError:
+        recall = 0
     if precision + recall == 0:
         f1_score = 0
     else:
         f1_score = (2 * precision * recall) / (precision + recall)
     return precision, recall, f1_score
+
 
 def generate_report(excel_file_path):
     evaluation_log_df = pd.read_excel(excel_file_path)
@@ -129,3 +136,7 @@ def generate_report(excel_file_path):
 
     # Ausgabe (optional)
     return macro_scores_df
+
+
+if __name__ == "__main__":
+    print(generate_report("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/approaches/evaluation_logs/baseline/evaluation_log-Ollama_llama3.3.xlsx"))
