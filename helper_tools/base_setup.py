@@ -44,13 +44,10 @@ elif llm_provider == "OpenAI":
     )
 
 elif llm_provider == "vLLM":
-    model = VLLM(
-        model=model_id,
-        trust_remote_code=True,
-        dtype='float16',
-        tensor_parallel_size=2,
-        download_dir=os.getenv("MODEL_DIR"),
-        vllm_kwargs={"quantization": "GPTQ", "distributed_executor_backend":"mp"}
+    model = ChatOpenAI(
+        api_key="EMPTY",
+        base_url="http://localhost:8000/v1",
+        model=model_id
     )
 
 elif llm_provider == "Ollama":

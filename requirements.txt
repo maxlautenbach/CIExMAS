@@ -20,3 +20,4 @@ faiss-cpu
 einops
 openpyxl
 gitpython
+bitsandbytes

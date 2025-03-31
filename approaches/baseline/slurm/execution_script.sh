@@ -10,36 +10,79 @@
 #SBATCH --chdir=/home/mlautenb/CIExMAS
 #SBATCH --partition=gpu-vram-48gb
 
-# Function to cleanup background processes
+# === Environment Setup ===
+source activate base
+conda activate CIExMAS
+source ./.env
+
+# === Trap and Cleanup ===
 cleanup() {
-    echo "Interrupt received. Killing ollama process..."
-    # Kill any process with "ollama" in its name.
-    kill $(pgrep ollama) 2>/dev/null
+    echo "Interrupt received. Cleaning up..."
+
+    echo "Killing ollama processes if running..."
+    pkill -f ollama 2>/dev/null
+
+    if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
+        echo "Killing vllm processes..."
+        pkill -f vllm 2>/dev/null
+    fi
+
     exit 1
 }
-
-# Trap SIGINT and SIGTERM signals (like when you press Ctrl+C)
 trap cleanup SIGINT SIGTERM
 
-conda activate CIExMAS
-
-pip install -r requirements.txt
-
-# Start ollama serve in the background
+echo "Starting Ollama server..."
 OLLAMA_MODELS=/work/$(whoami)/ollama_models OLLAMA_LOAD_TIMEOUT=30m ollama serve &
-# Optionally, capture its PID if needed:
 OLLAMA_PID=$!
+sleep 2  # Wait for server to spin up
 
-# Allow ollama to initialize
-sleep 2
-
-ollama pull llama3.3
-
-# Pull the nomic-embed-text model
+echo "Pulling embedding model: nomic-embed-text"
 ollama pull nomic-embed-text
 
-# Run your python agent system
+# === Start Ollama Server if Needed ===
+if [[ "$LLM_MODEL_PROVIDER" == "Ollama" ]]; then
+    echo "Pulling model: $LLM_MODEL_ID"
+    ollama pull "$LLM_MODEL_ID"
+fi
+
+# === Start vLLM if Needed ===
+if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
+    echo "Starting vLLM server with model: $LLM_MODEL_ID"
+    vllm serve "$LLM_MODEL_ID" \
+        --chat-template /home/mlautenb/CIExMAS/helper_tools/chat_templates/llama-3-instruct.jinja \
+        --download-dir /work/mlautenb/CIExMAS/models \
+        --gpu-memory-utilization 0.95 \
+        --max_model_len 8192 &
+    VLLM_PID=$!
+    echo "Waiting for vLLM server to be ready on port 8000..."
+    for i in {1..60}; do
+        if curl -s http://localhost:8000 > /dev/null; then
+            echo "vLLM server is up!"
+            break
+        fi
+        echo "Still waiting... ($i/60)"
+        sleep 10
+    done
+
+    # If still not ready, exit with error
+    if ! curl -s http://localhost:8000 > /dev/null; then
+        echo "Error: vLLM server did not start within expected time."
+        cleanup
+    fi
+
+fi
+
+# === Run Agent System ===
+echo "Running agent system..."
 python3 ./approaches/baseline/slurm/agent_system.py
 
-# After the script finishes, cleanup ollama (if still running)
-kill $(pgrep ollama) 2>/dev/null
+# === Final Cleanup ===
+echo "Job completed. Cleaning up..."
+
+echo "Killing ollama if still running..."
+pkill -f ollama 2>/dev/null
+
+if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
+    echo "Killing vLLM process..."
+    pkill -f vllm 2>/dev/null
+fi

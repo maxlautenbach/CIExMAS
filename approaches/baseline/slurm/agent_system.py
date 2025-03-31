@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-relation_df, entity_df, docs = parser.synthie_parser("test", 50)
+relation_df, entity_df, docs = parser.synthie_parser("train", 5)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
 
@@ -51,12 +51,12 @@ for i in tqdm(range(len(docs))):
     target_doc = docs.iloc[i]
     doc_id = target_doc["docid"]
     text = target_doc["text"]
-    response = graph.invoke({"text": text, "messages": [], "debug": False},
-                            config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
     try:
+        response = graph.invoke({"text": text, "messages": [], "debug": False},
+                                config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
-    except AttributeError:
-        turtle_string = ""
+    except Exception as e:
+        turtle_string = e
 
     evaluation_log.append([*evaluate_doc(turtle_string,doc_id, relation_df), response["messages"][-1]])
 
