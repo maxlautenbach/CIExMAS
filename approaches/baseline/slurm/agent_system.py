@@ -31,7 +31,10 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-relation_df, entity_df, docs = parser.synthie_parser("train", 5)
+split = "test"
+number_of_samples = 50
+
+relation_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
 
@@ -71,4 +74,4 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-evaluation_log_df.to_excel(f"{repo.working_dir}/approaches/evaluation_logs/baseline/evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)
+evaluation_log_df.to_excel(f"{repo.working_dir}/approaches/evaluation_logs/baseline/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)
