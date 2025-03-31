@@ -87,3 +87,16 @@ A fact is regarded as correct if the relation and the two corresponding entities
 | GenIE - PLM            |     59.32 |     77.78 |      67.31 |         – |         – |          – |
 | DISCIE (F2 calibrated) |     62.13 | **81.93** |      70.67 |         – |         – |          – |
 | DISCIE (F1 calibrated) | **77.41** |     72.68 |  **74.97** |         – |         – |          – |
+
+
+## Model Providers and IDs
+### SambaNova
+- Llama 3.3 70B - Meta-Llama-3.3-70B-Instruct
+
+### DeepInfra
+- Llama 3.3 70B - meta-llama/Llama-3.3-70B-Instruct
+- Gemma 3 27b - google/gemma-3-27b-it
+
+### vLLM
+- Gemma 3 27b - ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
+- 
