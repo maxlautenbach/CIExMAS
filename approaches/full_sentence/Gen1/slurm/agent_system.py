@@ -77,4 +77,11 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-evaluation_log_df.to_excel(f"{repo.working_dir}/approaches/evaluation_logs/Gen1/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx", index=False)
+
+excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
+try:
+    evaluation_log_df.to_excel(excel_file_path, index=False)
+except Exception as e:
+    print(excel_file_path)
+    print(e)
+    evaluation_log_df.to_excel(f"Output.xlsx", index=False)
