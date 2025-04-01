@@ -90,6 +90,9 @@ A fact is regarded as correct if the relation and the two corresponding entities
 
 
 ## Model Providers and IDs
+### OpenAI
+- GPT 4o 2025 Preview - gpt-4o-search-preview-2025-03-11
+
 ### SambaNova
 - Llama 3.3 70B - Meta-Llama-3.3-70B-Instruct
 - QwQ 32B - QwQ-32B

@@ -22,7 +22,7 @@ Note:
 - The first <goto> tag in your response will be executed.
 - Therefore, do include exact one agent call in your response.
 - If you output nothing, this will result in a NoneType Error.
-- Please do not hallucinate any URI.
+- Please do not hallucinate any URI, instead get all your URIs from the uri_detection_agent.
 
 Text: {text}
 Message History (latest to oldest): {history}

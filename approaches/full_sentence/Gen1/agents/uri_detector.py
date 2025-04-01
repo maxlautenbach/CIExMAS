@@ -11,7 +11,12 @@ importlib.reload(approaches.full_sentence.Gen1.prompts)
 
 
 def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple[cIEState, str]:
-    search_terms = re.search(r'<search_terms>(.*?)</search_terms>', state["instruction"], re.DOTALL).group(1)
+    search_terms_match = re.search(r'<search_terms>(.*?)</search_terms>', state["instruction"], re.DOTALL)
+    if search_terms_match:
+        search_terms = search_terms_match.group(1)
+    else:
+        search_terms = "NONE"
+    print(search_terms)
     additional_instruction_match = re.search(r'<additional_instruction>(.*?)</additional_instruction>', state["instruction"], re.DOTALL)
     if additional_instruction_match:
         additional_instruction = additional_instruction_match.group(1)
