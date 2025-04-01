@@ -31,8 +31,12 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-split = "test"
-number_of_samples = 50
+try:
+    split = sys.argv[1]
+    number_of_samples = int(sys.argv[2])
+except IndexError:
+    split = "test"
+    number_of_samples = 50
 
 relation_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()

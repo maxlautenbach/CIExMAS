@@ -139,4 +139,4 @@ def generate_report(excel_file_path):
 
 
 if __name__ == "__main__":
-    print(generate_report("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/approaches/evaluation_logs/baseline/evaluation_log-Ollama_llama3.3.xlsx"))
+    print(generate_report("/approaches/evaluation_logs/baseline/train-5-evaluation_log-Ollama_llama3.3.xlsx"))

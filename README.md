@@ -92,11 +92,16 @@ A fact is regarded as correct if the relation and the two corresponding entities
 ## Model Providers and IDs
 ### SambaNova
 - Llama 3.3 70B - Meta-Llama-3.3-70B-Instruct
+- QwQ 32B - QwQ-32B
 
 ### DeepInfra
 - Llama 3.3 70B - meta-llama/Llama-3.3-70B-Instruct
 - Gemma 3 27b - google/gemma-3-27b-it
+- DeepSeek R1 (Llama Distill) - deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+- DeepSeek R1 (Qwen Distill) - deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
+- QwQ 32B - Qwen/QwQ-32B
 
 ### vLLM
-- Gemma 3 27b - ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
-- 
+- Gemma 3 27b - ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g (GPTQ - 4bit)
+- Llama 3.3 70B - kosbu/Llama-3.3-70B-Instruct-AWQ (AWQ)
+- Command A - unsloth/c4ai-command-a-03-2025-unsloth-bnb-4bit (bitsandbytes)

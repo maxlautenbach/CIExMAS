@@ -34,21 +34,25 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-split = "train"
-number_of_samples = 5
+try:
+    split = sys.argv[1]
+    number_of_samples = int(sys.argv[2])
+except IndexError:
+    split = "test"
+    number_of_samples = 50
 
-relation_df, entity_df, docs = parser.synthie_parser(split,number_of_samples)
+relation_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
 
 builder = StateGraph(cIEState)
 builder.add_node("planner", planner)
-builder.add_node("agent_instructor_agent",agent_instructor_agent)
+builder.add_node("agent_instructor_agent", agent_instructor_agent)
 builder.add_node("entity_extraction_agent", entity_extraction_agent)
-builder.add_node("relation_extraction_agent",relation_extraction_agent)
-builder.add_node("uri_detection_agent",uri_detection_agent)
-builder.add_node("result_checker_agent",result_checker_agent)
-builder.add_node("result_formatting_agent",result_formatting_agent)
+builder.add_node("relation_extraction_agent", relation_extraction_agent)
+builder.add_node("uri_detection_agent", uri_detection_agent)
+builder.add_node("result_checker_agent", result_checker_agent)
+builder.add_node("result_formatting_agent", result_formatting_agent)
 
 builder.add_edge(START, "planner")
 
@@ -64,7 +68,7 @@ for i in tqdm(range(len(docs))):
                             config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
     turtle_string = response["results"][-1]
 
-    evaluation_log.append([*evaluate_doc(turtle_string,doc_id, relation_df), response["results"][-1]])
+    evaluation_log.append([*evaluate_doc(turtle_string, doc_id, relation_df), response["results"][-1]])
 
 evaluation_log_df = pd.DataFrame(
     evaluation_log,
@@ -77,8 +81,7 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-
-excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
+excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/', '-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
 try:
     evaluation_log_df.to_excel(excel_file_path, index=False)
 except Exception as e:
