@@ -64,10 +64,13 @@ for i in tqdm(range(len(docs))):
     target_doc = docs.iloc[i]
     doc_id = target_doc["docid"]
     text = target_doc["text"]
-    response = graph.invoke({"text": text, "results": [], "call_trace": [], "comments": [], "debug": False},
-                            config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
-    turtle_string = response["results"][-1]
 
+    try:
+        response = graph.invoke({"text": text, "results": [], "call_trace": [], "comments": [], "debug": False},
+                            config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
+        turtle_string = response["results"][-1]
+    except Exception as e:
+        turtle_string = e
     evaluation_log.append([*evaluate_doc(turtle_string, doc_id, relation_df), response["results"][-1]])
 
 evaluation_log_df = pd.DataFrame(

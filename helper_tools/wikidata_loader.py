@@ -21,7 +21,7 @@ def get_description(uri):
             retry += 1
     try:
         return results["results"]["bindings"][0]["o"]["value"]
-    except IndexError:
+    except Exception:
         return "No Description Found"
 
 if __name__ == "__main__":

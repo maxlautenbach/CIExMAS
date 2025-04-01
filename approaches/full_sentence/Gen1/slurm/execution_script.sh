@@ -49,7 +49,7 @@ fi
 if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
     echo "Starting vLLM server with model: $LLM_MODEL_ID"
     vllm serve "$LLM_MODEL_ID" \
-        --chat-template /home/mlautenb/CIExMAS/helper_tools/chat_templates/llama-3-instruct.jinja \
+        --chat-template /home/mlautenb/CIExMAS/helper_tools/chat_templates/gemma-it.jinja \
         --download-dir /work/mlautenb/CIExMAS/models \
         --gpu-memory-utilization 0.95 \
         --max_model_len 8192 &
