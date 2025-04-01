@@ -1,6 +1,5 @@
 import os
 import sys
-from cProfile import label
 from copy import deepcopy
 import re
 
@@ -11,9 +10,12 @@ sys.path.append(repo.working_dir)
 
 import streamlit as st
 import helper_tools.parser as parser
-from helper_tools.evaluation import evaluate_doc, get_uri_labels, parse_turtle, generate_pr_f1_score
 import importlib
-import pandas as pd
+import helper_tools.evaluation as evaluation
+
+importlib.reload(evaluation)
+
+from helper_tools.evaluation import evaluate_doc, get_uri_labels, parse_turtle, calculate_scores_from_array
 
 st.set_page_config(layout="wide")
 
@@ -151,12 +153,9 @@ if st.button("Run Evaluation"):
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', last_state["messages"][-1], re.DOTALL).group(1)
     else:
         turtle_string = last_state["results"][-1]
-    correct_relation, gold_standard_relation, pred_relation, extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
+    scores = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
                                            relation_df=stss.relation_df)
-    precision, recall, f1_score = generate_pr_f1_score(correct_relation, gold_standard_relation, pred_relation)
-    st.write(f'Precision: {round(precision, 2) * 100}%')
-    st.write(f'Recall: {round(recall, 2) * 100}%')
-    st.write(f'F1 Score: {round(f1_score, 2) * 100}%')
+    st.write(calculate_scores_from_array(scores))
     st.write(get_uri_labels(parse_turtle(turtle_string), stss.entity_set, stss.predicate_set_df)[
                  ["subject", "predicate", "object"]])
     st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][

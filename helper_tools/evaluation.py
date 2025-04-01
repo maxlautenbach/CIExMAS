@@ -138,5 +138,46 @@ def generate_report(excel_file_path):
     return macro_scores_df
 
 
+def calculate_scores_from_array(values_array):
+    if len(values_array) != 15:
+        raise ValueError(f"Expected 15 values, but got {len(values_array)}")
+
+    # Entpacke die Werte aus dem Array
+    (
+        correct_relations, gold_relations, pred_relations,
+        extracted_subjects, gold_subjects, correct_subjects,
+        extracted_predicates, gold_predicates, correct_predicates,
+        extracted_objects, gold_objects, correct_objects,
+        extracted_entities, gold_entities, correct_entities
+    ) = values_array
+
+    # Dictionary für die Score-Ausgabe
+    result = {}
+
+    # Relation
+    precision, recall, f1 = generate_pr_f1_score(correct_relations, gold_relations, pred_relations)
+    result["Relation"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Subject
+    precision, recall, f1 = generate_pr_f1_score(correct_subjects, gold_subjects, extracted_subjects)
+    result["Subject"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Predicate
+    precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates)
+    result["Predicate"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Object
+    precision, recall, f1 = generate_pr_f1_score(correct_objects, gold_objects, extracted_objects)
+    result["Object"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Entity
+    precision, recall, f1 = generate_pr_f1_score(correct_entities, gold_entities, extracted_entities)
+    result["Entity"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    return pd.DataFrame.from_dict(result, orient="index")
+
+
+
+
 if __name__ == "__main__":
     print(generate_report("/approaches/evaluation_logs/baseline/train-5-evaluation_log-Ollama_llama3.3.xlsx"))

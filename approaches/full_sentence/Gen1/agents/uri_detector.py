@@ -16,7 +16,6 @@ def agent(state: cIEState) -> Command[Literal["agent_instructor_agent"]] | tuple
         search_terms = search_terms_match.group(1)
     else:
         search_terms = "NONE"
-    print(search_terms)
     additional_instruction_match = re.search(r'<additional_instruction>(.*?)</additional_instruction>', state["instruction"], re.DOTALL)
     if additional_instruction_match:
         additional_instruction = additional_instruction_match.group(1)
