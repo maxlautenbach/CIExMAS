@@ -129,5 +129,5 @@ def synthie_parser(split, number_of_samples=10):
 
 
 if (__name__ == "__main__"):
-    relation_df, entity_df, docs = synthie_parser("test", 50)
+    relation_df, entity_df, docs = synthie_parser("test", 5)
     print("Test Parsing Finished")

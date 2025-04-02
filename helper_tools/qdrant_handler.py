@@ -3,24 +3,28 @@ from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient, models
 from helper_tools.wikidata_loader import get_description
+from helper_tools.base_setup import repo
+from dotenv import load_dotenv
+import os
 
+load_dotenv(repo.working_dir + "/.env", override=True)
 
 def upload_wikidata_entity(uri, label):
     if "^^" in uri:
         return None
 
-    client = QdrantClient("localhost", port=6333)
+    client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
 
     embeddings = OllamaEmbeddings(model='nomic-embed-text')
-    qdrant_wikidata_labels = QdrantVectorStore.from_existing_collection(
-        embedding=embeddings,
+    qdrant_wikidata_labels = QdrantVectorStore(
+        client=client,
         collection_name="wikidata_labels",
-        url="http://localhost:6333",
+        embedding=embeddings
     )
-    qdrant_wikidata_descriptions = QdrantVectorStore.from_existing_collection(
-        embedding=embeddings,
+    qdrant_wikidata_descriptions = QdrantVectorStore(
+        client=client,
         collection_name="wikidata_descriptions",
-        url="http://localhost:6333",
+        embedding=embeddings
     )
 
     # Erstelle ein Filter-Objekt, das nach einem Dokument mit der entsprechenden URI sucht.
@@ -50,9 +54,15 @@ def upload_wikidata_entity(uri, label):
     qdrant_wikidata_descriptions.add_documents([description_doc])
     return None
 
+def init_collections():
+    client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
+    client.create_collection(collection_name="wikidata_labels",
+                             vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+    client.create_collection(collection_name="wikidata_descriptions",
+                             vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
 
 def clear_collections():
-    client = QdrantClient("localhost", port=6333)
+    client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
 
     # Delete the collection
     client.delete_collection(collection_name="wikidata_labels")

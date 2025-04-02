@@ -68,7 +68,10 @@ langfuse_handler = CallbackHandler(
 
 if os.getenv("VECTOR_STORE") == "qdrant":
 
-    client = QdrantClient("localhost", port=6333)
+    qdrant_url = os.getenv("QDRANT_URL")
+    qdrant_port = os.getenv("QDRANT_PORT")
+    qdrant_api_key = os.getenv("QDRANT_API_KEY")
+    client = QdrantClient(qdrant_url, port=qdrant_port, api_key=qdrant_api_key)
     vector_store = QdrantVectorStore(
         client=client,
         collection_name="wikidata_labels",
