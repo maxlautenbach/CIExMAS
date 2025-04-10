@@ -21,6 +21,8 @@ st.set_page_config(layout="wide")
 
 stss = st.session_state
 
+if "dataset_cache" not in stss:
+    stss.dataset_cache = dict()
 
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
@@ -33,7 +35,13 @@ def reset_state():
 
 
 if "relation_df" not in stss:
-    stss.relation_df, stss.entity_df, stss.docs = parser.synthie_parser("train")
+    split = "train"
+    number_of_samples = 10
+    try:
+        stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{split}-{number_of_samples}"]
+    except KeyError:
+        stss.relation_df, stss.entity_df, stss.docs = parser.synthie_parser(split, number_of_samples)
+        stss.dataset_cache[f"{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
     stss.entity_set = stss.entity_df[['entity', 'entity_uri']].drop_duplicates()
     stss.predicate_set_df = stss.relation_df[["predicate", "predicate_uri"]].drop_duplicates()
 
@@ -154,9 +162,9 @@ if st.button("Run Evaluation"):
     else:
         turtle_string = last_state["results"][-1]
     scores = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
-                                           relation_df=stss.relation_df)
+                                           triple_df=stss.relation_df)
     st.write(calculate_scores_from_array(scores))
-    st.write(get_uri_labels(parse_turtle(turtle_string), stss.entity_set, stss.predicate_set_df)[
+    st.write(get_uri_labels(parse_turtle(turtle_string))[
                  ["subject", "predicate", "object"]])
     st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][
                  ["subject", "predicate", "object"]])

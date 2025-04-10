@@ -8,28 +8,20 @@ from tqdm import tqdm
 
 from helper_tools import parser
 from helper_tools.base_setup import wikidata_predicate_graph
+from helper_tools.wikidata_loader import get_label
 
-def get_uri_labels(df, entity_set, predicate_set_df):
+
+def get_uri_labels(df):
     subjects = []
     predicates = []
     objects = []
     for i, row in df.iterrows():
-        try:
-            subjects.append(entity_set[entity_set["entity_uri"] == row["subject_uri"]]["entity"].values[0])
-        except IndexError:
-            subjects.append("Unknown")
-        try:
-            predicates.append(
-                predicate_set_df[predicate_set_df["predicate_uri"] == row["predicate_uri"]]["predicate"].values[0])
-        except IndexError:
-            predicates.append("Unknown")
+        subjects.append(get_label(row["subject_uri"]))
+        predicates.append(get_label(row["predicate_uri"]))
         if row["object_uri"] is not None and "^^" in row["object_uri"]:
             objects.append(row["object_uri"])
         else:
-            try:
-                objects.append(entity_set[entity_set["entity_uri"] == row["object_uri"]]["entity"].values[0])
-            except IndexError:
-                objects.append("Unknown")
+            objects.append(get_label(row["object_uri"]))
     return pd.concat(
         [df.reset_index(drop=True), pd.DataFrame({"subject": subjects, "predicate": predicates, "object": objects})],
         axis=1)
@@ -130,14 +122,14 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
     for pred_predicate in pred_predicate_set:
         for doc_predicate in doc_predicate_set:
             if pred_predicate == doc_predicate:
-                correct_predicates_parent.add(pred_predicate)
-                correct_predicates_related.add(pred_predicate)
+                correct_predicates_parent.add(doc_predicate)
+                correct_predicates_related.add(doc_predicate)
                 break
             inter_predicate_relations = check_inter_predicate_relations(pred_predicate, doc_predicate)
             if "parentPropertyOf" in inter_predicate_relations:
-                correct_predicates_parent.add(pred_predicate)
+                correct_predicates_parent.add(doc_predicate)
             if len(inter_predicate_relations) > 0:
-                correct_predicates_related.add(pred_predicate)
+                correct_predicates_related.add(doc_predicate)
                 break
     correct_predicates_with_parent = len(correct_predicates_parent)
     correct_predicates_with_related = len(correct_predicates_related)
@@ -229,10 +221,10 @@ def calculate_scores_from_array(values_array):
         correct_subjects,
 
         extracted_predicates,
-        extracted_predicates_with_parent,
-        extracted_predicates_with_related,
         gold_predicates,
         correct_predicates,
+        correct_predicates_with_parent,
+        correct_predicates_with_related,
 
         extracted_objects,
         gold_objects,
@@ -266,11 +258,11 @@ def calculate_scores_from_array(values_array):
     result["Predicate"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Predicate with Parents
-    precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates_with_parent)
+    precision, recall, f1 = generate_pr_f1_score(correct_predicates_with_parent, gold_predicates, extracted_predicates)
     result["Predicate with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Predicate with Related
-    precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates_with_related)
+    precision, recall, f1 = generate_pr_f1_score(correct_predicates_with_related, gold_predicates, extracted_predicates)
     result["Predicate with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Object
