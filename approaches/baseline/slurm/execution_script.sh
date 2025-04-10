@@ -48,11 +48,20 @@ fi
 # === Start vLLM if Needed ===
 if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
     echo "Starting vLLM server with model: $LLM_MODEL_ID"
+    if [[ "$LLM_MODEL_ID" == *"gemma"* ]]; then
+        chat_template_name="gemma-it.jinja"
+    else
+        chat_template_name="llama-3-instruct.jinja"
+    fi
+
+    chat_template_path="/home/mlautenb/CIExMAS/helper_tools/chat_templates/${chat_template_name}"
+
     vllm serve "$LLM_MODEL_ID" \
-        --chat-template /home/mlautenb/CIExMAS/helper_tools/chat_templates/llama-3-instruct.jinja \
-        --download-dir /work/mlautenb/CIExMAS/models \
-        --gpu-memory-utilization 0.95 \
-        --max_model_len 8192 &
+            --chat-template "$chat_template_path" \
+            --download-dir /work/mlautenb/CIExMAS/models \
+            --gpu-memory-utilization 0.95 \
+            --max_model_len 8192 &
+
     VLLM_PID=$!
     echo "Waiting for vLLM server to be ready on port 8000..."
     for i in {1..60}; do
