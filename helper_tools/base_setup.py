@@ -15,6 +15,7 @@ repo = git.Repo(search_parent_directories=True)
 
 from dotenv import load_dotenv
 import os
+from rdflib import Graph
 
 load_dotenv(repo.working_dir + "/.env", override=True)
 
@@ -102,3 +103,6 @@ else:
         docstore=InMemoryDocstore(),
         index_to_docstore_id={},
     )
+
+wikidata_predicate_graph = Graph()
+wikidata_predicate_graph.parse("infrastructure/all_properties.ttl", format="ttl")

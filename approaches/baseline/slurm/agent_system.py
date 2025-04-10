@@ -64,15 +64,17 @@ for i in tqdm(range(len(docs))):
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
     except Exception as e:
         turtle_string = e
+        response = {"messages":[e]}
 
-    evaluation_log.append([*evaluate_doc(turtle_string,doc_id, relation_df), response["messages"][-1]])
+    evaluation_log.append([doc_id, *evaluate_doc(turtle_string,doc_id, relation_df), response["messages"][-1]])
 
 evaluation_log_df = pd.DataFrame(
     evaluation_log,
     columns=[
-        "Correct Relations", "Gold Standard", "Total Predicted",
+        "Doc ID",
+        "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples", "Total Triples Predicted",
         "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
-        "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+        "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates", "Correct Extracted Predicates with Parents", "Correct Extracted Predicates with Related",
         "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
         "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
     ]

@@ -1,6 +1,13 @@
+import os
+import re
+from pathlib import Path
+
 import pandas as pd
 from rdflib import Graph, URIRef
+from tqdm import tqdm
 
+from helper_tools import parser
+from helper_tools.base_setup import wikidata_predicate_graph
 
 def get_uri_labels(df, entity_set, predicate_set_df):
     subjects = []
@@ -44,40 +51,100 @@ def parse_turtle(turtle_string):
         return pd.DataFrame(columns=["subject_uri", "predicate_uri", "object_uri"])
 
 
-def evaluate_doc(turtle_string, doc_id, relation_df):
-    pred_relation_df = parse_turtle(turtle_string)
-    doc_relation_df = relation_df[relation_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
-    correct_relation_df = pred_relation_df.merge(doc_relation_df[["subject_uri", "predicate_uri", "object_uri"]],
+def check_inter_predicate_relations(predicate_a, predicate_b):
+    inter_predicate_relations = []
+    if wikidata_predicate_graph.query(
+            f'ASK {{<{predicate_a}> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ <{predicate_b}>.}}').askAnswer:
+        inter_predicate_relations.append("subPropertyOf")
+    elif wikidata_predicate_graph.query(
+            f'ASK {{<{predicate_b}> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ <{predicate_a}>.}}').askAnswer:
+        inter_predicate_relations.append("parentPropertyOf")
+    return inter_predicate_relations
+
+
+def evaluate_doc(turtle_string, doc_id, triple_df):
+    pred_triple_df = parse_turtle(turtle_string)
+    doc_triple_df = triple_df[triple_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
+    correct_triple_df = pred_triple_df.merge(doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
                                                  on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
 
     # Subjects
-    extracted_subjects = len(set(pred_relation_df["subject_uri"]))
-    gold_standard_subjects = len(set(doc_relation_df["subject_uri"]))
+    extracted_subjects = len(set(pred_triple_df["subject_uri"]))
+    gold_standard_subjects = len(set(doc_triple_df["subject_uri"]))
     correct_extracted_subjects = len(
-        set(pred_relation_df["subject_uri"]).intersection(set(doc_relation_df["subject_uri"])))
+        set(pred_triple_df["subject_uri"]).intersection(set(doc_triple_df["subject_uri"])))
 
     # Predicates
-    extracted_predicates = len(set(pred_relation_df["predicate_uri"]))
-    gold_standard_predicates = len(set(doc_relation_df["predicate_uri"]))
+    extracted_predicates = len(set(pred_triple_df["predicate_uri"]))
+    gold_standard_predicates = len(set(doc_triple_df["predicate_uri"]))
     correct_extracted_predicates = len(
-        set(pred_relation_df["predicate_uri"]).intersection(set(doc_relation_df["predicate_uri"])))
+        set(pred_triple_df["predicate_uri"]).intersection(set(doc_triple_df["predicate_uri"])))
 
     # Objects
-    extracted_objects = len(set(pred_relation_df["object_uri"]))
-    gold_standard_objects = len(set(doc_relation_df["object_uri"]))
+    extracted_objects = len(set(pred_triple_df["object_uri"]))
+    gold_standard_objects = len(set(doc_triple_df["object_uri"]))
     correct_extracted_objects = len(
-        set(pred_relation_df["object_uri"]).intersection(set(doc_relation_df["object_uri"])))
+        set(pred_triple_df["object_uri"]).intersection(set(doc_triple_df["object_uri"])))
 
     # Entities (Subjects + Objects)
-    extracted_entities = len(set(pred_relation_df["subject_uri"]).union(set(pred_relation_df["object_uri"])))
-    gold_standard_entities = len(set(doc_relation_df["subject_uri"]).union(set(doc_relation_df["object_uri"])))
+    extracted_entities = len(set(pred_triple_df["subject_uri"]).union(set(pred_triple_df["object_uri"])))
+    gold_standard_entities = len(set(doc_triple_df["subject_uri"]).union(set(doc_triple_df["object_uri"])))
     correct_extracted_entities = len(
-        set(pred_relation_df["subject_uri"]).union(set(pred_relation_df["object_uri"]))
-        .intersection(set(doc_relation_df["subject_uri"]).union(set(doc_relation_df["object_uri"])))
+        set(pred_triple_df["subject_uri"]).union(set(pred_triple_df["object_uri"]))
+        .intersection(set(doc_triple_df["subject_uri"]).union(set(doc_triple_df["object_uri"])))
     )
 
-    return len(correct_relation_df), len(doc_relation_df), len(
-        pred_relation_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
+    # Triples with Parent and Related Predicates
+    correct_triples_df = pred_triple_df.merge(doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
+                                                on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
+    incorrect_triples_df = \
+    pred_triple_df.merge(correct_triples_df, how="outer", indicator=True).query('_merge=="left_only"')[
+        ["subject_uri", "predicate_uri", "object_uri"]]
+    partial_matching_triples_df = incorrect_triples_df.merge(
+        doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]], on=["subject_uri", "object_uri"], how="inner")
+    correct_triples_with_parent_predicates_df = []
+    correct_triples_with_related_predicates_df = []
+    for i, row in partial_matching_triples_df.iterrows():
+        inter_predicate_relations = check_inter_predicate_relations(row["predicate_uri_x"], row["predicate_uri_y"])
+        if "parentPropertyOf" in inter_predicate_relations:
+            correct_triples_with_parent_predicates_df.append(row)
+        if len(inter_predicate_relations) > 0:
+            correct_triples_with_related_predicates_df.append(row)
+
+    correct_triples_with_parent_predicates_df = pd.DataFrame(correct_triples_with_parent_predicates_df).drop(
+        "predicate_uri_x", axis=1, errors='ignore').rename(columns={"predicate_uri_y": "predicate_uri"},
+                                                           errors='ignore')
+    correct_triples_with_parent_predicates_df = pd.concat(
+        [correct_triples_with_parent_predicates_df, correct_triples_df]).drop_duplicates()
+    correct_triples_with_related_predicates_df = pd.DataFrame(correct_triples_with_related_predicates_df).drop(
+        "predicate_uri_x", axis=1, errors='ignore').rename(columns={"predicate_uri_y": "predicate_uri"},
+                                                           errors='ignore')
+    correct_triples_with_related_predicates_df = pd.concat(
+        [correct_triples_with_related_predicates_df, correct_triples_df]).drop_duplicates()
+
+    # Predicates including Parent and Related Predicates
+    pred_predicate_set = set(pred_triple_df["predicate_uri"])
+    doc_predicate_set = set(doc_triple_df["predicate_uri"])
+    correct_predicates_parent = set()
+    correct_predicates_related = set()
+    for pred_predicate in pred_predicate_set:
+        for doc_predicate in doc_predicate_set:
+            if pred_predicate == doc_predicate:
+                correct_predicates_parent.add(pred_predicate)
+                correct_predicates_related.add(pred_predicate)
+                break
+            inter_predicate_relations = check_inter_predicate_relations(pred_predicate, doc_predicate)
+            if "parentPropertyOf" in inter_predicate_relations:
+                correct_predicates_parent.add(pred_predicate)
+            if len(inter_predicate_relations) > 0:
+                correct_predicates_related.add(pred_predicate)
+                break
+    correct_predicates_with_parent = len(correct_predicates_parent)
+    correct_predicates_with_related = len(correct_predicates_related)
+
+    return len(correct_triple_df), len(correct_triples_with_parent_predicates_df), len(
+        correct_triples_with_related_predicates_df), len(doc_triple_df), len(
+        pred_triple_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, correct_predicates_with_parent, correct_predicates_with_related, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
 
 
 def generate_pr_f1_score(correct, gold_standard, total_predicted):
@@ -101,9 +168,17 @@ def generate_report(excel_file_path):
 
     # Mapping der Spalten zu den jeweiligen Metriken
     metric_map = {
-        "Relation": ["Correct Relations", "Gold Standard", "Total Predicted"],
+        "Triple": ["Correct Triples", "Gold Standard Triples", "Total Triples Predicted"],
+        "Triple with Parents": ["Correct Triples with Parents", "Gold Standard Triples",
+                                  "Total Triples Predicted"],
+        "Triple with Related": ["Correct Triples with Related", "Gold Standard Triples",
+                                  "Total Triples Predicted"],
         "Subject": ["Correct Extracted Subjects", "Gold Standard Subjects", "Extracted Subjects"],
         "Predicate": ["Correct Extracted Predicates", "Gold Standard Predicates", "Extracted Predicates"],
+        "Predicate with Parents": ["Correct Extracted Predicates with Parents", "Gold Standard Predicates",
+                                   "Extracted Predicates"],
+        "Predicate with Related": ["Correct Extracted Predicates with Related", "Gold Standard Predicates",
+                                   "Extracted Predicates"],
         "Object": ["Correct Extracted Objects", "Gold Standard Objects", "Extracted Objects"],
         "Entity": ["Correct Extracted Entities", "Gold Standard Entities", "Extracted Entities"]
     }
@@ -139,24 +214,48 @@ def generate_report(excel_file_path):
 
 
 def calculate_scores_from_array(values_array):
-    if len(values_array) != 15:
-        raise ValueError(f"Expected 15 values, but got {len(values_array)}")
+    if len(values_array) != 19:
+        raise ValueError(f"Expected 19 values, but got {len(values_array)}")
 
-    # Entpacke die Werte aus dem Array
     (
-        correct_relations, gold_relations, pred_relations,
-        extracted_subjects, gold_subjects, correct_subjects,
-        extracted_predicates, gold_predicates, correct_predicates,
-        extracted_objects, gold_objects, correct_objects,
-        extracted_entities, gold_entities, correct_entities
+        correct_triples,
+        correct_triples_with_parents,
+        correct_triples_with_related,
+        gold_triples,
+        pred_triples,
+
+        extracted_subjects,
+        gold_subjects,
+        correct_subjects,
+
+        extracted_predicates,
+        extracted_predicates_with_parent,
+        extracted_predicates_with_related,
+        gold_predicates,
+        correct_predicates,
+
+        extracted_objects,
+        gold_objects,
+        correct_objects,
+
+        extracted_entities,
+        gold_entities,
+        correct_entities
     ) = values_array
 
-    # Dictionary für die Score-Ausgabe
     result = {}
 
-    # Relation
-    precision, recall, f1 = generate_pr_f1_score(correct_relations, gold_relations, pred_relations)
-    result["Relation"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+    # Triple
+    precision, recall, f1 = generate_pr_f1_score(correct_triples, gold_triples, pred_triples)
+    result["Triple"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Triple with Parents
+    precision, recall, f1 = generate_pr_f1_score(correct_triples_with_parents, gold_triples, pred_triples)
+    result["Triple with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Triple with Related
+    precision, recall, f1 = generate_pr_f1_score(correct_triples_with_related, gold_triples, pred_triples)
+    result["Triple with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Subject
     precision, recall, f1 = generate_pr_f1_score(correct_subjects, gold_subjects, extracted_subjects)
@@ -165,6 +264,14 @@ def calculate_scores_from_array(values_array):
     # Predicate
     precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates)
     result["Predicate"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Predicate with Parents
+    precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates_with_parent)
+    result["Predicate with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
+
+    # Predicate with Related
+    precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates_with_related)
+    result["Predicate with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Object
     precision, recall, f1 = generate_pr_f1_score(correct_objects, gold_objects, extracted_objects)
@@ -177,7 +284,50 @@ def calculate_scores_from_array(values_array):
     return pd.DataFrame.from_dict(result, orient="index")
 
 
+def convert_eval_log(path, dataset_cache):
+    match = re.match(r"(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", os.path.basename(path))
+
+    if match:
+        split = match.group("split")
+        number_of_samples = int(match.group("num_samples"))
+        try:
+            triple_df, entity_df, docs = dataset_cache[f"{split}-{number_of_samples}"]
+        except KeyError:
+            triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
+            dataset_cache[f"{split}-{number_of_samples}"] = (triple_df, entity_df, docs)
+    else:
+        print("File name does not match with the required format.")
+        return
+
+    evaluation_log_df = pd.read_excel(path)
+    evaluation_log = []
+    for doc_id, row in evaluation_log_df.iterrows():
+        result_string = str(row["Result String"])
+        turtle_string_match = re.search(r'<ttl>(.*?)</ttl>', result_string, re.DOTALL)
+        if turtle_string_match:
+            turtle_string = turtle_string_match.group(1)
+        else:
+            turtle_string = result_string
+        evaluation_log.append([doc_id, *evaluate_doc(turtle_string, doc_id, triple_df), result_string])
+
+    evaluation_log_df = pd.DataFrame(
+        evaluation_log,
+        columns=[
+            "Doc ID",
+            "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples",
+            "Total Triples Predicted",
+            "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
+            "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+            "Correct Extracted Predicates with Parents", "Correct Extracted Predicates with Related",
+            "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
+            "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
+        ]
+    )
+    evaluation_log_df.to_excel(path[:-5] + "-converted.xlsx", index=False)
+    return dataset_cache
+
+
 
 
 if __name__ == "__main__":
-    print(generate_report("/approaches/evaluation_logs/baseline/train-5-evaluation_log-Ollama_llama3.3.xlsx"))
+    generate_report("../approaches/evaluation_logs/baseline/train-5-evaluation_log-OpenAI_o3-mini-converted.xlsx")
