@@ -57,6 +57,13 @@ elif llm_provider == "Ollama":
         num_ctx=25600
     )
 
+elif llm_provider == "Cerebras":
+    model = ChatOpenAI(
+        api_key=os.getenv("CEREBRAS_API_KEY"),
+        base_url="https://api.cerebras.ai/v1",
+        model=model_id
+    )
+
 embeddings = OllamaEmbeddings(
     model=os.getenv("EMBEDDING_MODEL_ID"),
 )

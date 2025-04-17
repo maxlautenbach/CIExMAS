@@ -108,3 +108,7 @@ A fact is regarded as correct if the relation and the two corresponding entities
 - Gemma 3 27b - ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g (GPTQ - 4bit)
 - Llama 3.3 70B - kosbu/Llama-3.3-70B-Instruct-AWQ (AWQ)
 - Command A - unsloth/c4ai-command-a-03-2025-unsloth-bnb-4bit (bitsandbytes)
+
+### Cerebras
+- Llama 4 Scout - llama-4-scout-17b-16e-instruct
+- Llama 3.3 70B - llama-3.3-70b

@@ -89,6 +89,8 @@ def update_agent_list():
         unload_agent(loaded_agent["agent_dir"])
     if stss.option == "Gen1":
         agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1/agents/"
+    elif stss.option == "Gen1_PredEx":
+        agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1_PredEx/agents/"
     elif stss.option == "Baseline":
         agent_dir = repo.working_dir + "/approaches/baseline/agents/"
     if agent_dir:
@@ -101,7 +103,7 @@ def update_agent_list():
 
 st.sidebar.selectbox(
     "Approach",
-    ("Gen1", "Baseline"),
+    ("Gen1", "Gen1_PredEx", "Baseline"),
     index=None,
     placeholder="Select approach...",
     key="option",
@@ -163,6 +165,7 @@ if st.button("Run Evaluation"):
         turtle_string = last_state["results"][-1]
     scores = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
                                            triple_df=stss.relation_df)
+    st.write(scores)
     st.write(calculate_scores_from_array(scores))
     st.write(get_uri_labels(parse_turtle(turtle_string))[
                  ["subject", "predicate", "object"]])

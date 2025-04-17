@@ -119,8 +119,8 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
     doc_predicate_set = set(doc_triple_df["predicate_uri"])
     correct_predicates_parent = set()
     correct_predicates_related = set()
-    for pred_predicate in pred_predicate_set:
-        for doc_predicate in doc_predicate_set:
+    for doc_predicate in doc_predicate_set:
+        for pred_predicate in pred_predicate_set:
             if pred_predicate == doc_predicate:
                 correct_predicates_parent.add(doc_predicate)
                 correct_predicates_related.add(doc_predicate)
@@ -322,4 +322,10 @@ def convert_eval_log(path, dataset_cache):
 
 
 if __name__ == "__main__":
-    generate_report("../approaches/evaluation_logs/baseline/train-5-evaluation_log-OpenAI_o3-mini-converted.xlsx")
+    dataset_cache = {}
+    for root, dirs, files in os.walk("../approaches/evaluation_logs"):
+        for file in files:
+            if file.endswith(".xlsx") and not file.endswith("-converted.xlsx"):
+                file_path = os.path.join(root, file)
+                print(f"Converting {file_path}")
+                dataset_cache = convert_eval_log(file_path, dataset_cache)
