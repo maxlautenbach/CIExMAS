@@ -2,10 +2,10 @@
 
 #SBATCH --job-name=MAS-CIExMAS-EXEC
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=60G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=40G
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:1
 #SBATCH --time=04:00:00
 #SBATCH --chdir=/home/mlautenb/CIExMAS
 #SBATCH --partition=gpu-vram-48gb
