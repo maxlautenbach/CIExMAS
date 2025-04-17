@@ -47,6 +47,9 @@ def agent(state: cIEState) -> Command[Literal[
     if goto == "supervisor":
         response += "SYSTEM MESSAGE: You missed to include a goto."
 
+    if goto not in ["entity_extraction_agent", "relation_extraction_agent", "uri_detection_agent", END]:
+        response += "SYSTEM MESSAGE: The agent you called is non-existant. Please call one of the following: entity_extraction_agent, relation_extraction_agent, uri_detection_agent or FINISH."
+
     if state["debug"]:
         state["messages"].append(response)
         state["instruction"] = instruction
