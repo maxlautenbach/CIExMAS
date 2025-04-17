@@ -17,8 +17,6 @@ def agent(state: cIEState) -> Command[Literal["supervisor"]] | tuple[cIEState, s
         search_response += f'Most Similar Detection Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"]} for doc in vector_store.similarity_search(term, k=3)]}\n\n'
     search_response = search_response.replace("},", "},\n")
 
-    print("SIM SEARCH FINISHED")
-
     config = {}
 
     if state["debug"]:
@@ -33,7 +31,5 @@ def agent(state: cIEState) -> Command[Literal["supervisor"]] | tuple[cIEState, s
         state["messages"].append(response)
         state["instruction"] = ""
         return state, "\n-- Search Response --\n" + search_response + response
-
-    print("URI EX FINISHED")
 
     return Command(goto="supervisor", update={"messages": state["messages"] + [response], "instruction": ""})

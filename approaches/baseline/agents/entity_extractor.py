@@ -26,6 +26,4 @@ def agent(state: cIEState) -> Command[Literal["supervisor"]] | tuple[cIEState, s
         state["instruction"] = ""
         return state, response
 
-    print("E EX FINISHED")
-
     return Command(goto="supervisor", update={"messages": state["messages"] + [response], "instruction": ""})

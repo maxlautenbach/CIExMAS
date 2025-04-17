@@ -4,8 +4,6 @@ supervisor_prompt = PromptTemplate.from_template("""
 You are the Supervisor of a conversation among multiple agents.
 The conversation is about extracting information (Closed Information Extraction) from a user-provided text. The final output should only contain wikidata URIs instead of the labels of entities and relations. You can provide additional information to the agents using <instruction> tags.
 
-Example Output: <ttl><http://www.wikidata.org/entity/Q950380> <http://www.wikidata.org/entity/P361> <http://www.wikidata.org/entity/Q2576666>.</ttl>
-
 Agent Descriptions:
 - entity_extraction_agent: Extracts entities from the text. Instructions can change the extraction behavior and focus of the agent. Do not instruct the agent with URIs. The agent has only access to your instruction and the text.
 - relation_extraction_agent: Extracts relations from the text. Instructions can change the prompt of the called agent and can be used to input already extracted entity labels (i.e. <instruction>Please use the already extracted entities: [Olaf Scholz, Germany, Berlin]</instruction>). Do not instruct the agent with URIs. The agent has only access to your instruction and the text.
@@ -13,7 +11,14 @@ Agent Descriptions:
 
 You have two options:
 1. Call an agent using <goto>agent_name</goto>. Replace agent_name with either entity_extraction_agent or relation_extraction_agent. I.e. <goto>entity_extraction_agent</goto>.
-2. Finish the conversation using <goto>FINISH</goto>. Please output the final relations with their URI in turtle format enclosed in <ttl></ttl>. Please assure, that the URI are enclosed in angle brackets.
+2. Finish the conversation using <goto>FINISH</goto>. Please output the final relations with their URI in turtle format enclosed in <ttl></ttl> alongside with <goto>FINISH</goto>. Please assure, that the URI are enclosed in angle brackets. 
+
+Example Final Output: 
+<goto>FINISH</goto>
+<ttl>
+<http://www.wikidata.org/entity/Q950380> <http://www.wikidata.org/entity/P361> <http://www.wikidata.org/entity/Q2576666>. 
+<http://www.wikidata.org/entity/Q61053> <http://www.wikidata.org/entity/P361> <http://www.wikidata.org/entity/Q315863>.
+</ttl>
 
 
 Note:

@@ -1,15 +1,14 @@
+import faiss
+import git
 from langchain_community.docstore import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
-from langchain_openai import ChatOpenAI
-from langchain_qdrant import QdrantVectorStore
-from langchain_community.llms import VLLM
 from langchain_ollama.chat_models import ChatOllama
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_core.rate_limiters import InMemoryRateLimiter
+from langchain_qdrant import QdrantVectorStore
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
-import git
-import faiss
 
 repo = git.Repo(search_parent_directories=True)
 
@@ -32,10 +31,12 @@ if llm_provider == "DeepInfra":
     )
 
 elif llm_provider == "SambaNova":
+    rate_limiter = InMemoryRateLimiter(requests_per_second=1.3, check_every_n_seconds=0.1)
     model = ChatOpenAI(
         api_key=os.getenv("SAMBANOVA_API_KEY"),
         base_url="https://api.sambanova.ai/v1",
-        model=model_id
+        model=model_id,
+        rate_limiter=rate_limiter
     )
 
 elif llm_provider == "OpenAI":
@@ -58,10 +59,12 @@ elif llm_provider == "Ollama":
     )
 
 elif llm_provider == "Cerebras":
+    rate_limiter = InMemoryRateLimiter(requests_per_second=0.5, check_every_n_seconds=0.1)
     model = ChatOpenAI(
         api_key=os.getenv("CEREBRAS_API_KEY"),
         base_url="https://api.cerebras.ai/v1",
-        model=model_id
+        model=model_id,
+        rate_limiter=rate_limiter
     )
 
 embeddings = OllamaEmbeddings(

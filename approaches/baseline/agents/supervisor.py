@@ -32,8 +32,15 @@ def agent(state: cIEState) -> Command[Literal[
     if goto_match:
         goto = goto_match.group(1)
         if goto == "FINISH":
-            goto = END
+            ttl_match = re.search(r'<ttl>(.*?)</ttl>', response.content, re.DOTALL)
+            if ttl_match:
+                goto = END
+            else:
+                response += "SYSTEM MESSAGE: To finish, please also include the turtle output enclosed in <ttl>INSERT TURTLE OUTPUT HERE</ttl>."
+                goto = "supervisor"
+
     else:
+        response += "SYSTEM MESSAGE: You missed to include a goto."
         goto = "supervisor"
 
     instruction_match = re.search(r'<instruction>(.*?)</instruction>', response.content, re.DOTALL)
@@ -44,17 +51,13 @@ def agent(state: cIEState) -> Command[Literal[
 
     response = "\n-- Supervisor Agent --\n" + response.content
 
-    if goto == "supervisor":
-        response += "SYSTEM MESSAGE: You missed to include a goto."
-
-    if goto not in ["entity_extraction_agent", "relation_extraction_agent", "uri_detection_agent", END]:
+    if goto != END and goto not in ["entity_extraction_agent", "relation_extraction_agent", "uri_detection_agent", "supervisor"]:
         response += "SYSTEM MESSAGE: The agent you called is non-existant. Please call one of the following: entity_extraction_agent, relation_extraction_agent, uri_detection_agent or FINISH."
+        goto = "supervisor"
 
     if state["debug"]:
         state["messages"].append(response)
         state["instruction"] = instruction
         return state, response
-
-    print("SUPERVISOR FINISHED")
 
     return Command(goto=goto, update={"messages": state["messages"] + [response], "instruction": instruction})
