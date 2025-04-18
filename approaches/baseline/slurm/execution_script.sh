@@ -4,7 +4,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=40G
-#SBATCH --mail-user=max.lautenbach@sap.com
+#SBATCH --mail-user=max.lautenbach@yahoo.de
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --gres=gpu:1
 #SBATCH --time=04:00:00
