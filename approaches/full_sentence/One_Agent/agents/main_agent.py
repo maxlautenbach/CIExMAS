@@ -2,6 +2,7 @@ import importlib
 import re
 from typing import Literal
 
+from langgraph.constants import END
 from langgraph.types import Command
 
 from approaches.full_sentence.One_Agent.setup import cIEState, model, langfuse_handler
@@ -36,5 +37,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         id = id_match.group(1)
     else:
         id = "main_agent"
+
+    if id == "finish_processing":
+        id = END
 
     return Command(goto=id, update={"messages": state["messages"] + ["\n-- ReAct Agent --\n" + response.content], "instruction": instruction})

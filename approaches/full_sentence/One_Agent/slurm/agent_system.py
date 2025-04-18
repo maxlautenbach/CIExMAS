@@ -36,7 +36,7 @@ try:
     number_of_samples = int(sys.argv[2])
 except IndexError:
     split = "train"
-    number_of_samples = 5
+    number_of_samples = 1
 
 triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
