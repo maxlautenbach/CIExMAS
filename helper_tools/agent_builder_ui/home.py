@@ -91,6 +91,8 @@ def update_agent_list():
         agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1/agents/"
     elif stss.option == "Gen1_PredEx":
         agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1_PredEx/agents/"
+    elif stss.option == "One Agent":
+        agent_dir = repo.working_dir + "/approaches/full_sentence/One_Agent/agents/"
     elif stss.option == "Baseline":
         agent_dir = repo.working_dir + "/approaches/baseline/agents/"
     if agent_dir:
@@ -103,7 +105,7 @@ def update_agent_list():
 
 st.sidebar.selectbox(
     "Approach",
-    ("Gen1", "Gen1_PredEx", "Baseline"),
+    ("Gen1", "Gen1_PredEx", "One Agent", "Baseline"),
     index=None,
     placeholder="Select approach...",
     key="option",
@@ -159,7 +161,7 @@ for agent in stss.get("agents", []):
 st.header("Evaluation")
 if st.button("Run Evaluation"):
     last_state = stss.state_history[-1]
-    if stss.option == "Baseline":
+    if stss.option in ["Baseline", "One Agent"]:
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', last_state["messages"][-1], re.DOTALL).group(1)
     else:
         turtle_string = last_state["results"][-1]

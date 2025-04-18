@@ -96,6 +96,8 @@ A fact is regarded as correct if the relation and the two corresponding entities
 ### SambaNova
 - Llama 3.3 70B - Meta-Llama-3.3-70B-Instruct
 - QwQ 32B - QwQ-32B
+- Llama 4 Maverick - Llama-4-Maverick-17B-128E-Instruct
+- LLama 4 Scout - Llama-4-Scout-17B-16E-Instruct
 
 ### DeepInfra
 - Llama 3.3 70B - meta-llama/Llama-3.3-70B-Instruct

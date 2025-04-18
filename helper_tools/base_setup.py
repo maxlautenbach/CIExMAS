@@ -9,6 +9,7 @@ from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_qdrant import QdrantVectorStore
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
+from vertexai.preview.evaluation.utils import rate_limit
 
 repo = git.Repo(search_parent_directories=True)
 
@@ -20,18 +21,22 @@ load_dotenv(repo.working_dir + "/.env", override=True)
 
 llm_provider = os.getenv("LLM_MODEL_PROVIDER")
 model_id = os.getenv("LLM_MODEL_ID")
-print(llm_provider)
-print(model_id)
+req_per_second = int(os.getenv("LLM_RPM")) / 60
+print(f"Initializing {model_id} at {llm_provider} - {req_per_second * 60} RPM")
+
+if req_per_second > 0:
+    rate_limiter = InMemoryRateLimiter(requests_per_second=req_per_second, check_every_n_seconds=0.1)
+else:
+    rate_limiter = InMemoryRateLimiter(requests_per_second=100, check_every_n_seconds=0.1)
 
 if llm_provider == "DeepInfra":
     model = ChatOpenAI(
         api_key=os.getenv("DEEPINFRA_API_TOKEN"),
         base_url="https://api.deepinfra.com/v1/openai",
-        model=model_id
+        model=model_id,
     )
 
 elif llm_provider == "SambaNova":
-    rate_limiter = InMemoryRateLimiter(requests_per_second=1.3, check_every_n_seconds=0.1)
     model = ChatOpenAI(
         api_key=os.getenv("SAMBANOVA_API_KEY"),
         base_url="https://api.sambanova.ai/v1",
@@ -42,14 +47,14 @@ elif llm_provider == "SambaNova":
 elif llm_provider == "OpenAI":
     model = ChatOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
-        model=model_id
+        model=model_id,
     )
 
 elif llm_provider == "vLLM":
     model = ChatOpenAI(
         api_key="EMPTY",
         base_url="http://localhost:8000/v1",
-        model=model_id
+        model=model_id,
     )
 
 elif llm_provider == "Ollama":
@@ -59,10 +64,17 @@ elif llm_provider == "Ollama":
     )
 
 elif llm_provider == "Cerebras":
-    rate_limiter = InMemoryRateLimiter(requests_per_second=0.5, check_every_n_seconds=0.1)
     model = ChatOpenAI(
         api_key=os.getenv("CEREBRAS_API_KEY"),
         base_url="https://api.cerebras.ai/v1",
+        model=model_id,
+        rate_limiter=rate_limiter
+    )
+
+elif llm_provider == "Cohere":
+    model = ChatOpenAI(
+        api_key=os.getenv("CEREBRAS_API_KEY"),
+        base_url="https://api.cohere.ai/compatibility/v1",
         model=model_id,
         rate_limiter=rate_limiter
     )

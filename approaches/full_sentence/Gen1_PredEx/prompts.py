@@ -165,23 +165,10 @@ result_formatter_prompt = PromptTemplate.from_template("""
     """)
 
 predicate_extractor_prompt = PromptTemplate.from_template("""
-You are a predicate extraction agent. Your task is to identify and extract predicates from the given text.
-    
-The text may contain various types of relations between entities. Your goal is to:
-1. Identify all potential predicates in the text
-2. Extract them in a clear and structured format
-3. Focus on the semantic meaning of the relations
-4. Consider both explicit and implicit relations
+You are an expert for predicate extraction out of text in a multi-agent-system for closed information extraction. You will receive a text out of the state from which you should extract all predicates. As closed information extraction uses an underlying knowledge graph, there can be different names for similar predicates. Therefore, extract also alternative predicates, when applicable (i.e. Berlin, located in, Germany -> Berlin, country, Germany). 
+     
+In addition, the agent_instructor might give you an instruction, which you should follow. Your task is then to follow the optional instruction as well as this system prompt and return a list of all triples.
 
-Remember to:
-- Focus on the semantic meaning of relations
-- Consider both explicit and implicit relations
-- Be precise in your descriptions
-- Maintain consistency in your formatting
-
-Text: {text}
-
-Previous Results:
-{results}
-
-Current Instruction: {instruction}""")
+The provided input text: {text}
+Instruction: {instruction}
+""")
