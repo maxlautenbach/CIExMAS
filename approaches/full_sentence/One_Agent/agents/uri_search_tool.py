@@ -10,7 +10,6 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     search_terms = state["instruction"].split(",")
     label_search_terms = [term.replace("[LABEL]", "") for term in search_terms if "[LABEL]" in term]
     description_search_terms = [term.replace("[DESCR]", "") for term in search_terms if "[DESCR]" in term]
-    print(search_terms, label_search_terms, description_search_terms)
     search_response = ""
     for term in label_search_terms:
         search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"], "description": doc.metadata["description"]} for doc in label_vector_store.similarity_search(term, k=3)]}\n\n'
@@ -23,4 +22,4 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         state["messages"] += [search_response]
         return state, f"Search Results:\n{search_response}"
 
-    return Command(goto="result_checker_agent", update={"messages": state["messages"] + [search_response]})
+    return Command(goto="main_agent", update={"messages": state["messages"] + [search_response]})

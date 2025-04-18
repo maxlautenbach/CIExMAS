@@ -11,5 +11,6 @@ from helper_tools.base_setup import *
 
 class cIEState(TypedDict):
     messages: list[str]
+    text: str
     instruction: str
     debug: bool

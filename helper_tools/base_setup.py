@@ -127,4 +127,4 @@ else:
     )
 
 wikidata_predicate_graph = Graph()
-wikidata_predicate_graph.parse("infrastructure/all_properties.ttl", format="ttl")
+wikidata_predicate_graph.parse(repo.working_dir + "/infrastructure/all_properties.ttl", format="ttl")

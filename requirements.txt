@@ -21,3 +21,4 @@ einops
 openpyxl
 gitpython
 bitsandbytes
+matplotlib

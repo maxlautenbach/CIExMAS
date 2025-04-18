@@ -31,4 +31,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         state["instruction"] = instruction
         return state, response.content
 
-    return Command(goto="main_agent", update={"messages": state["messages"] + ["\n-- ReAct Agent --\n" + response.content], "instruction": instruction})
+    id_match = re.search(r'<id>(.*?)</id>', response.content, re.DOTALL)
+    if id_match:
+        id = id_match.group(1)
+    else:
+        id = "main_agent"
+
+    return Command(goto=id, update={"messages": state["messages"] + ["\n-- ReAct Agent --\n" + response.content], "instruction": instruction})

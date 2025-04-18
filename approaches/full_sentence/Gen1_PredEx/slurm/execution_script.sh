@@ -4,7 +4,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=60G
-#SBATCH --mail-user=max.lautenbach@sap.com
+#SBATCH --mail-user=max.lautenbach@yahoo.de
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --gres=gpu:2
 #SBATCH --time=06:00:00
@@ -84,7 +84,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./approaches/full_sentence/Gen1/slurm/agent_system.py
+python3 ./approaches/full_sentence/Gen1_PredEx/slurm/agent_system.py
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."
