@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 import os
 
@@ -20,11 +21,11 @@ from approaches.full_sentence.One_Agent.setup import cIEState
 from approaches.full_sentence.One_Agent.agents.main_agent import agent as main
 from approaches.full_sentence.One_Agent.agents.uri_search_tool import agent as uri_search_tool
 
-from helper_tools.evaluation import evaluate_doc
+from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
 
 load_dotenv(repo.working_dir + "/.env", override=True)
-from helper_tools.base_setup import langfuse_handler
+from helper_tools.base_setup import langfuse_handler, langfuse_client, session_id
 
 warnings.filterwarnings("ignore")
 
@@ -55,13 +56,19 @@ for i in tqdm(range(len(docs))):
     target_doc = docs.iloc[i]
     doc_id = target_doc["docid"]
     text = target_doc["text"]
+    trace_id = str(uuid.uuid4())
     try:
+        # noinspection PyTypeChecker
         response = graph.invoke({"text": text, "messages": [], "debug": False},
-                                config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
+                                config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["One Agent", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
+        score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
+                                           triple_df=triple_df))
+        langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])
     except Exception as e:
         turtle_string = e
         response = {"messages":[e]}
+        langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
 
     evaluation_log.append([doc_id, *evaluate_doc(turtle_string,doc_id, triple_df), response["messages"][-1]])
 

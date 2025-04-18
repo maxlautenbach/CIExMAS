@@ -1,3 +1,5 @@
+import uuid
+
 import faiss
 import git
 from langchain_community.docstore import InMemoryDocstore
@@ -7,6 +9,7 @@ from langchain_ollama.chat_models import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_qdrant import QdrantVectorStore
+from langfuse import Langfuse
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
 from vertexai.preview.evaluation.utils import rate_limit
@@ -83,11 +86,22 @@ embeddings = OllamaEmbeddings(
     model=os.getenv("EMBEDDING_MODEL_ID"),
 )
 
+session_id = str(uuid.uuid4())
+
 langfuse_handler = CallbackHandler(
     secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
     public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
     host=os.getenv("LANGFUSE_HOST"),
+    session_id=session_id
 )
+
+langfuse_client = Langfuse(
+    secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+    public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+    host=os.getenv("LANGFUSE_HOST"),
+)
+
+
 
 if os.getenv("VECTOR_STORE") == "qdrant":
 
