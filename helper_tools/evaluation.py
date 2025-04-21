@@ -38,9 +38,9 @@ def parse_turtle(turtle_string):
             final_result.append([str(subj), str(pred), str(obj)])
 
         return pd.DataFrame(final_result,
-                            columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates()
-    except Exception:
-        return pd.DataFrame(columns=["subject_uri", "predicate_uri", "object_uri"])
+                            columns=["subject_uri", "predicate_uri", "object_uri"]).drop_duplicates(), "Success"
+    except Exception as e:
+        return pd.DataFrame(columns=["subject_uri", "predicate_uri", "object_uri"]), f"Error: {str(e)}"
 
 
 def check_inter_predicate_relations(predicate_a, predicate_b):
@@ -55,7 +55,7 @@ def check_inter_predicate_relations(predicate_a, predicate_b):
 
 
 def evaluate_doc(turtle_string, doc_id, triple_df):
-    pred_triple_df = parse_turtle(turtle_string)
+    pred_triple_df, error = parse_turtle(turtle_string)
     doc_triple_df = triple_df[triple_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
     correct_triple_df = pred_triple_df.merge(doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
                                                  on=["subject_uri", "predicate_uri", "object_uri"], how="inner")

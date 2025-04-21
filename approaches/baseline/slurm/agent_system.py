@@ -61,7 +61,7 @@ for i in tqdm(range(len(docs))):
     try:
         response = graph.invoke({"text": text, "messages": [], "debug": False},
                                 config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
-        turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
+        turtle_string = response["messages"][-1]
     except Exception as e:
         turtle_string = e
         response = {"messages":[e]}

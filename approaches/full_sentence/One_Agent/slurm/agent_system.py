@@ -35,8 +35,8 @@ try:
     split = sys.argv[1]
     number_of_samples = int(sys.argv[2])
 except IndexError:
-    split = "train"
-    number_of_samples = 1
+    split = "test"
+    number_of_samples = 10
 
 triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
@@ -61,7 +61,7 @@ for i in tqdm(range(len(docs))):
         # noinspection PyTypeChecker
         response = graph.invoke({"text": text, "messages": [], "debug": False},
                                 config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["One Agent", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
-        turtle_string = re.search(r'<ttl>(.*?)</ttl>', response["messages"][-1], re.DOTALL).group(1)
+        turtle_string = response["messages"][-1]
         score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
                                            triple_df=triple_df))
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])

@@ -158,6 +158,7 @@ result_formatter_prompt = PromptTemplate.from_template("""
     wd:Q61053 wd:P27 wd:Q183.
     </ttl>  
     
+    Instruction: {instruction}
     Agent Call Trace: {call_trace}
     Agent Comments: {comments}
     The provided input text: {text}

@@ -169,7 +169,8 @@ if st.button("Run Evaluation"):
                                            triple_df=stss.relation_df)
     st.write(scores)
     st.write(calculate_scores_from_array(scores))
-    st.write(get_uri_labels(parse_turtle(turtle_string))[
+    result_df, error = parse_turtle(turtle_string)
+    st.write(get_uri_labels(result_df)[
                  ["subject", "predicate", "object"]])
     st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][
                  ["subject", "predicate", "object"]])

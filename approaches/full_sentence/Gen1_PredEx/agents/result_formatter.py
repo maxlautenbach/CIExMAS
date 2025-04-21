@@ -8,6 +8,8 @@ from approaches.full_sentence.Gen1_PredEx.setup import cIEState, model, langfuse
 from approaches.full_sentence.Gen1_PredEx.prompts import result_formatter_prompt as prompt
 import importlib
 import approaches.full_sentence.Gen1_PredEx.prompts
+from helper_tools.validation import validate_turtle_response
+
 importlib.reload(approaches.full_sentence.Gen1_PredEx.prompts)
 
 
@@ -23,13 +25,23 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
 
     result_match = re.search(r'<ttl>(.*?)</ttl>', response.content, re.DOTALL)
 
+    goto_id = END
+
     if result_match:
         result = result_match.group(1)
+        turtle_valid, error_message = validate_turtle_response(result)
+        if not turtle_valid:
+            goto_id = "main_agent"
+            instruction = "\nSYSTEM MESSAGE: " + error_message + "\n please fix."
+        else:
+            instruction = ""
     else:
         result = ""
+        instruction = "\nSYSTEM MESSAGE: No output could be parsed, as the regex r'<ttl>(.*?)</ttl>' produced no match.\n please fix."
 
     if state["debug"]:
         state["results"].append(result)
+        state["instruction"] = instruction
         return state, response.content
 
-    return Command(goto=END, update={"results": state["results"] + [result]})
+    return Command(goto=goto_id, update={"results": state["results"] + [result], "instruction": instruction})

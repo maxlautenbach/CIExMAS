@@ -23,7 +23,7 @@ For your task you will have access to the following tools:
         - [DESCR]: Search via a description for an URI of an entity or predicate. You will have to make up a description of the entity or predicate you are searching for.
     - Example Input: <instruction>Angela Merkel[LABEL], chancellor of Germany from 2005 to 2021[DESCR]</instruction>
     
-When you decide to end the processing, make sure you include the resulting triples in turtle format. Every URI should be in the form of <INSERT URI HERE>.
+When you decide to end the processing, make sure you include the resulting triples in turtle format. Every URI should be in the form of <INSERT URI HERE>. If you use any turtle prefixes, ensure that you introduce them at the beginning of the turtle output.
 
 A final example output does look like this:
 <goto>finish_processing</goto>

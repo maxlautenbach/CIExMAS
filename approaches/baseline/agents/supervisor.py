@@ -9,6 +9,7 @@ from langgraph.types import Command
 from approaches.baseline.setup import cIEState, model, langfuse_handler
 from approaches.baseline.prompts import supervisor_prompt as prompt
 import approaches.baseline.prompts
+from helper_tools.validation import validate_turtle_response
 
 importlib.reload(approaches.baseline.prompts)
 
@@ -28,13 +29,21 @@ def agent(state: cIEState) -> Command[Literal[
         print(state["messages"])
         return Command(goto=END)
 
+    turtle_string = ""
+
     goto_match = re.search(r'<goto>(.*?)</goto>', response.content, re.DOTALL)
     if goto_match:
         goto = goto_match.group(1)
         if goto == "FINISH":
             ttl_match = re.search(r'<ttl>(.*?)</ttl>', response.content, re.DOTALL)
             if ttl_match:
-                goto = END
+                turtle_string = ttl_match.group(1)
+                turtle_valid, error_message = validate_turtle_response(turtle_string)
+                if turtle_valid:
+                    goto = END
+                else:
+                    response += "SYSTEM MESSAGE: " + error_message + "\n please fix."
+                    goto = "supervisor"
             else:
                 response += "SYSTEM MESSAGE: To finish, please also include the turtle output enclosed in <ttl>INSERT TURTLE OUTPUT HERE</ttl>."
                 goto = "supervisor"
@@ -56,8 +65,14 @@ def agent(state: cIEState) -> Command[Literal[
         goto = "supervisor"
 
     if state["debug"]:
-        state["messages"].append(response)
+        if goto == END:
+            state["messages"].append("\n-- ReAct Agent --\n" + turtle_string)
+        else:
+            state["messages"].append("\n-- ReAct Agent --\n" + response)
         state["instruction"] = instruction
         return state, response
+
+    if goto == END:
+        response = turtle_string
 
     return Command(goto=goto, update={"messages": state["messages"] + [response], "instruction": instruction})

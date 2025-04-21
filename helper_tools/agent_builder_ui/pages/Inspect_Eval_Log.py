@@ -49,15 +49,18 @@ if uploaded_file:
             score = calculate_scores_from_array(row.to_list()[1:-1])
             st.write(stss.docs.loc[row["Doc ID"]]["text"])
             st.write(score.loc["Triple"]["F1-Score"])
+            result_string = str(row["Result String"])
+            turtle_string_match = re.search(r'<ttl>(.*?)</ttl>', result_string, re.DOTALL)
+            if turtle_string_match:
+                turtle_string = turtle_string_match.group(1)
+            else:
+                turtle_string = result_string
+            result_df, error = parse_turtle(turtle_string)
+            if len(result_df) == 0:
+                st.error(f"{error}")
             with st.expander("Show Details"):
-                result_string = str(row["Result String"])
-                turtle_string_match = re.search(r'<ttl>(.*?)</ttl>', result_string, re.DOTALL)
-                if turtle_string_match:
-                    turtle_string = turtle_string_match.group(1)
-                else:
-                    turtle_string = result_string
                 st.write("*Predicted Triples*")
-                st.write(get_uri_labels(parse_turtle(turtle_string))[["subject", "predicate","object"]])
+                st.write(get_uri_labels(result_df)[["subject", "predicate","object"]])
                 st.divider()
                 st.write("*Actual Triples*")
                 st.write(stss.relation_df[stss.relation_df["docid"] == row["Doc ID"]][["subject", "predicate","object"]])
