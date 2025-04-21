@@ -16,17 +16,20 @@ You have the following option:
 For your task you will have access to the following tools:
 - URI Search Tool
     - ID: uri_search_tool
-    - Description: The uri search tool takes a comma-seperated list of search terms and search modes. It will respond with the 3 most similar URIs according to the search term.
+    - Description: The uri search tool takes a comma-seperated list of search terms and search modes. It will respond with the 3 most similar URIs according to the search term. Please use multiple search terms at once if possible, to speed up processing.
     - Input Requirements: Search Term 1[Search Mode 1], Search Term 2[Search Mode 2]...
     - Search Modes: 
         - [LABEL]: Search via a label for an URI of an entity or predicate. This might often meet, how the entities are written down in the text. (Recommended to use as first search mode)
         - [DESCR]: Search via a description for an URI of an entity or predicate. The provided search term has to be a description of the entity or predicate you are searching for. (Recommended to search non-found entities and predicates)
     - Example Input: <instruction>Angela Merkel[LABEL], chancellor of Germany from 2005 to 2021[DESCR]</instruction>
     
-When you decide to end the processing, make sure you include the resulting triples in turtle format. Every URI should be in the form of <INSERT URI HERE> or should use an according prefix. If you use any turtle prefixes, ensure that you introduce them at the beginning of the turtle output. Ignore your implicit knowledge about public knowledge graphs (i.e. Namespaces for properties or URIs mapped to labels) and make sure, that you only use URIs, that were previously extracted by the uri_detection_agent. For example do not use the wikidata prefix wdt for properties, when there is no URI extracted with http://www.wikidata.org/prop/direct/, instead use the URIs extracted.
+When you decide to end the processing, make sure you include the resulting triples in turtle format. Every URI should be in the form of <INSERT URI HERE> or should use an according prefix. If you use any turtle prefixes, ensure that you introduce them at the beginning of the turtle output. Ignore your implicit knowledge about public knowledge graphs (i.e. Namespaces for properties or URIs mapped to labels) and make sure, that you only use URIs, that were previously extracted by the uri_detection_agent. For example do only include http://www.wikidata.org/entity for properties, when the URIs of all properties start with http://www.wikidata.org/entity.
 
 A final example output does look like this:
-<goto>finish_processing</goto>
+<next>
+    <id>finish_processing</id>
+    <instruction></instruction>
+</next>
 <ttl>
 <http://www.wikidata.org/entity/Q950380> <http://www.wikidata.org/entity/P361> <http://www.wikidata.org/entity/Q2576666>. 
 <http://www.wikidata.org/entity/Q61053> <http://www.wikidata.org/entity/P361> <http://www.wikidata.org/entity/Q315863>.
