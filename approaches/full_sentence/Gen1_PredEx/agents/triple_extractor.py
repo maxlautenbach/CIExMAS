@@ -20,7 +20,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
 
     response = response_chain.invoke(state, config=config)
 
-    response = f"""-- Relation Extraction Agent --
+    response = f"""-- Triple Extraction Agent --
     
 {response.content} """
 

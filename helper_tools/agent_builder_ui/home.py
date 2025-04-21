@@ -27,7 +27,7 @@ if "dataset_cache" not in stss:
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
-    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "debug": True}
+    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "instruction": "", "debug": True}
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()

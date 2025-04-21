@@ -11,7 +11,7 @@ Agent Descriptions:
 
 You have two options:
 1. Call an agent using <goto>agent_name</goto>. Replace agent_name with either entity_extraction_agent or relation_extraction_agent. I.e. <goto>entity_extraction_agent</goto>.
-2. Finish the conversation using <goto>FINISH</goto>. Please output the final relations with their URI in turtle format enclosed in <ttl></ttl> alongside with <goto>FINISH</goto>. Please assure, that the URI are enclosed in angle brackets. 
+2. Finish the conversation using <goto>FINISH</goto>. Please output the final relations with their URI in turtle format enclosed in <ttl></ttl> alongside with <goto>FINISH</goto>. Please ensure, that the URI are enclosed in angle brackets. Ignore your implicit knowledge about public knowledge graphs (i.e. Namespaces for properties or URIs mapped to labels) and make sure, that you only use URIs, that were previously extracted by the uri_detection_agent. For example do not use the wikidata prefix wdt for properties, when there is no URI extracted with http://www.wikidata.org/prop/direct/, instead use the URIs extracted.
 
 Example Final Output: 
 <goto>FINISH</goto>

@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 import os
 
@@ -25,11 +26,11 @@ from approaches.full_sentence.Gen1_PredEx.agents.uri_detector import agent as ur
 from approaches.full_sentence.Gen1_PredEx.agents.result_checker import agent as result_checker_agent
 from approaches.full_sentence.Gen1_PredEx.agents.result_formatter import agent as result_formatting_agent
 from approaches.full_sentence.Gen1_PredEx.agents.planner import agent as planner
-from helper_tools.evaluation import evaluate_doc
+from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
 
 load_dotenv(repo.working_dir + "/.env", override=True)
-from helper_tools.base_setup import langfuse_handler
+from helper_tools.base_setup import langfuse_handler, langfuse_client
 
 warnings.filterwarnings("ignore")
 
@@ -66,15 +67,19 @@ for i in tqdm(range(len(docs))):
     target_doc = docs.iloc[i]
     doc_id = target_doc["docid"]
     text = target_doc["text"]
-
+    trace_id = str(uuid.uuid4())
     try:
         response = graph.invoke({"text": text, "results": [], "call_trace": [], "comments": [], "debug": False},
-                            config={"recursion_limit": 70, "callbacks": [langfuse_handler]})
+                            config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Gen1 (PredEx)", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         final_result = response["results"][-1]
         turtle_string = response["results"][-1]
+        score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
+                                                         triple_df=triple_df))
+        langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])
     except Exception as e:
         turtle_string = ""
         final_result = e
+        langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
     evaluation_log.append([doc_id, *evaluate_doc(turtle_string, doc_id, triple_df), final_result])
 
 evaluation_log_df = pd.DataFrame(

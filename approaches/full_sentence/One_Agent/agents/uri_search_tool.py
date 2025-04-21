@@ -22,4 +22,4 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         state["messages"] += [search_response]
         return state, f"Search Results:\n{search_response}"
 
-    return Command(goto="main_agent", update={"messages": state["messages"] + [search_response]})
+    return Command(goto="main_agent", update={"messages": state["messages"] + [search_response], "instruction": ""})

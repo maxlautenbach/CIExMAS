@@ -12,9 +12,9 @@ For your planning you have access on:
 For executing the tasks, you can include the following agents:
 - **Entity Extraction Agent:** Extracts entities from the text. Can handle addition instructions to extract types or make a disambiguation. Is an expert for entities in knowledge graphs.
 - **Relation Extraction Agent:** Extracts relations from the text. Can handle addition instructions to make a disambiguation. Is an expert for relations in knowledge graphs.
-- **URI Detection Agent:** Determines if there is an associated entity or relation in the Knowledge Graph based on search terms.
-- **Result Formatting Agent:** Summarizes the results, outputs the final triples and ends the iteration process. Calling this agent ends the processing. Don't plan to use it without having a mapping for all entities and predicates that the result will contain.
-
+- **URI Detection Agent:** Determines if there is an associated entity or predicate in the Knowledge Graph based on search terms. Returns a mapping of search terms to URIs.
+- **Result Formatting Agent:** Summarizes the results, outputs the final triples and ends the iteration process. Calling this agent ends the processing. Call it when you have a URI mapping for all subjects, predicates and objects that the result will contain. If the mapping is not complete, the result will be invalid.
+                                              
 **Instructions:**
 1. **On the first call:** Produce a complete, comprehensive plan that outlines every necessary step in detail. This plan should cover all phases required to transform the input text into the desired triple format.
 2. **On subsequent calls:** Provide only the remaining steps of the plan, incorporating any adjustments based on feedback found in the Agent Comments. The feedback is most likely a recommendation of adjustments that have to be incorporated into the next steps Please respect the result checker agent by including the ideas it gives. The last comments is most likely the latest feedback given by the result checker agent. Clearly indicate what the next task is and how it fits into the overall plan.
@@ -61,7 +61,7 @@ In addition, you will receive the history of agent call traces and the text whic
 
     URI Detection Agent
     - id: uri_detection_agent
-    - use of instruction: The use of an instruction is mandatory. The instruction must include a comma separated list of search terms enclosed in <search_terms> tags. For each search term include the search mode - either [LABEL] for a similarity search on rdfs:label or [DESCR] for a similarity search on schema:description. Please adapt the search term based on the search type. Single Word -> [LABEL]; Description of entity/relation -> [DESCR]. If you want to give an additional instruction to the mapper agent, which will process the search results, please enclose them in <additional_instruction> tags.
+    - use of instruction: The use of an instruction is mandatory. The instruction must include a comma separated list of search terms enclosed in <search_terms> tags. For each search term include the search mode - either [LABEL] for a similarity search on the label or [DESCR] on the description of the entity/predicate. Please adapt the search term based on the search type, so use a full sentence description of a entity/predicate for [DESCR] and group of words for [LABEL]. If you search a entity or predicate for the first time use [LABEL], you might want to use [DESCR] for a search, where you did not find a mapping using [LABEL]. If you want to give an additional instruction to the mapper agent, which will process the search results, please enclose them in <additional_instruction> tags.
     - example of instruction: <instruction><search_terms>Olaf Scholz[LABEL], Angela Merkel[LABEL], a person, that leads a country[DESCR]</search_terms></instruction>
     - description: Based on search terms, can map URIs from an underlying Knowledge Graph to search terms.
     - has access on: text, instruction
@@ -112,7 +112,7 @@ uri_detector_prompt = PromptTemplate.from_template("""
     You are a formatting agent. Your task is to check and format the output of the URI detection tool. The tool will give a response like this:
     Most Similar Detection Result for Olaf Scholz: ('label': Angela Merkel, 'uri': 'http://www.wikidata.org/entity/Q567)
     
-    Your task is to check the response and output an overall mapping of search terms to URIs. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph. Please also leverage the text for identifying the context of the search terms. You might also get an additional instruction by the agent instructor, which you have to follow. If there are no search results, it is most typically due to the fact, that the agent instruction didn't include a <search_terms> tag with the search terms. If this is the case answer this prompt with the advise to include search terms the next time.
+    Your task is to check the response and output an overall mapping of search terms to URIs. Those search terms can either be entities or predicates. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph. Please also leverage the text for identifying the context of the search terms. You might also get an additional instruction by the agent instructor, which you have to follow. If there are no search results, it is most typically due to the fact, that the agent instruction didn't include a <search_terms> tag with the search terms. If this is the case answer this prompt with the advise to include search terms the next time.
     
     Text: {text}
     Instruction: {instruction}
@@ -139,9 +139,10 @@ result_checker_prompt = PromptTemplate.from_template("""
     """)
 
 result_formatter_prompt = PromptTemplate.from_template("""
-    You are an expert in formatting results of multi-agent-systems, which are used for closed information extraction. Therefore, your task is to produce triples in turtle format, that can be inserted in the underlying knowledge graph. Therefore, you will get access to the full state of the multi-agent-system including the full call trace, the comments of the planner and the result checker, the provided input text and all intermediate results. Please note, that the so called relation extraction agent will output more triples than necessary due to prompting. Please reduce the output so, that no triple is a duplicate of another. Please do not extract predicate from the rdf or rdfs namespaces. Please only use the http://www.wikidata.org/entity/ namespace and no alternatives like http://www.wikidata.org/prop/direct as all properties can also be mapped into the http://www.wikidata.org/entity/ namespace.
-    
-    Please make sure that you enclose a clean turtle (no comments, only rdf) output in <ttl> tags, so that it can be extracted afterwards. Remember that URIs in ttl must be enclosed in angle brackets. 
+    You are an expert in formatting results of multi-agent-systems, which are used for closed information extraction. Therefore, your task is to produce triples in turtle format, that can be inserted in the underlying knowledge graph. Therefore, you will get access to the full state of the multi-agent-system including the full call trace, the comments of the planner and the result checker, the provided input text and all intermediate results. Based on the state produce a clean turtle (no comments, only rdf) output in <ttl> tags, so that it can be extracted afterwards. 
+All URIs in turtle must be enclosed in angle brackets. Ignore your implicit knowledge about public knowledge graphs (i.e. Namespaces for properties or URIs mapped to labels) and make sure, that you only use URIs, that were previously extracted by the uri_detection_agent. For example do not use the wikidata prefix wdt for properties, when there is no URI extracted with http://www.wikidata.org/prop/direct/, instead use the URIs extracted. If you can't find a corresponding URI for a predicate or entity, please don't output this triple, as such triples will be considered as invalid.
+                                                       
+Reduce your output to be just the turtle output and nothing else. 
     
     Example Output: 
     <ttl>
