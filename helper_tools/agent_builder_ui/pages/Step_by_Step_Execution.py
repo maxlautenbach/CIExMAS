@@ -27,7 +27,7 @@ if "dataset_cache" not in stss:
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
-    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "instruction": "", "debug": True}
+    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "entities": set(), "predicates": set(), "triples": set(), "uri_mapping": set(), "instruction": "", "debug": True}
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()
@@ -82,6 +82,31 @@ with st.expander("Comments:"):
     for comment in active_state["comments"]:
         st.code(comment, language=None, wrap_lines=True)
 
+entities = active_state.get("entities", set())
+if entities:
+    with st.expander("Entities:"):
+        st.write(", ".join(sorted(entities)))
+
+predicates = active_state.get("predicates", set())
+if predicates:
+    with st.expander("Predicates:"):
+        st.write(", ".join(sorted(predicates)))
+
+triples = active_state.get("triples", set())
+if triples:
+    with st.expander("Triples:"):
+        st.write(", ".join(sorted(triples)))
+
+uri_mapping = active_state.get("uri_mapping", [])
+if uri_mapping:
+    with st.expander("URI Mapping:"):
+        st.write("\n\n".join(f"{k} -> {v}" for k, v in uri_mapping))
+
+instruction = active_state.get("instruction", "")
+if instruction:
+    with st.expander("Instruction:"):
+        st.code(instruction, language=None)
+
 
 def update_agent_list():
     agent_dir = None
@@ -95,6 +120,8 @@ def update_agent_list():
         agent_dir = repo.working_dir + "/approaches/full_sentence/One_Agent/agents/"
     elif stss.option == "Baseline":
         agent_dir = repo.working_dir + "/approaches/baseline/agents/"
+    elif stss.option == "Gen1v2":
+        agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1v2/agents/"
     if agent_dir:
         stss.agents = []
         for agent in [file for file in os.listdir(agent_dir) if ".py" in file]:
@@ -105,7 +132,7 @@ def update_agent_list():
 
 st.sidebar.selectbox(
     "Approach",
-    ("Gen1", "Gen1_PredEx", "One Agent", "Baseline"),
+    ("Gen1", "Gen1_PredEx", "One Agent", "Baseline", "Gen1v2"),
     index=None,
     placeholder="Select approach...",
     key="option",
@@ -161,8 +188,8 @@ for agent in stss.get("agents", []):
 st.header("Evaluation")
 if st.button("Run Evaluation"):
     last_state = stss.state_history[-1]
-    if stss.option in ["Baseline", "One Agent"]:
-        turtle_string = re.search(r'<ttl>(.*?)</ttl>', last_state["messages"][-1], re.DOTALL).group(1)
+    if stss.option in ["Baseline", "One Agent", "Gen1v2"]:
+        turtle_string = last_state["messages"][-1]
     else:
         turtle_string = last_state["results"][-1]
     scores = evaluate_doc(turtle_string=turtle_string, doc_id=stss.docs.iloc[stss.doc_index]["docid"],
