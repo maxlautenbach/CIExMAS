@@ -6,10 +6,11 @@ from langgraph.constants import END
 from langgraph.types import Command
 from rdflib import Graph
 
-from approaches.full_sentence.Gen1v2.setup import cIEState, model, langfuse_handler
-from approaches.full_sentence.Gen1v2.prompts import turtle_extractor_prompt as prompt
 import approaches.full_sentence.Gen1v2.prompts
 importlib.reload(approaches.full_sentence.Gen1v2.prompts)
+
+from approaches.full_sentence.Gen1v2.setup import cIEState, model, langfuse_handler
+from approaches.full_sentence.Gen1v2.prompts import turtle_extractor_prompt as prompt
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:

@@ -366,9 +366,24 @@ def convert_eval_log(path, dataset_cache):
 
 if __name__ == "__main__":
     dataset_cache = {}
-    for root, dirs, files in os.walk("../approaches/evaluation_logs"):
-        for file in files:
-            if file.endswith(".xlsx"):
-                file_path = os.path.join(root, file)
+    
+    # List of explicit file paths to process
+    explicit_paths = [
+        "../approaches/evaluation_logs/One_Agent/test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0849.xlsx",
+    ]
+    
+    # Check if we should use explicit paths or walk directory
+    use_explicit_paths = True
+    
+    if use_explicit_paths:
+        for file_path in explicit_paths:
+            if file_path.endswith(".xlsx"):
                 print(f"Converting {file_path}")
                 dataset_cache = convert_eval_log(file_path, dataset_cache)
+    else:
+        for root, dirs, files in os.walk("../approaches/evaluation_logs"):
+            for file in files:
+                if file.endswith(".xlsx"):
+                    file_path = os.path.join(root, file)
+                    print(f"Converting {file_path}")
+                    dataset_cache = convert_eval_log(file_path, dataset_cache)

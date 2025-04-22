@@ -15,7 +15,7 @@ class cIEState(TypedDict):
     entities: set[str]
     predicates: set[str]
     triples: set[str]
-    uri_mapping: set[tuple[str, str]]
+    uri_mapping: dict[str, dict[str, str]]
     agent_response: str
     instruction: str
     debug: bool

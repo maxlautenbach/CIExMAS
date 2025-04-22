@@ -27,7 +27,7 @@ if "dataset_cache" not in stss:
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
-    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "entities": set(), "predicates": set(), "triples": set(), "uri_mapping": set(), "instruction": "", "debug": True}
+    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "entities": set(), "predicates": set(), "triples": set(), "uri_mapping": {}, "agent_response":"", "instruction": "", "debug": True}
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()
@@ -95,12 +95,16 @@ if predicates:
 triples = active_state.get("triples", set())
 if triples:
     with st.expander("Triples:"):
-        st.write(", ".join(sorted(triples)))
+        st.write("\n\n".join(sorted(triples)))
 
-uri_mapping = active_state.get("uri_mapping", [])
+uri_mapping = active_state.get("uri_mapping", {})
 if uri_mapping:
     with st.expander("URI Mapping:"):
-        st.write("\n\n".join(f"{k} -> {v}" for k, v in uri_mapping))
+        for label, details in uri_mapping.items():
+            st.write(f"**{label}**")
+            for key, value in details.items():
+                st.write(f"  - {key}: {value}")
+            st.write("")
 
 instruction = active_state.get("instruction", "")
 if instruction:
