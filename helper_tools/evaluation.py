@@ -117,26 +117,40 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
     # Predicates including Parent and Related Predicates
     pred_predicate_set = set(pred_triple_df["predicate_uri"])
     doc_predicate_set = set(doc_triple_df["predicate_uri"])
-    correct_predicates_parent = set()
-    correct_predicates_related = set()
+    detected_predicates_doc_parent = set()  # For doc predicates detected through parent relationships
+    detected_predicates_doc_related = set()  # For doc predicates detected through related relationships
+    correct_pred_predicates_parent = set()  # New variable for correct predicates from pred
+    correct_pred_predicates_related = set()  # New variable for correct predicates from pred
+    
     for doc_predicate in doc_predicate_set:
+        found = False
         for pred_predicate in pred_predicate_set:
             if pred_predicate == doc_predicate:
-                correct_predicates_parent.add(doc_predicate)
-                correct_predicates_related.add(doc_predicate)
+                correct_pred_predicates_parent.add(pred_predicate)
+                correct_pred_predicates_related.add(pred_predicate)
+                detected_predicates_doc_parent.add(doc_predicate)
+                detected_predicates_doc_related.add(doc_predicate)
+                found = True
                 break
             inter_predicate_relations = check_inter_predicate_relations(pred_predicate, doc_predicate)
             if "parentPropertyOf" in inter_predicate_relations:
-                correct_predicates_parent.add(doc_predicate)
+                correct_pred_predicates_parent.add(pred_predicate)
+                detected_predicates_doc_parent.add(doc_predicate)
+                found = True
             if len(inter_predicate_relations) > 0:
-                correct_predicates_related.add(doc_predicate)
+                correct_pred_predicates_related.add(pred_predicate)
+                detected_predicates_doc_related.add(doc_predicate)
+                found = True
                 break
-    correct_predicates_with_parent = len(correct_predicates_parent)
-    correct_predicates_with_related = len(correct_predicates_related)
+    
+    detected_predicates_doc_parent_count = len(detected_predicates_doc_parent)
+    detected_predicates_doc_related_count = len(detected_predicates_doc_related)
+    correct_pred_predicates_parent_count = len(correct_pred_predicates_parent)
+    correct_pred_predicates_related_count = len(correct_pred_predicates_related)
 
     return len(correct_triple_df), len(correct_triples_with_parent_predicates_df), len(
         correct_triples_with_related_predicates_df), len(doc_triple_df), len(
-        pred_triple_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, correct_predicates_with_parent, correct_predicates_with_related, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
+        pred_triple_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, detected_predicates_doc_parent_count, detected_predicates_doc_related_count, correct_pred_predicates_parent_count, correct_pred_predicates_related_count, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
 
 
 def generate_pr_f1_score(correct, gold_standard, total_predicted):
@@ -146,6 +160,22 @@ def generate_pr_f1_score(correct, gold_standard, total_predicted):
         precision = 0
     try:
         recall = correct / gold_standard
+    except ZeroDivisionError:
+        recall = 0
+    if precision + recall == 0:
+        f1_score = 0
+    else:
+        f1_score = (2 * precision * recall) / (precision + recall)
+    return precision, recall, f1_score
+
+
+def generate_pr_f1_score_predicates(correct_pred, detected_doc, total_predicted, gold_standard):
+    try:
+        precision = correct_pred / total_predicted
+    except ZeroDivisionError:
+        precision = 0
+    try:
+        recall = detected_doc / gold_standard
     except ZeroDivisionError:
         recall = 0
     if precision + recall == 0:
@@ -167,10 +197,8 @@ def generate_report(excel_file_path):
                                   "Total Triples Predicted"],
         "Subject": ["Correct Extracted Subjects", "Gold Standard Subjects", "Extracted Subjects"],
         "Predicate": ["Correct Extracted Predicates", "Gold Standard Predicates", "Extracted Predicates"],
-        "Predicate with Parents": ["Correct Extracted Predicates with Parents", "Gold Standard Predicates",
-                                   "Extracted Predicates"],
-        "Predicate with Related": ["Correct Extracted Predicates with Related", "Gold Standard Predicates",
-                                   "Extracted Predicates"],
+        "Predicate with Parents": ["Correct Pred Predicates Parents", "Detected Predicates Doc Parent", "Extracted Predicates", "Gold Standard Predicates"],
+        "Predicate with Related": ["Correct Pred Predicates Related", "Detected Predicates Doc Related", "Extracted Predicates", "Gold Standard Predicates"],
         "Object": ["Correct Extracted Objects", "Gold Standard Objects", "Extracted Objects"],
         "Entity": ["Correct Extracted Entities", "Gold Standard Entities", "Extracted Entities"]
     }
@@ -180,10 +208,17 @@ def generate_report(excel_file_path):
 
     # Über alle Dokumente iterieren und Einzelwerte sammeln
     for _, row in evaluation_log_df.iterrows():
-        for metric, (correct_col, gold_col, pred_col) in metric_map.items():
-            precision, recall, f1 = generate_pr_f1_score(
-                row[correct_col], row[gold_col], row[pred_col]
-            )
+        for metric, columns in metric_map.items():
+            if metric in ["Predicate with Parents", "Predicate with Related"]:
+                correct_pred_col, detected_doc_col, pred_col, gold_col = columns
+                precision, recall, f1 = generate_pr_f1_score_predicates(
+                    row[correct_pred_col], row[detected_doc_col], row[pred_col], row[gold_col]
+                )
+            else:
+                correct_col, gold_col, pred_col = columns
+                precision, recall, f1 = generate_pr_f1_score(
+                    row[correct_col], row[gold_col], row[pred_col]
+                )
             metric_scores[metric]["precision"].append(precision)
             metric_scores[metric]["recall"].append(recall)
             metric_scores[metric]["f1"].append(f1)
@@ -206,8 +241,8 @@ def generate_report(excel_file_path):
 
 
 def calculate_scores_from_array(values_array):
-    if len(values_array) != 19:
-        raise ValueError(f"Expected 19 values, but got {len(values_array)}")
+    if len(values_array) != 21:
+        raise ValueError(f"Expected 21 values, but got {len(values_array)}")
 
     (
         correct_triples,
@@ -223,8 +258,10 @@ def calculate_scores_from_array(values_array):
         extracted_predicates,
         gold_predicates,
         correct_predicates,
-        correct_predicates_with_parent,
-        correct_predicates_with_related,
+        detected_predicates_doc_parent,
+        detected_predicates_doc_related,
+        correct_pred_predicates_parent,
+        correct_pred_predicates_related,
 
         extracted_objects,
         gold_objects,
@@ -257,12 +294,16 @@ def calculate_scores_from_array(values_array):
     precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates)
     result["Predicate"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Predicate with Parents
-    precision, recall, f1 = generate_pr_f1_score(correct_predicates_with_parent, gold_predicates, extracted_predicates)
+    # Predicate with Parents - using the new function and variables
+    precision, recall, f1 = generate_pr_f1_score_predicates(
+        correct_pred_predicates_parent, detected_predicates_doc_parent, extracted_predicates, gold_predicates
+    )
     result["Predicate with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Predicate with Related
-    precision, recall, f1 = generate_pr_f1_score(correct_predicates_with_related, gold_predicates, extracted_predicates)
+    # Predicate with Related - using the new function and variables
+    precision, recall, f1 = generate_pr_f1_score_predicates(
+        correct_pred_predicates_related, detected_predicates_doc_related, extracted_predicates, gold_predicates
+    )
     result["Predicate with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
     # Object
@@ -310,12 +351,14 @@ def convert_eval_log(path, dataset_cache):
             "Total Triples Predicted",
             "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
             "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
-            "Correct Extracted Predicates with Parents", "Correct Extracted Predicates with Related",
+            "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
+            "Correct Pred Predicates Parents", "Correct Pred Predicates Related", 
             "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
-            "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
+            "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", 
+            "Result String"
         ]
     )
-    evaluation_log_df.to_excel(path[:-5] + "-converted.xlsx", index=False)
+    evaluation_log_df.to_excel(path, index=False)
     return dataset_cache
 
 
@@ -325,7 +368,7 @@ if __name__ == "__main__":
     dataset_cache = {}
     for root, dirs, files in os.walk("../approaches/evaluation_logs"):
         for file in files:
-            if file.endswith(".xlsx") and not file.endswith("-converted.xlsx"):
+            if file.endswith(".xlsx"):
                 file_path = os.path.join(root, file)
                 print(f"Converting {file_path}")
                 dataset_cache = convert_eval_log(file_path, dataset_cache)

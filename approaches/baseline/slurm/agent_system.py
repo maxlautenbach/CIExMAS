@@ -80,7 +80,9 @@ evaluation_log_df = pd.DataFrame(
         "Doc ID",
         "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples", "Total Triples Predicted",
         "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
-        "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates", "Correct Extracted Predicates with Parents", "Correct Extracted Predicates with Related",
+        "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+        "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
+        "Correct Pred Predicates Parents", "Correct Pred Predicates Related",
         "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
         "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
     ]
