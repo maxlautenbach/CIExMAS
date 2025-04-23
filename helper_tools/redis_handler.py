@@ -15,9 +15,12 @@ def element_info_upload(uri: str, label: str, description: str) -> None:
     Args:
         uri (str): The URI to track
     """
+    element_type = "predicate" if "entity/P" in uri else "entity" if "entity/Q" in uri else "unknown"
+
     tracking_data = {
         "label": label,
-        "description": description
+        "description": description,
+        "type": element_type
     }
     r.hset(uri, mapping=tracking_data)
 

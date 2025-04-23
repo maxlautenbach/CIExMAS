@@ -24,17 +24,17 @@ def add_wikidata_prefix(uri):
 
 def upload_parsed_data(relation_df, entity_df):
     if os.getenv("VECTOR_STORE") == "qdrant":
-        from helper_tools.qdrant_handler import upload_wikidata_entity
+        from helper_tools.qdrant_handler import upload_wikidata_element
     else:
         from helper_tools.faiss_handler import upload_wikidata_entity
     entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
     print(f"Uploading Entities to {os.getenv('VECTOR_STORE')}.")
     for i, row in tqdm(entity_set.iterrows(), total=entity_set.shape[0]):
-        upload_wikidata_entity(uri=row["entity_uri"], label=row["entity"])
+        upload_wikidata_element(uri=row["entity_uri"], label=row["entity"])
     print(f"Uploading Predicates to {os.getenv('VECTOR_STORE')}.")
     predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
     for i, row in tqdm(predicate_set_df.iterrows(), total=predicate_set_df.shape[0]):
-        upload_wikidata_entity(uri=row["predicate_uri"], label=row["predicate"])
+        upload_wikidata_element(uri=row["predicate_uri"], label=row["predicate"])
 
 
 def babelscape_parser(filename, number_of_samples=10):

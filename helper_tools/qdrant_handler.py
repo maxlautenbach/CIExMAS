@@ -10,7 +10,7 @@ import os
 
 load_dotenv(repo.working_dir + "/.env", override=True)
 
-def upload_wikidata_entity(uri, label):
+def upload_wikidata_element(uri, label):
     if "^^" in uri:
         return None
 
@@ -18,6 +18,9 @@ def upload_wikidata_entity(uri, label):
     tracking_info = get_element_info(uri)
     if tracking_info:
         return None
+
+    # Determine element type from URI
+    element_type = "predicate" if "entity/P" in uri else "entity" if "entity/Q" in uri else "unknown"
 
     client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
 
@@ -35,12 +38,12 @@ def upload_wikidata_entity(uri, label):
 
     description = get_description(uri)
 
-    label_doc = Document(page_content=label, metadata={"uri": uri, "description": description})
-    description_doc = Document(page_content=description, metadata={"uri": uri, "label": label})
+    label_doc = Document(page_content=label, metadata={"uri": uri, "description": description, "type": element_type})
+    description_doc = Document(page_content=description, metadata={"uri": uri, "label": label, "type": element_type})
     qdrant_wikidata_labels.add_documents([label_doc])
     qdrant_wikidata_descriptions.add_documents([description_doc])
     
-    # Track the upload in Redis
+    # Track the upload in Redis with type information
     element_info_upload(uri, label, description)
     return None
 

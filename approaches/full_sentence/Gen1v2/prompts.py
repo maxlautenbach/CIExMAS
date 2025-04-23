@@ -40,8 +40,8 @@ Triple Extractor:
 URI Retriever:
     ID: uri_retriever_agent
     Description: Retrieves URIs by similarity search for extracted elements and finds appropriate URIs for given search terms and search modes. Use the URI Retriever with different search terms and modes when a URI for an entity or predicate is not found. Do not search for the same term with the same mode twice. If a search term does not yield a result, you can also try to find alternative search terms using the extractors. Sometimes, it could be the parent of the entity or predicate that is not found. Use the URI Retriever at least once to find URIs for the extracted entities and predicates.
-    Use of Instruction: Required - Must receive comma-separated search terms with mode indicators [LABEL] or [DESCR]. [LABEL] searches the labels of instances in the Knowledge Graph, while [DESCR] searches the stored descriptions of instances. Do not provide any other instructions. Please use [LABEL] as standard search mode.
-    Example of Instruction: <instruction>king[LABEL],title given to the name of a male monarch[DESCR]</instruction> The description "title given to the name of a male monarch" is targeted to find a URI for king.
+    Use of Instruction: Required - Must receive comma-separated search terms with mode indicators [LABEL] or [DESCR]. [LABEL] searches the labels of instances in the Knowledge Graph, while [DESCR] searches the stored descriptions of instances. You can also specify filter modes [LABEL-Q] or [LABEL-P] to filter for entities (Q) or predicates (P) respectively. The same applies for [DESCR-Q] and [DESCR-P]. Do not provide any other instructions. Please use [LABEL] as standard search mode.
+    Example of Instruction: <instruction>king[LABEL-Q],title given to the name of a male monarch[DESCR-Q],lives in[LABEL-P]</instruction> The description "title given to the name of a male monarch" is targeted to find a URI for king, and "lives in" is targeted to find a predicate URI.
 
 Turtle Extractor:
     ID: turtle_extraction_agent
