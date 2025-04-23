@@ -11,7 +11,7 @@ import pandas as pd
 repo = git.Repo(search_parent_directories=True)
 sys.path.append(repo.working_dir)
 
-import helper_tools
+import helper_tools.evaluation
 
 importlib.reload(helper_tools.evaluation)
 
@@ -59,6 +59,8 @@ if uploaded_file:
             if len(result_df) == 0:
                 st.error(f"{error}")
             with st.expander("Show Details"):
+                st.write("*Turtle String*")
+                st.code(turtle_string)
                 st.write("*Predicted Triples*")
                 st.write(get_uri_labels(result_df)[["subject", "predicate","object"]])
                 st.divider()

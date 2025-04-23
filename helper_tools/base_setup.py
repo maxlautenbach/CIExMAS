@@ -2,6 +2,7 @@ import uuid
 
 import faiss
 import git
+from SPARQLWrapper import SPARQLWrapper
 from langchain_community.docstore import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
@@ -142,3 +143,5 @@ else:
 
 wikidata_predicate_graph = Graph()
 wikidata_predicate_graph.parse(repo.working_dir + "/infrastructure/all_properties.ttl", format="ttl")
+
+sparql = SPARQLWrapper("https://query.wikidata.org/sparql", agent="CIExMAS-SPARQL-Loader-Bot/1.0 (mlautenb@students.uni-mannheim.de)")

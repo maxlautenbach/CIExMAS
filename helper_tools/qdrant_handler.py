@@ -4,7 +4,7 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient, models
 from helper_tools.wikidata_loader import get_description
 from helper_tools.base_setup import repo
-from helper_tools.redis_handler import get_tracking, track_upload, clear_redis
+from helper_tools.redis_handler import get_element_info, element_info_upload, clear_redis
 from dotenv import load_dotenv
 import os
 
@@ -15,7 +15,7 @@ def upload_wikidata_entity(uri, label):
         return None
 
     # Check if entity is already tracked in Redis
-    tracking_info = get_tracking(uri)
+    tracking_info = get_element_info(uri)
     if tracking_info:
         return None
 
@@ -41,7 +41,7 @@ def upload_wikidata_entity(uri, label):
     qdrant_wikidata_descriptions.add_documents([description_doc])
     
     # Track the upload in Redis
-    track_upload(uri)
+    element_info_upload(uri, label, description)
     return None
 
 def init_collections():

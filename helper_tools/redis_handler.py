@@ -8,7 +8,7 @@ load_dotenv(repo.working_dir + "/.env", override=True)
 creds_provider = redis.UsernamePasswordCredentialProvider(os.getenv("REDIS_USER"), os.getenv("REDIS_PASSWORD"))
 r = redis.Redis(host=os.getenv("REDIS_HOST"), decode_responses=True, credential_provider=creds_provider,db=1)
 
-def track_upload(uri: str) -> None:
+def element_info_upload(uri: str, label: str, description: str) -> None:
     """
     Track the upload status of a URI by setting both label and description upload flags to True.
     
@@ -16,12 +16,12 @@ def track_upload(uri: str) -> None:
         uri (str): The URI to track
     """
     tracking_data = {
-        "label_uploaded": "true",
-        "description_uploaded": "true"
+        "label": label,
+        "description": description
     }
     r.hset(uri, mapping=tracking_data)
 
-def get_tracking(uri: str) -> dict:
+def get_element_info(uri: str) -> dict:
     """
     Get the tracking information for a given URI.
     
@@ -42,5 +42,5 @@ def clear_redis() -> None:
     r.flushdb()
 
 if __name__ == "__main__":
-    print(get_tracking("http://www.wikidata.org/entity/P618"))
+    print(get_element_info("http://www.wikidata.org/entity/P618"))
     

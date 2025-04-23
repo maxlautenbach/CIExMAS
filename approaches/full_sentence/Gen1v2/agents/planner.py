@@ -10,6 +10,15 @@ importlib.reload(approaches.full_sentence.Gen1v2.prompts)
 from approaches.full_sentence.Gen1v2.setup import cIEState, model, langfuse_handler
 from approaches.full_sentence.Gen1v2.prompts import planner_prompt as prompt
 
+# Define valid agent IDs
+VALID_AGENTS = [
+    "planner",
+    "entity_extraction_agent",
+    "predicate_extraction_agent",
+    "triple_extraction_agent",
+    "uri_retriever_agent",
+    "turtle_extraction_agent"
+]
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     response_chain = prompt | model
@@ -33,22 +42,28 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     instruction_match = re.search(r'<instruction>(.*?)</instruction>', next_section)
     instruction = instruction_match.group(1).strip() if instruction_match else ""
 
-    if next_agent:
-        update = {
-            "messages": state["messages"] + ["\n-- Planner Agent --\n" + response.content],
-            "instruction": instruction
-        }
+    # Prepare base update with message history
+    update = {
+        "messages": state["messages"] + ["\n-- Planner Agent --\n" + response.content]
+    }
+
+    if not next_agent:
+        # Missing agent ID
+        update["instruction"] = "The planner response is missing the required <next> section with <id> and <instruction> tags. Please provide a properly formatted response."
+        next_agent = "planner"
+    elif next_agent not in VALID_AGENTS:
+        # Invalid agent ID
+        update["instruction"] = f"The agent ID '{next_agent}' is not valid. Please choose from the following valid agent IDs: {', '.join(VALID_AGENTS)}"
+        next_agent = "planner"
     else:
-        update = {
-            "messages": state["messages"] + ["\n-- Planner Agent --\n" + response.content],
-            "instruction": "The planner response is missing the required <next> section with <id> and <instruction> tags. Please provide a properly formatted response."
-        }
+        # Valid agent ID
+        update["instruction"] = instruction
 
     if state["debug"]:
         state.update(update)
         return state, f"Response: {response.content}"
 
     return Command(
-        goto=next_agent if next_agent else "planner",
+        goto=next_agent,
         update=update
     )
