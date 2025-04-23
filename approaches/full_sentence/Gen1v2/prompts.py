@@ -60,6 +60,69 @@ Message History:
 {messages}
 - END OF HISTORY -
                                               
+Example of a final state:
+-- BEGIN OF EXAMPLE FINAL STATE --
+
+Text: Austrian skater Willy Böckl won the men's singles event at the 1924 Winter Olympics, which was held in Chamonix, France. The event followed the men's singles event at the 1920 Summer Olympics.
+Entities: Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles,Willy_Böckl,Figure_skating_at_the_1924_Winter_Olympics,Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles,Louis_Magnus
+Predicates: participant,part of,follows,significant person
+Triples:
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;participant;Willy_Böckl  
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;part of;Figure_skating_at_the_1924_Winter_Olympics  
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;follows;Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles  
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;significant person;Louis_Magnus
+
+URI Mapping:
+{{  
+  "Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles": {{  
+    "uri": "http://www.wikidata.org/entity/Q1184712",  
+    "label": "Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles",  
+    "description": "Men's singles figure skating event at the 1924 Winter Olympics"  
+  }},  
+  "Willy_Böckl": {{  
+    "uri": "http://www.wikidata.org/entity/Q378938",  
+    "label": "Willy_Böckl",  
+    "description": "Austrian figure skater (1893–1975)"  
+  }},  
+  "Figure_skating_at_the_1924_Winter_Olympics": {{  
+    "uri": "http://www.wikidata.org/entity/Q753636",  
+    "label": "Figure_skating_at_the_1924_Winter_Olympics",  
+    "description": "Figure skating competitions at the 1924 Winter Olympics"  
+  }},  
+  "Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles": {{  
+    "uri": "http://www.wikidata.org/entity/Q5448032",  
+    "label": "Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles",  
+    "description": "Men's singles figure skating event at the 1920 Summer Olympics"  
+  }},  
+  "Louis_Magnus": {{  
+    "uri": "http://www.wikidata.org/entity/Q1871849",  
+    "label": "Louis_Magnus",  
+    "description": "French figure skater and sports administrator (1881–1950)"  
+  }},  
+  "participant": {{  
+    "uri": "http://www.wikidata.org/entity/P710",  
+    "label": "participant",  
+    "description": "Person, group, or organization that actively takes part in an event or process"  
+  }},  
+  "part of": {{  
+    "uri": "http://www.wikidata.org/entity/P361",  
+    "label": "part of",  
+    "description": "Indicates that the subject is a component of the object"  
+  }},  
+  "follows": {{  
+    "uri": "http://www.wikidata.org/entity/P155",  
+    "label": "follows",  
+    "description": "Indicates that the subject follows the object in a sequence"  
+  }},  
+  "significant person": {{  
+    "uri": "http://www.wikidata.org/entity/P3342",  
+    "label": "significant person",  
+    "description": "Person linked to the item in any notable way"  
+  }}  
+}}
+
+-- END OF EXAMPLE FINAL STATE --
+                                              
 Remember to use the output schema format with <message>, <next> tags containing <id> and <instruction>.
 
 Output Schema:
@@ -91,6 +154,7 @@ Guidelines:
 - Each entity should be a meaningful noun or noun phrase
 - Entities should be relevant to the domain and could form part of a triple
 - Keep entities concise but meaningful
+- If there are entities with multiple possible meanings, return all their disambiguated forms. For example, if "Mercury" can refer to both a planet and a chemical element, return both forms: Mercury (Planet), Mercury (Element)
 
 Respond with your FULL UPDATED LIST of entities in the following format:
 <entities>
@@ -98,6 +162,18 @@ entity1
 entity2
 ...
 </entities>
+
+- BEGIN OF EXAMPLE -
+Text: Austrian skater Willy Böckl won the men's singles event at the 1924 Winter Olympics, which was held in Chamonix, France. The event followed the men's singles event at the 1920 Summer Olympics.
+Output:
+<entities>
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles
+Willy_Böckl
+Figure_skating_at_the_1924_Winter_Olympics
+Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles
+Louis_Magnus
+</entities>
+- END OF EXAMPLE -
 """)
 
 predicate_extractor_prompt = PromptTemplate.from_template("""
@@ -130,6 +206,17 @@ predicate1
 predicate2
 ...
 </predicates>
+
+- BEGIN OF EXAMPLE -
+Text: Austrian skater Willy Böckl won the men's singles event at the 1924 Winter Olympics, which was held in Chamonix, France. The event followed the men's singles event at the 1920 Summer Olympics.
+Output:
+<predicates>
+participant
+part of
+follows
+significant person
+</predicates>
+- END OF EXAMPLE -
 """)
 
 triple_extractor_prompt = PromptTemplate.from_template("""
@@ -158,10 +245,21 @@ Guidelines:
 
 Respond with your FULL UPDATED LIST of triples in the following format:
 <triples>
-subject1 predicate1 object1
-subject2 predicate2 object2
+subject1; predicate1; object1
+subject2; predicate2; object2
 ...
 </triples>
+
+- BEGIN OF EXAMPLE -
+Text: Austrian skater Willy Böckl won the men's singles event at the 1924 Winter Olympics, which was held in Chamonix, France. The event followed the men's singles event at the 1920 Summer Olympics.
+Output:
+<triples>
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;participant;Willy_Böckl
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;part of;Figure_skating_at_the_1924_Winter_Olympics
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;follows;Figure_skating_at_the_1920_Summer_Olympics_–_Men's_singles
+Figure_skating_at_the_1924_Winter_Olympics_–_Men's_singles;significant person;Louis_Magnus
+</triples>
+- END OF EXAMPLE -
 """)
 
 uri_retriever_prompt = PromptTemplate.from_template("""

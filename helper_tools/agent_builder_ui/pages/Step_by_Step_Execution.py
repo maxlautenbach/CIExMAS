@@ -169,6 +169,9 @@ def run_agent(id, module):
     stss.agent_trace.append(id)
     return response
 
+with st.expander("Expected Result"):
+    st.write(stss.relation_df[stss.relation_df["docid"] == stss.docs.iloc[stss.doc_index]["docid"]][
+                 ["subject", "predicate", "object"]])
 
 col1, col2, col3 = st.columns(3)
 col1.header("Agents:")
