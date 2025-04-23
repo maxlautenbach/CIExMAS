@@ -10,10 +10,8 @@ Your role is to:
 
 Guidelines:
 - You can only delegate tasks, not perform them yourself
-- Re-iterate with different instructions over the text, so that every entity, predicate and triple can be extracted from the text.
 - Keep the efficiency in mind. So if you have already found many entities, predicates and triples, you can stop the process by calling the turtle formatter.
-- Keep it short. Do not search for quantity but for quality. Focus on a few triples, but very precise ones.
-- Do not call the same agent, more than two times in a row.                                              
+- If necessary, re-iterate with different instructions over the text, so that every entity, predicate and triple can be extracted from the text.
 
 Respond with:
 1. Feedback to the output of the last agent. Maximum one sentence.
@@ -153,10 +151,10 @@ Your task is to:
 
 Guidelines:
 - Review the "Already Extracted Triples" list and include them in your response
-- Add new triples that are relevant and not already in the list
+- Change or add triples in the list. You are also allowed to delete triples
 - Each triple should be meaningful and make sense in the context
 - Use only entities and predicates from the available lists
-- Keep it short. Do not search for quantity but for quality. Focus on a few triples, but very precise ones.
+- Keep it short. Do not produce quantity but quality. Focus on a few triples, but very precise ones.
 
 Respond with your FULL UPDATED LIST of triples in the following format:
 <triples>
@@ -187,6 +185,9 @@ Guidelines:
 - Each mapping should be meaningful and relevant
 - Include the original text, URI, label, and description in each mapping
 - Extract label and description information directly from the search results
+- Only use the URIs from the search results and existing URI Mappings, no other URIs.
+- Do not include any other text in your response.
+                                                    
 
 Example Output:
 <uri_mappings>
@@ -231,13 +232,14 @@ Your task is to:
 2. Only include triples where all components (subject, predicate, object) have valid URIs
 3. Format the output according to turtle syntax rules
 4. Include necessary prefixes
-5. Only output the turtle format, no other text.
+5. Only output the turtle format enclosed in <ttl> tags, no other text.
 
 Guidelines:
 - All URIs in turtle must be enclosed in angle brackets
 - Only use URIs that are present in the URI mappings
 - Each URI mapping now contains additional information (uri, label, description)
-- When retrieving URIs from the mapping, use the "uri" field
+- When retrieving URIs from the mapping, use the "uri" field. 
+- Do only use the URIs from the mapping, no other URIs.
 - If a triple component doesn't have a URI mapping, exclude that triple
 - Keep the output clean and well-formatted.
 - Include relevant prefixes at the start of the output

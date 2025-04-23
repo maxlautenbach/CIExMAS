@@ -55,6 +55,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             term, 
             k=3,
             filter=filter_condition
+        ) if filter_mode else label_vector_store.similarity_search(
+            term, 
+            k=3
         )
         search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"], "description": doc.metadata["description"]} for doc in results]}\n\n'
     
@@ -73,6 +76,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             term, 
             k=3,
             filter=filter_condition
+        ) if filter_mode else description_vector_store.similarity_search(
+            term, 
+            k=3
         )
         search_response += f'Most Similar schema:description Search Results for {term}:{[{"label": doc.metadata["label"], "uri": doc.metadata["uri"], "description": doc.page_content} for doc in results]}\n\n'
     
