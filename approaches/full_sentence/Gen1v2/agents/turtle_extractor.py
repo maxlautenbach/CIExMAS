@@ -23,7 +23,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         {
             "text": state["text"],
             "uri_mapping": state["uri_mapping"],
-            "triples": state["triples"]
+            "triples": state["triples"],
+            "instruction": state["instruction"]
         },
         config=config
     )

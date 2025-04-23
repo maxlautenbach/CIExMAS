@@ -47,16 +47,20 @@ Turtle Extractor:
     ID: turtle_extraction_agent
     Description: Creates final Turtle format output and converts triples with URIs into valid Turtle format and ends the iteration. Only run the turtle formatter when many (ca 75%) of the parts of a triple (subject, predicate, object) can be found in the URI Mapping. Otherwise reiterate the process to find different entities, predicates and triples. Also use different search terms and/or different mode indicators. For instance a URI for all entities like Olaf Scholz, Angela Merkel was found, but for the predicates like "lives in" or "was born in" no URI was found.
     Use of Instruction: Optional - Can receive specific formatting instructions
-
+                                              
 Current State:
+Instruction: {instruction}
 Text: {text}
 Last Agent Response: {agent_response}
 Entities: {entities}
 Predicates: {predicates}
 Triples: {triples}
 URI Mapping: {uri_mapping}
-Instruction: {instruction}
-Message History: {messages}
+                                              
+Message History:
+- BEGIN OF HISTORY -
+{messages}
+- END OF HISTORY -
                                               
 Remember to use the output schema format with <message>, <next> tags containing <id> and <instruction>.
 
@@ -217,6 +221,7 @@ turtle_extractor_prompt = PromptTemplate.from_template("""
 You are an expert in formatting results of multi-agent-systems for closed information extraction. Your task is to produce triples in turtle format that can be inserted into the underlying knowledge graph.
 
 Current State:
+Instruction: {instruction}
 Text: {text}
 URI Mappings: {uri_mapping}
 Triples: {triples}
@@ -226,6 +231,7 @@ Your task is to:
 2. Only include triples where all components (subject, predicate, object) have valid URIs
 3. Format the output according to turtle syntax rules
 4. Include necessary prefixes
+5. Only output the turtle format, no other text.
 
 Guidelines:
 - All URIs in turtle must be enclosed in angle brackets
@@ -236,7 +242,7 @@ Guidelines:
 - Keep the output clean and well-formatted.
 - Include relevant prefixes at the start of the output
 
-Respond with your turtle output in the following format:
+Example Output:
 <ttl>
 @prefix wd: <http://www.wikidata.org/entity/> .
 

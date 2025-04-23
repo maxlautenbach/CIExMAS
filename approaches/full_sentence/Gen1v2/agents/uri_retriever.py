@@ -60,12 +60,19 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     
     for i, term in enumerate(description_search_terms):
         filter_mode = description_filters[i]
-        filter_criteria = {"type": "entity"} if filter_mode == "Q" else {"type": "predicate"} if filter_mode == "P" else None
+        filter_condition = models.Filter(
+            must=[
+                models.FieldCondition(
+                    key="metadata.type",
+                    match=models.MatchValue(value="entity" if filter_mode == "Q" else "predicate" if filter_mode == "P" else None)
+                )
+            ]
+        )
         
         results = description_vector_store.similarity_search(
             term, 
             k=3,
-            filter=filter_criteria
+            filter=filter_condition
         )
         search_response += f'Most Similar schema:description Search Results for {term}:{[{"label": doc.metadata["label"], "uri": doc.metadata["uri"], "description": doc.page_content} for doc in results]}\n\n'
     
