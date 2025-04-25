@@ -1,0 +1,30 @@
+{
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0354.xlsx": {
+        "short_description": "Robustness Increase",
+        "description": "Increased robustness, but checking RDF syntax and Agent IDs"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-1516.xlsx": {
+        "short_description": "Robustness Increase",
+        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-24-0001.xlsx": {
+        "short_description": "One-Shot/URI-Filter-Mode",
+        "description": "Implemented One-Shot Examples for all Extractors and for the Planner. Introduced a URI-Filter-Mode."
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-2018.xlsx": {
+        "short_description": "First Attempt",
+        "description": ""
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0849.xlsx": {
+        "short_description": "Robustness Increase",
+        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-21-2222.xlsx": {
+        "short_description": "Robustness Increase",
+        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-01-1222-converted.xlsx": {
+        "short_description": "Dec. URI Hallucination",
+        "description": "Decreasing URI Hallucination, by adapting the prompt."
+    }
+}

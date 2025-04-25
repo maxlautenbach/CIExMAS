@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import git
 import sys
+import json
 from collections import defaultdict
 import numpy as np
 from datetime import datetime
@@ -12,6 +13,12 @@ repo = git.Repo(search_parent_directories=True)
 sys.path.append(repo.working_dir)
 
 from helper_tools.evaluation import generate_report
+
+# Model ID to shortened name mapping
+MODEL_ID_MAPPING = {
+    "kosbu-Llama-3.3-70B-Instruct-AWQ": "Llama 3.3 AWQ",
+    "ISTA-DASLab-gemma-3-27b-it-GPTQ-4b-128g": "Gemma 3 GPTQ"
+}
 
 # Set page to full width
 st.set_page_config(layout="wide")
@@ -45,7 +52,10 @@ def extract_model_info(file_path):
     provider = parts[0]
     model_id = "-".join(parts[1:])
     
-    return provider, model_id
+    # Get shortened model name if available
+    display_model_id = MODEL_ID_MAPPING.get(model_id, model_id)
+    
+    return provider, model_id, display_model_id
 
 def extract_datasplit(file_path):
     """Extract datasplit from file path."""
@@ -68,6 +78,14 @@ def extract_timestamp(file_path):
     timestamp_str = "-".join(filename.split('-')[-4:])
     # Convert to datetime object
     return datetime.strptime(timestamp_str, '%Y-%m-%d-%H%M')
+
+def load_notes():
+    """Load notes from log_notes.json."""
+    notes_file = os.path.join(repo.working_dir, "approaches/evaluation_logs/log_notes.json")
+    if os.path.exists(notes_file):
+        with open(notes_file, 'r') as f:
+            return json.load(f)
+    return {}
 
 def main():
     st.title("Evaluation Results Comparison")
@@ -95,24 +113,35 @@ def main():
     model_runs = defaultdict(list)
     model_names = {}
     
+    # Load notes
+    notes = load_notes()
+    
     # First pass: collect all timestamps for each model
     for file_path in filtered_files:
-        provider, model_id = extract_model_info(file_path)
+        provider, model_id, display_model_id = extract_model_info(file_path)
         architecture = extract_architecture(file_path)
         if provider and model_id:
             model_key = f"{provider}_{model_id}_{architecture}"
             timestamp = extract_timestamp(file_path)
             model_runs[model_key].append((timestamp, file_path))
     
-    # Second pass: sort by timestamp and assign run numbers
+    # Second pass: sort by timestamp and assign run numbers with short descriptions
     for model_key in model_runs:
         # Sort by timestamp
         model_runs[model_key].sort(key=lambda x: x[0])
-        # Assign run numbers
+        # Assign run numbers with short descriptions
         for i, (timestamp, file_path) in enumerate(model_runs[model_key], 1):
-            provider, model_id = extract_model_info(file_path)
+            provider, model_id, display_model_id = extract_model_info(file_path)
             architecture = extract_architecture(file_path)
-            model_name = f"{architecture} - {provider} - {model_id} (Run {i})"
+            filename = os.path.basename(file_path)
+            
+            # Get short description if available
+            short_desc = notes.get(filename, {}).get("short_description", "")
+            run_info = f"Run {i}"
+            if short_desc:
+                run_info = f"{run_info} - {short_desc}"
+            
+            model_name = f"{architecture} - {provider} - {display_model_id} ({run_info})"
             model_names[file_path] = model_name
     
     # Generate reports for all files
