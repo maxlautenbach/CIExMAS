@@ -1,5 +1,6 @@
 import redis
-from helper_tools.base_setup import repo
+import git
+repo = git.Repo(search_parent_directories=True)
 from dotenv import load_dotenv
 import os
 

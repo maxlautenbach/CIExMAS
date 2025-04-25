@@ -2,12 +2,15 @@ from langchain_core.documents import Document
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient, models
-from helper_tools.wikidata_loader import get_description
-from helper_tools.base_setup import repo
+
 from helper_tools.redis_handler import get_element_info, element_info_upload, clear_redis
 from dotenv import load_dotenv
 import os
+import git
 
+from helper_tools.wikidata_loader import get_description
+
+repo = git.Repo(search_parent_directories=True)
 load_dotenv(repo.working_dir + "/.env", override=True)
 
 def upload_wikidata_element(uri, label):
@@ -24,7 +27,7 @@ def upload_wikidata_element(uri, label):
 
     client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
 
-    embeddings = OllamaEmbeddings(model='nomic-embed-text')
+    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL_ID"))
     qdrant_wikidata_labels = QdrantVectorStore(
         client=client,
         collection_name="wikidata_labels",
@@ -50,9 +53,10 @@ def upload_wikidata_element(uri, label):
 def init_collections():
     client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
     client.create_collection(collection_name="wikidata_labels",
-                             vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+                             vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
     client.create_collection(collection_name="wikidata_descriptions",
-                             vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+                             vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
+    clear_redis()
 
 def clear_collections():
     client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
@@ -61,9 +65,9 @@ def clear_collections():
     client.delete_collection(collection_name="wikidata_labels")
     client.delete_collection(collection_name="wikidata_descriptions")
 
-    client.create_collection(collection_name="wikidata_labels", vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+    client.create_collection(collection_name="wikidata_labels", vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
 
-    client.create_collection(collection_name="wikidata_descriptions", vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+    client.create_collection(collection_name="wikidata_descriptions", vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
 
     # Clear Redis
     clear_redis()
