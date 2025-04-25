@@ -26,5 +26,8 @@
   "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-01-1222-converted.xlsx": {
     "short_description": "Dec. URI Hallucination",
     "description": "Decreasing URI Hallucination, by adapting the prompt."
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-25-1041.xlsx": {
+    "short_description": "URI Filter Mode"
   }
 }

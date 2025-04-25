@@ -119,6 +119,8 @@ def main():
     
     # Load notes
     notes = load_notes()
+
+    print(notes.get("train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-25-1041.xlsx", ))
     
     # First pass: collect all timestamps for each model
     for file_path in filtered_files:
@@ -141,6 +143,7 @@ def main():
             
             # Get short description if available
             short_desc = notes.get(filename, {}).get("short_description", "")
+            print(f"Short description for {architecture} {filename}: {short_desc}")
             run_info = f"Run {i}"
             if short_desc:
                 run_info = f"{run_info} - {short_desc}"

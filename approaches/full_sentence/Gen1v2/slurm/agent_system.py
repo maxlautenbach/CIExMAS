@@ -128,7 +128,7 @@ if description:
 
     # Use just the filename, not the full path
     excel_file_name = os.path.basename(excel_file_path)
-    log_notes[excel_file_name] = {"description": description}
+    log_notes[excel_file_name] = {"short_description": description}
 
     with open(log_notes_path, "w") as log_file:
         json.dump(log_notes, log_file, indent=4)
