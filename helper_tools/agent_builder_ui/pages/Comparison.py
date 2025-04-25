@@ -17,7 +17,11 @@ from helper_tools.evaluation import generate_report
 # Model ID to shortened name mapping
 MODEL_ID_MAPPING = {
     "kosbu-Llama-3.3-70B-Instruct-AWQ": "Llama 3.3 AWQ",
-    "ISTA-DASLab-gemma-3-27b-it-GPTQ-4b-128g": "Gemma 3 GPTQ"
+    "ISTA-DASLab-gemma-3-27b-it-GPTQ-4b-128g": "Gemma 3 GPTQ",
+    "Meta-Llama-3.3-70B-Instruct": "Llama 3.3",
+    "google-gemma-3-27b-it": "Gemma 3",
+    "Llama-4-Maverick-17B-128E-Instruct": "Llama 4 Maverick",
+    "deepseek-ai-DeepSeek-R1-Distill-Llama-70B": "DeepSeek R1 Dist. Llama",
 }
 
 # Set page to full width

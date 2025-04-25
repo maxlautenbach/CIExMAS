@@ -2,32 +2,32 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, set_key
 
-# Dictionary of available providers and their models
+# Updated AVAILABLE_MODELS to include RPM values
 AVAILABLE_MODELS = {
     "OpenAI": [
-        "gpt-4o-search-preview-2025-03-11"
+        {"model": "gpt-4o-search-preview-2025-03-11", "rpm": 0}
     ],
     "SambaNova": [
-        "Meta-Llama-3.3-70B-Instruct",
-        "QwQ-32B",
-        "Llama-4-Maverick-17B-128E-Instruct",
-        "Llama-4-Scout-17B-16E-Instruct"
+        {"model": "Meta-Llama-3.3-70B-Instruct", "rpm": 80},
+        {"model": "QwQ-32B", "rpm": 40},
+        {"model": "Llama-4-Maverick-17B-128E-Instruct", "rpm": 40},
+        {"model": "Llama-4-Scout-17B-16E-Instruct", "rpm": 40}
     ],
     "DeepInfra": [
-        "meta-llama/Llama-3.3-70B-Instruct",
-        "google/gemma-3-27b-it",
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
-        "Qwen/QwQ-32B"
+        {"model": "meta-llama/Llama-3.3-70B-Instruct", "rpm": 0},
+        {"model": "google/gemma-3-27b-it", "rpm": 0},
+        {"model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", "rpm": 0},
+        {"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", "rpm": 0},
+        {"model": "Qwen/QwQ-32B", "rpm": 0}
     ],
     "vLLM": [
-        "ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g",
-        "kosbu/Llama-3.3-70B-Instruct-AWQ",
-        "unsloth/c4ai-command-a-03-2025-unsloth-bnb-4bit"
+        {"model": "ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g", "rpm": 0},
+        {"model": "kosbu/Llama-3.3-70B-Instruct-AWQ", "rpm": 0},
+        {"model": "unsloth/c4ai-command-a-03-2025-unsloth-bnb-4bit", "rpm": 0}
     ],
     "Cerebras": [
-        "llama-4-scout-17b-16e-instruct",
-        "llama-3.3-70b"
+        {"model": "llama-4-scout-17b-16e-instruct", "rpm": 30},
+        {"model": "llama-3.3-70b", "rpm": 30}
     ]
 }
 
@@ -50,13 +50,14 @@ def select_provider():
         except ValueError:
             print("Please enter a valid number.")
 
+# Updated select_model to return both model and RPM
 def select_model(provider):
     """Let the user select a model for the chosen provider"""
     models = AVAILABLE_MODELS[provider]
     print(f"\nAvailable models for {provider}:")
-    for i, model in enumerate(models, 1):
-        print(f"{i}. {model}")
-    
+    for i, model_info in enumerate(models, 1):
+        print(f"{i}. {model_info['model']} (RPM: {model_info['rpm']})")
+
     while True:
         try:
             choice = int(input("\nSelect a model (number): "))
@@ -66,27 +67,32 @@ def select_model(provider):
         except ValueError:
             print("Please enter a valid number.")
 
+# Updated main to set LLM_RPM in .env
 def main():
     env_path = get_env_path()
-    
+
     if not env_path.exists():
         print("Error: .env file not found!")
         return
-    
+
     # Load existing .env file
     load_dotenv(env_path)
-    
+
     # Get user selections
     provider = select_provider()
-    model = select_model(provider)
-    
+    model_info = select_model(provider)
+    model = model_info['model']
+    rpm = model_info['rpm']
+
     # Update .env file
     set_key(env_path, "LLM_MODEL_PROVIDER", provider)
     set_key(env_path, "LLM_MODEL_ID", model)
-    
+    set_key(env_path, "LLM_RPM", str(rpm))
+
     print(f"\nSuccessfully set:")
     print(f"Provider: {provider}")
     print(f"Model: {model}")
+    print(f"RPM: {rpm}")
 
 if __name__ == "__main__":
-    main() 
+    main()

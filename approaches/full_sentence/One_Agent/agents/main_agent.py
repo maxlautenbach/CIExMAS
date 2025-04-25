@@ -53,15 +53,14 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
 
 
 
-    if state["debug"]:
-        if id == END:
-            state["messages"].append("\n-- ReAct Agent --\n" + turtle_string)
-        else:
-            state["messages"].append("\n-- ReAct Agent --\n" + response)
-        state["instruction"] = instruction
-        return state, response
-
     if id == END:
         response = turtle_string
+
+    if state["debug"]:
+        state["messages"].append(response)
+        state["instruction"] = "\n-- ReAct Agent --\n" + instruction
+        return state, response
+
+
 
     return Command(goto=id, update={"messages": state["messages"] + [response], "instruction": instruction})
