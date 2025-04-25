@@ -39,9 +39,11 @@ importlib.reload(parser)
 try:
     split = sys.argv[1]
     number_of_samples = int(sys.argv[2])
+    description = sys.argv[3]
 except IndexError:
     split = "test"
     number_of_samples = 50
+    description = None
 
 triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
@@ -103,3 +105,21 @@ except Exception as e:
     print(excel_file_path)
     print(e)
     evaluation_log_df.to_excel(f"Output.xlsx", index=False)
+
+import json
+import os.path
+
+if description:
+    log_notes_path = f"{repo.working_dir}/approaches/evaluation_logs/log_notes.json"
+    try:
+        with open(log_notes_path, "r") as log_file:
+            log_notes = json.load(log_file)
+    except FileNotFoundError:
+        log_notes = {}
+
+    # Use just the filename, not the full path
+    excel_file_name = os.path.basename(excel_file_path)
+    log_notes[excel_file_name] = {"description": description}
+
+    with open(log_notes_path, "w") as log_file:
+        json.dump(log_notes, log_file, indent=4)
