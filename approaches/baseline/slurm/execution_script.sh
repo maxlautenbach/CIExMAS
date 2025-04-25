@@ -37,8 +37,8 @@ OLLAMA_MODELS=/work/$(whoami)/ollama_models OLLAMA_LOAD_TIMEOUT=30m ollama serve
 OLLAMA_PID=$!
 sleep 2  # Wait for server to spin up
 
-echo "Pulling embedding model: nomic-embed-text"
-ollama pull nomic-embed-text
+echo "Pulling embedding model: $EMBEDDING_MODEL_ID"
+ollama pull $EMBEDDING_MODEL_ID
 
 # === Start Ollama Server if Needed ===
 if [[ "$LLM_MODEL_PROVIDER" == "Ollama" ]]; then
