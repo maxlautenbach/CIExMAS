@@ -35,5 +35,8 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1516.xlsx": {
         "short_description": "URI Filter Mode"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1614.xlsx": {
+        "short_description": "Prompt Eng. - Inc. Robustness"
     }
 }
