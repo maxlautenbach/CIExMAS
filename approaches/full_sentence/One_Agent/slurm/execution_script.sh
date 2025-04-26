@@ -84,7 +84,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./approaches/full_sentence/One_Agent/slurm/agent_system.py test 50 'URI Filter Mode'
+python3 ./approaches/full_sentence/One_Agent/slurm/agent_system.py test 50 'PE-RI-EMC'
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."

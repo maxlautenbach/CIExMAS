@@ -41,5 +41,14 @@
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1643.xlsx": {
         "short_description": "PE-RI-EMC"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1951.xlsx": {
+        "short_description": "EMC"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2141.xlsx": {
+        "short_description": "EMC"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2218.xlsx": {
+        "short_description": "PE-RI-EMC"
     }
 }
