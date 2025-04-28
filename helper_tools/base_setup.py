@@ -57,7 +57,7 @@ elif llm_provider == "OpenAI":
 elif llm_provider == "vLLM":
     model = ChatOpenAI(
         api_key="EMPTY",
-        base_url="http://localhost:8000/v1",
+        base_url="http://localhost:19123/v1",
         model=model_id,
     )
 

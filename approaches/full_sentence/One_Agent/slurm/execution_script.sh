@@ -58,15 +58,16 @@ if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
     chat_template_path="/home/mlautenb/CIExMAS/helper_tools/chat_templates/${chat_template_name}"
 
     vllm serve "$LLM_MODEL_ID" \
+            --port 19123 \
             --chat-template "$chat_template_path" \
             --download-dir /work/mlautenb/CIExMAS/models \
             --gpu-memory-utilization 0.95 \
             --max_model_len 8192 &
 
     VLLM_PID=$!
-    echo "Waiting for vLLM server to be ready on port 8000..."
+    echo "Waiting for vLLM server to be ready on port 19123..."
     for i in {1..60}; do
-        if curl -s http://localhost:8000 > /dev/null; then
+        if curl -s http://localhost:19123 > /dev/null; then
             echo "vLLM server is up!"
             break
         fi
@@ -75,7 +76,7 @@ if [[ "$LLM_MODEL_PROVIDER" == "vLLM" ]]; then
     done
 
     # If still not ready, exit with error
-    if ! curl -s http://localhost:8000 > /dev/null; then
+    if ! curl -s http://localhost:19123 > /dev/null; then
         echo "Error: vLLM server did not start within expected time."
         cleanup
     fi
