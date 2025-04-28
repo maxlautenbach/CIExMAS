@@ -37,7 +37,8 @@
         "short_description": "URI Filter Mode"
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1614.xlsx": {
-        "short_description": "Prompt Eng. - Inc. Robustness"
+        "short_description": "PE-RI",
+        "description": ""
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1643.xlsx": {
         "short_description": "PE-RI-EMC"
@@ -65,5 +66,36 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-1010.xlsx": {
         "short_description": "PE-RI-EMC"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1147.xlsx": {
+        "short_description": "Temp 0"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1148.xlsx": {
+        "short_description": "Temp 0",
+        "description": ""
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1149.xlsx": {
+        "short_description": "Temp 1"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1151.xlsx": {
+        "short_description": "Temp 1"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1158.xlsx": {
+        "short_description": "Temp Standard"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1325.xlsx": {
+        "short_description": "Temp 0.7"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1338.xlsx": {
+        "short_description": "Temp 0.3"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1342.xlsx": {
+        "short_description": "Temp 1.5"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1349.xlsx": {
+        "short_description": "Temp 1"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1350.xlsx": {
+        "short_description": "Temp 1"
     }
 }

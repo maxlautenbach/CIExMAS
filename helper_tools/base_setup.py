@@ -38,6 +38,7 @@ if llm_provider == "DeepInfra":
         api_key=os.getenv("DEEPINFRA_API_TOKEN"),
         base_url="https://api.deepinfra.com/v1/openai",
         model=model_id,
+        temperature=0.7,
     )
 
 elif llm_provider == "SambaNova":
@@ -45,13 +46,15 @@ elif llm_provider == "SambaNova":
         api_key=os.getenv("SAMBANOVA_API_KEY"),
         base_url="https://api.sambanova.ai/v1",
         model=model_id,
-        rate_limiter=rate_limiter
+        rate_limiter=rate_limiter,
+        temperature=0.7
     )
 
 elif llm_provider == "OpenAI":
     model = ChatOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
         model=model_id,
+        temperature=0.7,
     )
 
 elif llm_provider == "vLLM":
@@ -59,12 +62,14 @@ elif llm_provider == "vLLM":
         api_key="EMPTY",
         base_url="http://localhost:19123/v1",
         model=model_id,
+        temperature=0.7,
     )
 
 elif llm_provider == "Ollama":
     model = ChatOllama(
         model=model_id,
-        num_ctx=25600
+        num_ctx=25600,
+        temperature=0.7,
     )
 
 elif llm_provider == "Cerebras":
@@ -72,7 +77,8 @@ elif llm_provider == "Cerebras":
         api_key=os.getenv("CEREBRAS_API_KEY"),
         base_url="https://api.cerebras.ai/v1",
         model=model_id,
-        rate_limiter=rate_limiter
+        rate_limiter=rate_limiter,
+        temperature=0.7,
     )
 
 elif llm_provider == "Cohere":
@@ -80,7 +86,8 @@ elif llm_provider == "Cohere":
         api_key=os.getenv("CEREBRAS_API_KEY"),
         base_url="https://api.cohere.ai/compatibility/v1",
         model=model_id,
-        rate_limiter=rate_limiter
+        rate_limiter=rate_limiter,
+        temperature=0.7,
     )
 
 embeddings = OllamaEmbeddings(
