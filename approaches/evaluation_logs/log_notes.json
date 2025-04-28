@@ -62,5 +62,8 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0930.xlsx": {
         "short_description": "PE-RI-EMC"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-1010.xlsx": {
+        "short_description": "PE-RI-EMC"
     }
 }
