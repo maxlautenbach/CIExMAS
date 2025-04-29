@@ -23,18 +23,90 @@ def add_wikidata_prefix(uri):
 
 
 def upload_parsed_data(relation_df, entity_df):
+    """
+    Upload parsed entities and predicates to the vector store using bulk upload.
+    
+    Args:
+        relation_df: DataFrame containing relations with predicates
+        entity_df: DataFrame containing entities
+    """
     if os.getenv("VECTOR_STORE") == "qdrant":
-        from helper_tools.qdrant_handler import upload_wikidata_element
+        from helper_tools.qdrant_handler import upload_wikidata_elements
+        from helper_tools.redis_handler import get_element_info
+        from helper_tools.wikidata_loader import get_description
     else:
         from helper_tools.faiss_handler import upload_wikidata_entity
+        return
+    
+    # Process entities in bulk
     entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
-    print(f"Uploading Entities to {os.getenv('VECTOR_STORE')}.")
-    for i, row in tqdm(entity_set.iterrows(), total=entity_set.shape[0]):
-        upload_wikidata_element(uri=row["entity_uri"], label=row["entity"])
-    print(f"Uploading Predicates to {os.getenv('VECTOR_STORE')}.")
+    print(f"Preparing entities for bulk upload to {os.getenv('VECTOR_STORE')}...")
+    
+    # Create a dictionary for bulk upload
+    entity_elements = {}
+    already_uploaded_entities = 0
+    
+    # Build dictionary for entities
+    for i, row in tqdm(entity_set.iterrows(), total=entity_set.shape[0], desc="Preparing entities"):
+        uri = row["entity_uri"]
+        label = row["entity"]
+        
+        # Check if entity is already in Redis
+        if get_element_info(uri):
+            already_uploaded_entities += 1
+            continue
+            
+        # Get description for the entity
+        description = get_description(uri)
+        
+        # Add to bulk upload dictionary
+        entity_elements[uri] = {
+            'label': label,
+            'description': description
+        }
+    
+    # Upload entities in bulk
+    if entity_elements:
+        print(f"Uploading {len(entity_elements)} entities to {os.getenv('VECTOR_STORE')} in batches...")
+        upload_wikidata_elements(entity_elements)
+        print(f"Entity upload complete. {len(entity_elements)} new entities uploaded, {already_uploaded_entities} entities were already in the database.")
+    else:
+        print(f"No new entities to upload. {already_uploaded_entities} entities were already in the database.")
+    
+    # Process predicates in bulk
     predicate_set_df = relation_df[["predicate", "predicate_uri"]].drop_duplicates()
-    for i, row in tqdm(predicate_set_df.iterrows(), total=predicate_set_df.shape[0]):
-        upload_wikidata_element(uri=row["predicate_uri"], label=row["predicate"])
+    print(f"Preparing predicates for bulk upload to {os.getenv('VECTOR_STORE')}...")
+    
+    # Create a dictionary for bulk upload
+    predicate_elements = {}
+    already_uploaded_predicates = 0
+    
+    # Build dictionary for predicates
+    for i, row in tqdm(predicate_set_df.iterrows(), total=predicate_set_df.shape[0], desc="Preparing predicates"):
+        uri = row["predicate_uri"]
+        label = row["predicate"]
+        
+        # Check if predicate is already in Redis
+        if get_element_info(uri):
+            already_uploaded_predicates += 1
+            continue
+            
+        # Get description for the predicate
+        description = get_description(uri)
+        
+        # Add to bulk upload dictionary
+        predicate_elements[uri] = {
+            'label': label,
+            'description': description
+        }
+    
+    # Upload predicates in bulk
+    if predicate_elements:
+        print(f"Uploading {len(predicate_elements)} predicates to {os.getenv('VECTOR_STORE')} in batches...")
+        upload_wikidata_elements(predicate_elements)
+        print(f"Predicate upload complete. {len(predicate_elements)} new predicates uploaded, {already_uploaded_predicates} predicates were already in the database.")
+    else:
+        print(f"No new predicates to upload. {already_uploaded_predicates} predicates were already in the database.")
 
 
 def babelscape_parser(filename, number_of_samples=10):

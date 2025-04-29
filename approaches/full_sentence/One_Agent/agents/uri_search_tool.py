@@ -1,6 +1,7 @@
 import re
 import traceback
 from typing import Literal
+import json
 
 from langgraph.types import Command
 
@@ -53,7 +54,13 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                 term, 
                 k=3
             )
-            search_response += f'Most Similar rdfs:label Search Results for {term}:{[{"label": doc.page_content, "uri": doc.metadata["uri"], "description": doc.metadata["description"]} for doc in results]}\n\n'
+            
+            search_response += f'Most Similar Search Results for "{term}" - Search Mode [LABEL]:\n'
+            for idx, doc in enumerate(results):
+                search_response += f"  {idx+1}. Label: {doc.page_content}\n"
+                search_response += f"     URI: {doc.metadata['uri']}\n"
+                search_response += f"     Description: {doc.metadata['description']}\n"
+            search_response += "\n"
         
         for i, term in enumerate(description_search_terms):
             filter_mode = description_filters[i]
@@ -74,9 +81,13 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                 term, 
                 k=3
             )
-            search_response += f'Most Similar schema:description Search Results for {term}:{[{"label": doc.metadata["label"], "uri": doc.metadata["uri"], "description": doc.page_content} for doc in results]}\n\n'
-        
-        search_response = search_response.replace("},", "},\n")
+            
+            search_response += f'Most Similar Search Results for "{term}" - Search Mode [DESCR]:\n'
+            for idx, doc in enumerate(results):
+                search_response += f"  {idx+1}. Label: {doc.metadata['label']}\n"
+                search_response += f"     URI: {doc.metadata['uri']}\n"
+                search_response += f"     Description: {doc.page_content}\n"
+            search_response += "\n"
 
         if state["debug"]:
             state["instruction"] = ""

@@ -113,29 +113,27 @@ def main():
     # Filter files for selected datasplit
     filtered_files = [f for f in evaluation_files if extract_datasplit(f) == selected_datasplit]
     
-    # Track runs per model with timestamps
-    model_runs = defaultdict(list)
+    # Track runs per architecture model combination with timestamps
+    architecture_model_runs = defaultdict(list)
     model_names = {}
     
     # Load notes
     notes = load_notes()
     
-    # First pass: collect all timestamps for each model
+    # First pass: collect all timestamps for each model within its architecture
     for file_path in filtered_files:
-        provider, model_id, display_model_id = extract_model_info(file_path)
+        provider, _, display_model_id = extract_model_info(file_path)
         architecture = extract_architecture(file_path)
-        if provider and model_id:
-            model_key = f"{provider}_{model_id}_{architecture}"
-            timestamp = extract_timestamp(file_path)
-            model_runs[model_key].append((timestamp, file_path))
+        timestamp = extract_timestamp(file_path)
+        architecture_model_runs[architecture].append((timestamp, file_path))
     
     # Second pass: sort by timestamp and assign run numbers with short descriptions
-    for model_key in model_runs:
+    for arch_model_key in architecture_model_runs:
         # Sort by timestamp
-        model_runs[model_key].sort(key=lambda x: x[0])
+        architecture_model_runs[arch_model_key].sort(key=lambda x: x[0])
         # Assign run numbers with short descriptions
-        for i, (timestamp, file_path) in enumerate(model_runs[model_key], 1):
-            provider, model_id, display_model_id = extract_model_info(file_path)
+        for i, (timestamp, file_path) in enumerate(architecture_model_runs[arch_model_key], 1):
+            provider, _, display_model_id = extract_model_info(file_path)
             architecture = extract_architecture(file_path)
             filename = os.path.basename(file_path)
             
@@ -238,4 +236,4 @@ def main():
         st.dataframe(df)
 
 if __name__ == "__main__":
-    main() 
+    main()
