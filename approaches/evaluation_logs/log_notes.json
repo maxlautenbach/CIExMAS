@@ -140,5 +140,20 @@
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1138.xlsx": {
         "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1615.xlsx": {
+        "short_description": "PE"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1629.xlsx": {
+        "short_description": "PE"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1631.xlsx": {
+        "short_description": "PE"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1635.xlsx": {
+        "short_description": "PE"
+    },
+    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1638.xlsx": {
+        "short_description": "PE"
     }
 }

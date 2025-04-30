@@ -76,14 +76,19 @@ Tips for better results:
 
 Guidelines:
 - Use the delete message tool to remove long outputs as early as you can to enable faster and cheaper inference.
-- Name every new entity or predicate found, and only refer to them again if new information is added.
+- Name every new entity or predicate found in your output.
 - Always use `[LABEL]` for the first predicate search.
 - Do not re-search the same term in the same mode if it yielded no result.
 - Only use URIs from the URI Search Tool. Do not fabricate or infer them.
+- Only use the wd: prefix for URIs from the URI Search Tool.
 - Keep outputs concise.
 - When naming entities in your output, also include their type, e.g., Angela Merkel (Human)
 - When naming ambigous entities in your output, include all ambiguous types, e.g., Mannheim (city, urban municipality).
+- When naming predicates in your output, include the domain and range of the predicate, e.g., "is the capital of" (city, country).
+- Include the entity type or predicate domain/range in the search term of the URI Search Tool, e.g., <instruction>Angela Merkel (Human)[LABEL-Q]|Mannheim (city or urban municipal)[LABEL-Q]|is the capital of (city, country)[LABEL-P]</instruction>".
 - Only the first <next> block will be executed; additional ones may serve as hints.
 - Prefer reiteration with refined search terms over including poor-matching triples.
 - Before deleting messages, summarize key URIs and findings to preserve essential information.
+
+YOUR OUTPUT:
 """)
