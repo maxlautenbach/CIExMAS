@@ -121,5 +121,23 @@
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-0804.xlsx": {
         "short_description": "Sleek State"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1126.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1127.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1129.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1130.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1136.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1138.xlsx": {
+        "short_description": "PE-DMT"
     }
 }

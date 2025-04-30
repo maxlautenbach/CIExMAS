@@ -83,7 +83,7 @@ elif llm_provider == "Cerebras":
 
 elif llm_provider == "Cohere":
     model = ChatOpenAI(
-        api_key=os.getenv("CEREBRAS_API_KEY"),
+        api_key=os.getenv("COHERE_API_KEY"),
         base_url="https://api.cohere.ai/compatibility/v1",
         model=model_id,
         rate_limiter=rate_limiter,

@@ -7,9 +7,11 @@ from langgraph.types import Command
 
 from helper_tools.validation import validate_turtle_response
 from approaches.full_sentence.One_Agent.setup import cIEState, model, langfuse_handler
-from approaches.full_sentence.One_Agent.prompts import react_agent_promt as prompt
+from approaches.full_sentence.One_Agent.prompts import react_agent_prompt as prompt
 import approaches.full_sentence.One_Agent.prompts
 importlib.reload(approaches.full_sentence.One_Agent.prompts)
+
+import copy
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
@@ -20,7 +22,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     if state["debug"]:
         config = {"callbacks": [langfuse_handler]}
 
-    response = response_chain.invoke(state, config=config).content
+    llm_state = copy.deepcopy(state)
+    llm_state["messages"] = [f"Index: {i} - {message}" for i, message in enumerate(state["messages"])]
+
+    response = response_chain.invoke(llm_state, config=config).content
 
     instruction_match = re.search(r'<instruction>(.*?)</instruction>', response, re.DOTALL)
     if instruction_match:

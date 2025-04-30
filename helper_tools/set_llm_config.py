@@ -18,7 +18,9 @@ AVAILABLE_MODELS = {
         {"model": "google/gemma-3-27b-it", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", "rpm": 0},
-        {"model": "Qwen/QwQ-32B", "rpm": 0}
+        {"model": "Qwen/QwQ-32B", "rpm": 0},
+        {"model": "Qwen/Qwen3-235B-A22B", "rpm": 0},
+        {"model": "Qwen/Qwen3-30B-A3B", "rpm": 0},
     ],
     "vLLM": [
         {"model": "ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g", "rpm": 0},
@@ -28,7 +30,10 @@ AVAILABLE_MODELS = {
     "Cerebras": [
         {"model": "llama-4-scout-17b-16e-instruct", "rpm": 30},
         {"model": "llama-3.3-70b", "rpm": 30}
-    ]
+    ],
+    "Cohere": [
+        {"model": "command-a-03-2025", "rpm": 20},
+    ],
 }
 
 def get_env_path():

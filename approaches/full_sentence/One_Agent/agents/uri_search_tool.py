@@ -46,20 +46,21 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                 ]
             )
             
-            results = label_vector_store.similarity_search(
+            results = label_vector_store.similarity_search_with_score(
                 term, 
                 k=3,
                 filter=filter_condition
-            ) if filter_mode else label_vector_store.similarity_search(
+            ) if filter_mode else label_vector_store.similarity_search_with_score(
                 term, 
                 k=3
             )
             
             search_response += f'Most Similar Search Results for "{term}" - Search Mode [LABEL]:\n'
-            for idx, doc in enumerate(results):
+            for idx, (doc, sim_score) in enumerate(results):
                 search_response += f"  {idx+1}. Label: {doc.page_content}\n"
                 search_response += f"     URI: {doc.metadata['uri']}\n"
                 search_response += f"     Description: {doc.metadata['description']}\n"
+                search_response += f"     Similarity Score: {sim_score}\n"
             search_response += "\n"
         
         for i, term in enumerate(description_search_terms):
@@ -73,20 +74,21 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                 ]
             )
             
-            results = description_vector_store.similarity_search(
+            results = description_vector_store.similarity_search_with_score(
                 term, 
                 k=3,
                 filter=filter_condition
-            ) if filter_mode else description_vector_store.similarity_search(
+            ) if filter_mode else description_vector_store.similarity_search_with_score(
                 term, 
                 k=3
             )
             
             search_response += f'Most Similar Search Results for "{term}" - Search Mode [DESCR]:\n'
-            for idx, doc in enumerate(results):
+            for idx, (doc, sim_score) in enumerate(results):
                 search_response += f"  {idx+1}. Label: {doc.metadata['label']}\n"
                 search_response += f"     URI: {doc.metadata['uri']}\n"
                 search_response += f"     Description: {doc.page_content}\n"
+                search_response += f"     Similarity Score: {sim_score}\n"
             search_response += "\n"
 
         if state["debug"]:
