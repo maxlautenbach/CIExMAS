@@ -112,5 +112,14 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-29-1633.xlsx": {
         "short_description": "RI-PE-NTT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1703.xlsx": {
+        "short_description": "Sleek State"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1705.xlsx": {
+        "short_description": "Sleek State"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-0804.xlsx": {
+        "short_description": "Sleek State"
     }
 }
