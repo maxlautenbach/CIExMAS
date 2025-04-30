@@ -111,7 +111,8 @@
         "short_description": "RI-PE-NTT"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-29-1633.xlsx": {
-        "short_description": "RI-PE-NTT"
+        "short_description": "RI-PE-NTT",
+        "description": "\t- Robustness Increase\n\t\t\u25cb Filter False Inputs to URI Agent leading to to errors -> Output Instruction\n\t- Prompt Engineering\n\t\t\u25cb Search more specific predicates -> Doesn't work (Replaced by Network Traversal Tool)\n\t\t\u25cb Do not search twice for proper names\n\t\t\u25cb Different Separator like |\n\t\t\u25cb Use prefixes -> Turtle output more likely to be correct.\n\t\t\u25cb Include Description of Search Results\n\t- Network Traversal Tool\nUploaded all Wikidata predicates"
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1703.xlsx": {
         "short_description": "Sleek State"
