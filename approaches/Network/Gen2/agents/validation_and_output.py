@@ -39,6 +39,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # If triples are found, parse them and add to the state
     if goto_match:
         goto = goto_match.group(1).strip()
+    else:
+        update["agent_instruction"] = "\nSYSTEM MESSAGE: RegEx r'<goto>(.*?)</goto>' doesn't find any match, so the result could not be extracted.\n please fix."
+
 
     if goto == "END":
         turtle_match = re.search(r'<ttl>(.*?)</ttl>', content, re.DOTALL)
@@ -50,8 +53,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                 goto = END
             else:
                 update["agent_instruction"] = "\nSYSTEM MESSAGE: " + error_message + "\n please fix."
+                goto = "validation_and_output"
         else:
             update["agent_instruction"] = "\nSYSTEM MESSAGE: RegEx r'<ttl>(.*?)</ttl>' doesn't find any match, so the result could not be extracted.\n please fix."
+            goto = "validation_and_output"
 
 
     if state["debug"]:
