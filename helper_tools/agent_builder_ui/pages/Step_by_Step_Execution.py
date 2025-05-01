@@ -117,15 +117,15 @@ def update_agent_list():
     for loaded_agent in stss.get("agents", []):
         unload_agent(loaded_agent["agent_dir"])
     if stss.option == "Gen1":
-        agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1/agents/"
+        agent_dir = repo.working_dir + "/approaches/Supervisor/Gen1/agents/"
     elif stss.option == "Gen1_PredEx":
-        agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1_PredEx/agents/"
+        agent_dir = repo.working_dir + "/approaches/Supervisor/Gen1_PredEx/agents/"
     elif stss.option == "One Agent":
-        agent_dir = repo.working_dir + "/approaches/full_sentence/One_Agent/agents/"
+        agent_dir = repo.working_dir + "/approaches/One_Agent/agents/"
     elif stss.option == "Baseline":
-        agent_dir = repo.working_dir + "/approaches/baseline/agents/"
+        agent_dir = repo.working_dir + "/approaches/Supervisor/baseline/agents/"
     elif stss.option == "Gen1v2":
-        agent_dir = repo.working_dir + "/approaches/full_sentence/Gen1v2/agents/"
+        agent_dir = repo.working_dir + "/approaches/Supervisor/Gen1v2/agents/"
     if agent_dir:
         stss.agents = []
         for agent in [file for file in os.listdir(agent_dir) if ".py" in file]:
