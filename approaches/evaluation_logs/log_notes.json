@@ -155,5 +155,11 @@
     },
     "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1638.xlsx": {
         "short_description": "PE"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1708.xlsx": {
+        "short_description": "PE-DMT"
+    },
+    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1825.xlsx": {
+        "short_description": "PE"
     }
 }
