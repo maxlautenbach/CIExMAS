@@ -157,9 +157,11 @@
         "short_description": "PE"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1708.xlsx": {
-        "short_description": "PE-DMT"
+        "short_description": "PE-DMT",
+        "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Entity Type Naming\n\t\t\u25cb Output Limiting\n\t\t\u25cb Advice - Only one next tag used\n\t\t\u25cb Hint for transitive relations\n\t- Network Traversal Tool takes now multiple search terms\n\t- Delete Message Tool implemented\nAgent should delete message from the output"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1825.xlsx": {
-        "short_description": "PE"
+        "short_description": "PE",
+        "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Domain/Range extraction\n\t\t\u25cb Include type and domain/range in search\n\t\t\u25cb wd: prefix only\n"
     }
 }
