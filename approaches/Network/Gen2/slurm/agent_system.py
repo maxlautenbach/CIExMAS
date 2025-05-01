@@ -17,13 +17,12 @@ import importlib
 import pandas as pd
 import warnings
 from langgraph.graph import StateGraph, START, END
-from approaches.Supervisor.Gen1v2.setup import cIEState
-from approaches.Supervisor.Gen1v2.agents.planner import agent as planner
-from approaches.Supervisor.Gen1v2.agents.entity_extractor import agent as entity_extraction_agent
-from approaches.Supervisor.Gen1v2.agents.predicate_extractor import agent as predicate_extraction_agent
-from approaches.Supervisor.Gen1v2.agents.triple_extractor import agent as triple_extraction_agent
-from approaches.Supervisor.Gen1v2.agents.uri_retriever import agent as uri_retriever_agent
-from approaches.Supervisor.Gen1v2.agents.turtle_extractor import agent as turtle_extraction_agent
+from approaches.Network.Gen2.setup import cIEState
+from approaches.Network.Gen2.agents.extractor import agent as extractor
+from approaches.Network.Gen2.agents.uri_mapping_and_refinement import agent as uri_mapping_and_refinement
+from approaches.Network.Gen2.agents.validation_and_output import agent as validation_and_output
+from approaches.Network.Gen2.agents.uri_search_tool import agent as uri_search_tool
+from approaches.Network.Gen2.agents.network_traversal_search import agent as network_traversal_search
 from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
 import json
@@ -49,14 +48,13 @@ entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = triple_df[["predicate", "predicate_uri"]].drop_duplicates()
 
 builder = StateGraph(cIEState)
-builder.add_node("planner", planner)
-builder.add_node("entity_extraction_agent", entity_extraction_agent)
-builder.add_node("predicate_extraction_agent", predicate_extraction_agent)
-builder.add_node("triple_extraction_agent", triple_extraction_agent)
-builder.add_node("uri_retriever_agent", uri_retriever_agent)
-builder.add_node("turtle_extraction_agent", turtle_extraction_agent)
+builder.add_node("extractor", extractor)
+builder.add_node("uri_mapping_and_refinement", uri_mapping_and_refinement)
+builder.add_node("validation_and_output", validation_and_output)
+builder.add_node("uri_search_tool", uri_search_tool)
+builder.add_node("network_traversal_tool", network_traversal_search)
 
-builder.add_edge(START, "planner")
+builder.add_edge(START, "extractor")
 
 graph = builder.compile()
 
@@ -70,15 +68,13 @@ for i in tqdm(range(len(docs))):
     try:
         response = graph.invoke({
             "text": text,
+            "triples": {},
+            "last_agent_response": "",
+            "agent_instruction": "",
             "messages": [],
-            "entities": set(),
-            "predicates": set(),
-            "triples": set(),
-            "uri_mapping": {},
-            "agent_response": "",
-            "instruction": "",
+            "tool_input": "", 
             "debug": False
-        }, config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Gen1v2", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
+        }, config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Gen2", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         
         # Assuming the final result is in the last message
         if response["messages"]:
@@ -110,7 +106,7 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1v2/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/', '-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
+excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen2/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/', '-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
 try:
     evaluation_log_df.to_excel(excel_file_path, index=False)
 except Exception as e:

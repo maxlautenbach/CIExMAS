@@ -13,7 +13,6 @@ from langchain_qdrant import QdrantVectorStore
 from langfuse import Langfuse
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
-from vertexai.preview.evaluation.utils import rate_limit
 
 repo = git.Repo(search_parent_directories=True)
 

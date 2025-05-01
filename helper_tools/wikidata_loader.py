@@ -1,3 +1,5 @@
+from distutils.core import run_setup
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 from helper_tools.base_setup import sparql
 from helper_tools.redis_handler import get_element_info, element_info_upload
@@ -97,6 +99,8 @@ def fetch_description_from_sparql(uri):
             <{uri}> schema:description ?o .
             FILTER(langmatches(lang(?o), "en"))
         }}
+        ORDER BY (lang(?l) != "en")
+        LIMIT 1
     """
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
@@ -113,5 +117,56 @@ def fetch_description_from_sparql(uri):
     except Exception:
         return "No Description Found"
 
+def get_types(uri):
+    query = f"""
+        SELECT ?o WHERE {{
+            <{uri}> wdt:P31 ?o .
+        }}
+    """
+
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    results = ""
+    retry = 0
+    max_retries = 10
+    while results == "" and retry < max_retries:
+        try:
+            results = sparql.query().convert()
+        except Exception as e:
+            retry += 1
+    try:
+        type_list = get_superclasses(uri)
+        for binding in results["results"]["bindings"]:
+            type_list.append(get_label(binding["o"]["value"]))
+        return type_list
+    except Exception:
+        return ["No Types Found"]
+
+def get_superclasses(uri):
+    query = f"""
+            SELECT ?o WHERE {{
+                <{uri}> wdt:P279 ?o .
+            }}
+        """
+
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    results = ""
+    retry = 0
+    max_retries = 10
+    while results == "" and retry < max_retries:
+        try:
+            results = sparql.query().convert()
+        except Exception as e:
+            retry += 1
+    try:
+        super_class_list = []
+        for binding in results["results"]["bindings"]:
+            super_class_list.append(get_label(binding["o"]["value"]))
+        return super_class_list
+    except Exception:
+        return ["No Super-Class Found"]
+
+
 if __name__ == "__main__":
-    print(get_label("http://www.wikidata.org/entity/Q567"))
+    print(get_types("http://www.wikidata.org/entity/Q174174"))

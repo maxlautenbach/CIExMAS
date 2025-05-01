@@ -27,7 +27,7 @@ if "dataset_cache" not in stss:
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
-    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "entities": set(), "predicates": set(), "triples": set(), "uri_mapping": {}, "agent_response":"", "instruction": "", "debug": True}
+    stss.state = {"text": text, "results": [], "call_trace": [], "comments": [], "messages": [], "entities": set(), "predicates": set(), "triples": set(), "uri_mapping": {}, "agent_response":"", "instruction": "", "agent_instruction": "", "debug": True}
     stss.state_history = [deepcopy(stss.state)]
     stss.state_index = 0
     stss.last_answers = dict()
@@ -107,9 +107,16 @@ if uri_mapping:
             st.write("")
 
 instruction = active_state.get("instruction", "")
+if not instruction:
+    instruction = active_state.get("tool_input", "")
 if instruction:
     with st.expander("Instruction:"):
         st.code(instruction, language=None)
+
+last_response = active_state.get("last_response", "")
+if last_response:
+    with st.expander("Last Response:"):
+        st.code(last_response, language=None)
 
 
 def update_agent_list():
@@ -126,6 +133,8 @@ def update_agent_list():
         agent_dir = repo.working_dir + "/approaches/Supervisor/baseline/agents/"
     elif stss.option == "Gen1v2":
         agent_dir = repo.working_dir + "/approaches/Supervisor/Gen1v2/agents/"
+    elif stss.option == "Gen2":
+        agent_dir = repo.working_dir + "/approaches/Network/Gen2/agents/"
     if agent_dir:
         stss.agents = []
         for agent in [file for file in os.listdir(agent_dir) if ".py" in file]:
@@ -136,7 +145,7 @@ def update_agent_list():
 
 st.sidebar.selectbox(
     "Approach",
-    ("Gen1", "Gen1_PredEx", "One Agent", "Baseline", "Gen1v2"),
+    ("Baseline", "One Agent", "Gen1", "Gen1_PredEx", "Gen1v2", "Gen2"),
     index=None,
     placeholder="Select approach...",
     key="option",
@@ -195,7 +204,7 @@ for agent in stss.get("agents", []):
 st.header("Evaluation")
 if st.button("Run Evaluation"):
     last_state = stss.state_history[-1]
-    if stss.option in ["Baseline", "One Agent", "Gen1v2"]:
+    if stss.option in ["Baseline", "One Agent", "Gen1v2", "Gen2"]:
         turtle_string = last_state["messages"][-1]
     else:
         turtle_string = last_state["results"][-1]

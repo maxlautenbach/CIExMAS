@@ -163,5 +163,11 @@
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1825.xlsx": {
         "short_description": "PE",
         "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Domain/Range extraction\n\t\t\u25cb Include type and domain/range in search\n\t\t\u25cb wd: prefix only\n"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1626.xlsx": {
+        "short_description": "First Attempt"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1633.xlsx": {
+        "short_description": "First Attempt"
     }
 }
