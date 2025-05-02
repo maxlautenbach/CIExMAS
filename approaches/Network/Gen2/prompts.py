@@ -77,8 +77,13 @@ To process the task you have access to the following tools:
 - Network Traversal Tool
     - ID: network_traversal_tool
     - Description: Returns super- and sub-properties of given predicate URIs using SPARQL.
-    - Input: One or more predicate URIs separated by |
-    - Example: <input>http://www.wikidata.org/entity/P166|http://www.wikidata.org/entity/P361</input>
+    - Input: RDF triples in turtle format containing the predicates to explore
+    - Example: 
+      <input>
+      @prefix wd: <http://www.wikidata.org/entity/>.
+      wd:Q123 wd:P166 wd:Q456.
+      wd:Q789 wd:P361 wd:Q101.
+      </input>
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -94,7 +99,18 @@ In addition, you can decide which agent to call next, when you are ready with yo
 Guidelines:
 - Use the URI Search Tool to find URIs for subjects and objects. The results will be written into Last Agent/Tool Response.
 - Call yourself, if you need to refine the triples further.
-- Use the triple state to store intermediate results.
+- Refine the search terms, if the results are not satisfying.
+- Use the Network Traversal Tool to find super- and sub-properties of predicates.
+  - The Network Traversal Tool input should be valid turtle format RDF triples containing the predicates you want to explore.
+  - You can include one or more predicates in a single turtle document.
+  - The tool will extract all predicates from the triples and return their super- and sub-properties.
+- Save intermediate results using the mapping output.
+
+Chain of Thought:
+1. Get first URI Mapping
+2. Check if the results are satisfying, if not, refine the search terms and call the URI Search Tool again.
+3. Call the Network Traversal Tool with predicates formatted as turtle triples.
+4. Check if the results can be used. If yes, build them into the triples and call the next agent.
 
 Last Call: {last_call}
 
@@ -104,28 +120,40 @@ Text: {text}
 
 Triples {triples}
 
-Your output should be in one of the following formats:
+Your can include the following:
 
 TOOL USAGE:
 <goto>ONE OF [uri_search_tool,network_traversal_tool]</goto>
 <tool_input>INSERT YOUR INPUT HERE</tool_input>
 
-OR
+AND/OR
 
 MAPPING OUTPUT:
-<goto>ONE OF [extractor,validation_and_output,uri_mapping_and_refinement]</goto>
 <triples>
-Subject1 (Types: [Type A1], URI: UriS1); Predicate1; Object1 (Types: [Type B1], URI: UriO1)
-Subject2 (Types: [Type A2], URI: UriS2); Predicate2; Object2 (Types: [Type B2], URI: UriO2)
-Subject3 (Types: [Type A3], URI: UriS3); Predicate3; Object3 (Types: [Type B3], URI: UriO3)
+Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1); Predicate1; Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1)
+Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2); Predicate2; Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2)
+Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3); Predicate3; Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3)
 </triples>
+
+AND/OR
+
+AGENT CALL:
+<goto>ONE OF [extractor,validation_and_output,uri_mapping_and_refinement]</goto>
 
 Example Mapping Output:
 Text: The Albert S. Sholes House is a bungalow designed by architect Richard H. Martin Jr.
 <triples>
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171); architectural style (URI: http://www.wikidata.org/entity/P149); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107)
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171); architect (URI: http://www.wikidata.org/entity/P84); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008)
+Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architectural style (URI: http://www.wikidata.org/entity/P149); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107, URI-Label: Bungalow)
+Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architect (URI: http://www.wikidata.org/entity/P84); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008, URI-Label: Richard_H._Martin_Jr.)
 </triples>
+
+Example Network Traversal Tool Input:
+<goto>network_traversal_tool</goto>
+<tool_input>
+@prefix wd: <http://www.wikidata.org/entity/>.
+wd:Q4711171 wd:P149 wd:Q850107.
+wd:Q4711171 wd:P84 wd:Q47035008.
+</tool_input>
 
 """)
 

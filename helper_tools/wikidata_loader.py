@@ -4,6 +4,27 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from helper_tools.base_setup import sparql
 from helper_tools.redis_handler import get_element_info, element_info_upload
 
+def send_query(query):
+    """Helper function to send a SPARQL query and handle retries
+    
+    Args:
+        query (str): The SPARQL query to execute
+        
+    Returns:
+        dict: The query results or empty string if failed
+    """
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    results = ""
+    retry = 0
+    max_retries = 10
+    while results == "" and retry < max_retries:
+        try:
+            results = sparql.query().convert()
+        except Exception as e:
+            retry += 1
+    return results
+
 def get_description(uri):
     # Check if the description exists in Redis
     redis_info = get_element_info(uri)
@@ -18,16 +39,7 @@ def get_description(uri):
             FILTER(langmatches(lang(?o), "en"))
         }}
     """
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    results = ""
-    retry = 0
-    max_retries = 10
-    while results == "" and retry < max_retries:
-        try:
-            results = sparql.query().convert()
-        except Exception as e:
-            retry += 1
+    results = send_query(query)
     
     try:
         description = results["results"]["bindings"][0]["o"]["value"]
@@ -75,17 +87,7 @@ def fetch_label_from_sparql(uri):
                 FILTER(langmatches(lang(?o), "en"))
             }}
         """
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    results = ""
-    retry = 0
-    max_retries = 10
-    while results == "" and retry < max_retries:
-        try:
-            results = sparql.query().convert()
-        except Exception as e:
-            print(e)
-            retry += 1
+    results = send_query(query)
     try:
         return results["results"]["bindings"][0]["o"]["value"]
     except Exception:
@@ -102,16 +104,7 @@ def fetch_description_from_sparql(uri):
         ORDER BY (lang(?l) != "en")
         LIMIT 1
     """
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    results = ""
-    retry = 0
-    max_retries = 10
-    while results == "" and retry < max_retries:
-        try:
-            results = sparql.query().convert()
-        except Exception as e:
-            retry += 1
+    results = send_query(query)
     try:
         return results["results"]["bindings"][0]["o"]["value"]
     except Exception:
@@ -123,17 +116,7 @@ def get_types(uri):
             <{uri}> wdt:P31 ?o .
         }}
     """
-
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    results = ""
-    retry = 0
-    max_retries = 10
-    while results == "" and retry < max_retries:
-        try:
-            results = sparql.query().convert()
-        except Exception as e:
-            retry += 1
+    results = send_query(query)
     try:
         type_list = get_superclasses(uri)
         for binding in results["results"]["bindings"]:
@@ -148,17 +131,7 @@ def get_superclasses(uri):
                 <{uri}> wdt:P279 ?o .
             }}
         """
-
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    results = ""
-    retry = 0
-    max_retries = 10
-    while results == "" and retry < max_retries:
-        try:
-            results = sparql.query().convert()
-        except Exception as e:
-            retry += 1
+    results = send_query(query)
     try:
         super_class_list = []
         for binding in results["results"]["bindings"]:
