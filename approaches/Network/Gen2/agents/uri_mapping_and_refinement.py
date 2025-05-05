@@ -13,6 +13,10 @@ from approaches.Network.Gen2.prompts import uri_mapping_and_refinement_prompt as
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
+    # Update call_trace with current agent call information
+    agent_id = "uri_mapping_and_refinement"
+    agent_instruction = state.get("agent_instruction", "")
+    
     response_chain = prompt | model
 
     goto="extractor"
@@ -35,7 +39,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
 
     # Initialize the update dict with the last agent response
     update = {
-        "last_response": content
+        "last_response": content,
+        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
     }
 
     # If triples are found, parse them and add to the state

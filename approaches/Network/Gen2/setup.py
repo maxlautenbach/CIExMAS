@@ -1,5 +1,5 @@
 import sys
-from typing import TypedDict, List
+from typing import TypedDict, List, Tuple
 
 import git
 
@@ -18,3 +18,4 @@ class cIEState(TypedDict):
     tool_input: str
     messages: List[str]
     debug: bool
+    call_trace: List[Tuple[str, str]]  # List of (agent_id/tool_id, agent_instruction/tool_input) tuples

@@ -59,20 +59,20 @@ In addition, return which agent to call next:
 """)
 
 uri_mapping_and_refinement_prompt = PromptTemplate.from_template("""
-You are an expert in creating uri mappings and refining triples. Therefore, you will receive a text and a set of triples extracted from the text. Out of this context you have to search URIs for subjects, predicates and objects. 
+You are an expert in creating uri mappings and refining triples (i.e. by replacing predicates for more specific ones). Therefore, you will receive a text and a set of triples extracted from the text. Out of this context you have to search URIs for subjects, predicates and objects. 
 
 To process the task you have access to the following tools:
 - URI Search Tool
     - ID: uri_search_tool
     - Description: Takes a |-separated list of search terms with search and optional filter modes. Returns the 3 most similar URIs per term.
-    - Input format: Term1[SearchMode1-FilterMode1]|Term2[SearchMode2-FilterMode2]...
+    - Input format: Term1([SearchMode1-FilterMode1]|Term2[SearchMode2-FilterMode2]...
     - Search Modes:
         - 'LABEL': Search using rdfs:label (recommended for first attempts)
         - 'DESCR': Search using a textual description (especially useful for predicates/entities not found via label)
     - Filter Modes:
-        - '-Q': Filter for entities
+        - '-Q': Filter for entities. Include the expected type of the entity in the search term. I.e. 'Angela Merkel (human)[LABEL-Q]'
         - '-P': Filter for predicates
-    - Example: <input>Angela Merkel[LABEL-Q]|chancellor of Germany from 2005 to 2021[DESCR-Q]|work location[LABEL-P]</input>
+    - Example: <input>Angela Merkel (human)[LABEL-Q]|chancellor of Germany from 2005 to 2021[DESCR-Q]|work location[LABEL-P]</input>
 
 - Network Traversal Tool
     - ID: network_traversal_tool
@@ -112,6 +112,8 @@ Chain of Thought:
 3. Call the Network Traversal Tool with predicates formatted as turtle triples.
 4. Check if the results can be used. If yes, build them into the triples and call the next agent.
 
+Call Trace: {call_trace}
+                                                                 
 Last Call: {last_call}
 
 Output on Last Call: {last_response}
@@ -155,6 +157,83 @@ wd:Q4711171 wd:P149 wd:Q850107.
 wd:Q4711171 wd:P84 wd:Q47035008.
 </tool_input>
 
+Example Processing:
+Text: The politician Angela Merkel is member of the CDU.
+Triples: 
+Angela_Merkel (Types: [politician]); member of; CDU (Types: [political party])
+Angela_Merkel (Types: [politician]); occupation; politician (Types: [profession])
+
+1. URI Search with Instruction: Angela Merkel (human)[LABEL-Q]|CDU (political party)[LABEL-Q]|politician (profession)[LABEL-Q]|member of[LABEL-P]|occupation[LABEL-P]
+2. Built in pre-liminary triples:
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P463); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
+
+3. Network Traversal Search with Instruction:
+@prefix wd: <http://www.wikidata.org/entity/>.
+wd:Q567 wd:P463 wd:Q49762.
+wd:Q567 wd:P106 wd:Q82955.
+
+4. Network Traversal Search brought up: 
+
+Possible Predicate Replacements:
+
+## Possible Predicate Replacements for Triple: http://www.wikidata.org/entity/Q567, http://www.wikidata.org/entity/P463, http://www.wikidata.org/entity/Q49762
+
+### Current Predicate Example:
+Property: http://www.wikidata.org/entity/P463
+Label: member of
+Example: Diana Ross; member of; The Supremes
+Super-properties (1):
+
+URI: http://www.wikidata.org/entity/P361
+Label: part of
+Example: Lake Ontario; part of; Great Lakes
+Subject matches type restriction: None
+Object matches type restriction: None
+
+Sub-properties (3):
+
+URI: http://www.wikidata.org/entity/P4100
+Label: parliamentary group
+Example: Matteo Renzi; parliamentary group; Italia Viva
+Subject matches type restriction: human
+Object matches type restriction: political party
+
+URI: http://www.wikidata.org/entity/P102
+Label: member of political party
+Example: Deng Xiaoping; member of political party; Chinese Communist Party
+Subject matches type restriction: human
+Object matches type restriction: political organization
+
+URI: http://www.wikidata.org/entity/P102
+Label: member of political party
+Example: Deng Xiaoping; member of political party; Chinese Communist Party
+Subject matches type restriction: human
+Object matches type restriction: political party
+
+## Possible Predicate Replacements for Triple: http://www.wikidata.org/entity/Q567, http://www.wikidata.org/entity/P106, http://www.wikidata.org/entity/Q82955
+
+### Current Predicate Example:
+Property: http://www.wikidata.org/entity/P106
+Label: occupation
+Example: Yuri Gagarin; occupation; astronaut
+Super-properties (0):
+
+Sub-properties (1):
+
+URI: http://www.wikidata.org/entity/P3001
+Label: retirement age
+Example: Australia; retirement age; 67
+Subject matches type restriction: None
+Object matches type restriction: None
+
+
+5. Update predicate URI for "member of" with more relevant predicates "member of political party" and "parliamentary group" and build the triples:
+
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P102, URI-Label: member of political party); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P4100, URI-Label: parliamentary group); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106, URI-Label: occupation); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
+
 """)
 
 validation_and_output_prompt = PromptTemplate.from_template("""
@@ -169,6 +248,8 @@ To continue you could call one of the following agents:
     - Description: Maps the triples with URIs and refines the triples. 
                                                             
 Your Instruction: {agent_instruction}
+                                                            
+Call Trace: {call_trace}
 
 Last Call: {last_call}
 

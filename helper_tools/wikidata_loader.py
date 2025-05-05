@@ -140,6 +140,56 @@ def get_superclasses(uri):
     except Exception:
         return ["No Super-Class Found"]
 
+def get_property_example(property_uri):
+    """
+    Get an example usage of a Wikidata property (P1855 example)
+    
+    Args:
+        property_uri (str): The full URI of the property to find an example for
+        
+    Returns:
+        dict: Contains example subject and object with their labels,
+              or empty dict if no example found
+    """
+    # Extract the property ID from the URI
+    property_id = property_uri.split('/')[-1]
+    
+    # Ensure we have just the P-number
+    if not property_id.startswith('P'):
+        property_id = f"P{property_id}" if property_id.isdigit() else property_id
+    
+    # Construct the SPARQL query to find examples
+    query = f"""
+    SELECT ?exampleSubject ?exampleSubjectLabel ?exampleObject ?exampleObjectLabel
+    WHERE {{
+      # Find items that are examples of this property (P1855)
+      wd:{property_id} wdt:P1855 ?exampleSubject .
+      
+      # Find the actual triple using this property
+      ?exampleSubject wdt:{property_id} ?exampleObject .
+      
+      # Get labels
+      SERVICE wikibase:label {{
+        bd:serviceParam wikibase:language "en" .
+        ?exampleSubject rdfs:label ?exampleSubjectLabel .
+        ?exampleObject rdfs:label ?exampleObjectLabel .
+      }}
+    }}
+    LIMIT 1
+    """
+    
+    results = send_query(query)
+    
+    try:
+        binding = results["results"]["bindings"][0]
+        return {
+            "subject_uri": binding["exampleSubject"]["value"],
+            "subject_label": binding["exampleSubjectLabel"]["value"],
+            "object_uri": binding["exampleObject"]["value"],
+            "object_label": binding["exampleObjectLabel"]["value"],
+        }
+    except (IndexError, KeyError):
+        return {}
 
 if __name__ == "__main__":
-    print(get_types("http://www.wikidata.org/entity/Q174174"))
+    print(get_property_example("http://www.wikidata.org/entity/P17"))

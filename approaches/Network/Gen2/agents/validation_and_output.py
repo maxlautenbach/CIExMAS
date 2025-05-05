@@ -15,6 +15,10 @@ from approaches.Network.Gen2.prompts import validation_and_output_prompt as prom
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
+    # Update call_trace with current agent call information
+    agent_id = "validation_and_output"
+    agent_instruction = state.get("agent_instruction", "")
+    
     response_chain = prompt | model
 
     config = {}
@@ -32,7 +36,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Initialize the update dict with the last agent response
     update = {
         "last_response": content,
-        "last_call": "extractor",
+        "last_call": "validation_and_output",
+        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
     }
     goto = "validation_and_output"
 

@@ -73,7 +73,8 @@ for i in tqdm(range(len(docs))):
             "agent_instruction": "",
             "messages": [],
             "tool_input": "", 
-            "debug": False
+            "debug": False,
+            "call_trace": [],
         }, config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Gen2", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         
         # Assuming the final result is in the last message

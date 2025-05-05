@@ -36,7 +36,7 @@ def reset_state():
 
 if "relation_df" not in stss:
     split = "train"
-    number_of_samples = 10
+    number_of_samples = 11
     try:
         stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{split}-{number_of_samples}"]
     except KeyError:

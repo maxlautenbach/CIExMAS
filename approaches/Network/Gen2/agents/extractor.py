@@ -12,6 +12,10 @@ from approaches.Network.Gen2.prompts import extractor_prompt as prompt
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
+    # Update call_trace with current agent call information
+    agent_id = "extractor"
+    agent_instruction = state.get("agent_instruction", "")
+    
     response_chain = prompt | model
 
     config = {}
@@ -33,6 +37,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     update = {
         "last_response": content,
         "last_call": "extractor",
+        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
     }
     
     # If triples are found, parse them and add to the state

@@ -10,6 +10,10 @@ from qdrant_client.http import models
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     try:
+        # Update call_trace with current tool call information
+        tool_id = "uri_search_tool"
+        tool_input = state.get("tool_input", "")
+        
         search_terms = state["tool_input"].split("|")
         
         # Parse search terms and their modes
@@ -94,6 +98,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             "tool_input": "",
             "last_call": "URI Search Tool - INPUT: " + state["tool_input"],
             "last_response": search_response,
+            "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
         }
 
         if state["debug"]:
@@ -107,6 +112,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         state_update = {
             "tool_input": "",
             "agent_instruction": error_message,
+            "call_trace": state.get("call_trace", []) + [("uri_search_tool", state.get("tool_input", ""))]
         }
         if state["debug"]:
             state.update(state_update)
