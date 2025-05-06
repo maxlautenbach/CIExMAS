@@ -52,7 +52,7 @@ def upload_wikidata_element(uri, label, description=None):
     return None
 
 
-def upload_wikidata_elements(elements_dict):
+def upload_wikidata_elements(elements_dict, type):
     """
     Upload multiple Wikidata elements in bulk, processing in batches of 100.
     
@@ -77,7 +77,13 @@ def upload_wikidata_elements(elements_dict):
         collection_name="wikidata_descriptions",
         embedding=embeddings
     )
-    
+    qdrant_wikidata_examples = QdrantVectorStore(
+        client=client,
+        collection_name="wikidata_examples",
+        embedding=embeddings
+    )
+
+
     # Process elements in batches of 100
     batch_size = 100
     all_uris = list(elements_dict.keys())
@@ -93,6 +99,7 @@ def upload_wikidata_elements(elements_dict):
         
         label_docs = []
         description_docs = []
+        example_docs = []
         
         for uri in batch_uris:
             if "^^" in uri:
@@ -101,20 +108,26 @@ def upload_wikidata_elements(elements_dict):
             content = elements_dict[uri]
             label = content.get('label')
             description = content.get('description')
+            example = content.get('example')
             
             # Determine element type from URI
             element_type = "predicate" if "entity/P" in uri else "entity" if "entity/Q" in uri else "unknown"
             
             if not description:
                 description = get_description(uri)
+
             
             # Create document objects
             label_doc = Document(page_content=label, metadata={"uri": uri, "description": description, "type": element_type})
             description_doc = Document(page_content=description, metadata={"uri": uri, "label": label, "type": element_type})
-            
+
             label_docs.append(label_doc)
             description_docs.append(description_doc)
-            
+
+            if type == "predicates" and example != "":
+                example_doc = Document(page_content=example, metadata={"uri": uri, "label": label, "description": description, "type": element_type})
+                example_docs.append(example_doc)
+
             # Track the upload in Redis with type information
             element_info_upload(uri, label, description)
         
@@ -123,12 +136,16 @@ def upload_wikidata_elements(elements_dict):
             qdrant_wikidata_labels.add_documents(label_docs)
         if description_docs:
             qdrant_wikidata_descriptions.add_documents(description_docs)
+        if example_docs:
+            qdrant_wikidata_examples.add_documents(example_docs)
     
     return None
 
 
 def init_collections():
     client = QdrantClient(os.getenv("QDRANT_URL"), port=os.getenv("QDRANT_PORT"), api_key=os.getenv("QDRANT_API_KEY"))
+    client.create_collection(collection_name="wikidata_examples",
+                             vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
     client.create_collection(collection_name="wikidata_labels",
                              vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
     client.create_collection(collection_name="wikidata_descriptions",
@@ -142,13 +159,15 @@ def clear_collections():
     # Delete the collection
     client.delete_collection(collection_name="wikidata_labels")
     client.delete_collection(collection_name="wikidata_descriptions")
+    client.delete_collection(collection_name="wikidata_examples")
 
     client.create_collection(collection_name="wikidata_labels",
                              vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
 
     client.create_collection(collection_name="wikidata_descriptions",
                              vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
-
+    client.create_collection(collection_name="wikidata_examples",
+                             vectors_config=models.VectorParams(size=1024, distance=models.Distance.COSINE))
     # Clear Redis
     clear_redis()
 

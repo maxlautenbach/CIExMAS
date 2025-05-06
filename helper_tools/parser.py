@@ -11,6 +11,8 @@ import gzip
 from dotenv import load_dotenv
 import git
 
+from helper_tools.wikidata_loader import get_property_example
+
 repo = git.Repo(search_parent_directories=True)
 
 load_dotenv(repo.working_dir + "/.env")
@@ -68,7 +70,7 @@ def upload_parsed_data(relation_df, entity_df):
     # Upload entities in bulk
     if entity_elements:
         print(f"Uploading {len(entity_elements)} entities to {os.getenv('VECTOR_STORE')} in batches...")
-        upload_wikidata_elements(entity_elements)
+        upload_wikidata_elements(entity_elements, "entity")
         print(f"Entity upload complete. {len(entity_elements)} new entities uploaded, {already_uploaded_entities} entities were already in the database.")
     else:
         print(f"No new entities to upload. {already_uploaded_entities} entities were already in the database.")
@@ -93,17 +95,20 @@ def upload_parsed_data(relation_df, entity_df):
             
         # Get description for the predicate
         description = get_description(uri)
+        property_example = get_property_example(uri)
+        example = f"{property_example['subject_label']} {label} {property_example['object_label']}" if property_example else ""
         
         # Add to bulk upload dictionary
         predicate_elements[uri] = {
             'label': label,
-            'description': description
+            'description': description,
+            'example': example
         }
     
     # Upload predicates in bulk
     if predicate_elements:
         print(f"Uploading {len(predicate_elements)} predicates to {os.getenv('VECTOR_STORE')} in batches...")
-        upload_wikidata_elements(predicate_elements)
+        upload_wikidata_elements(predicate_elements, "predicates")
         print(f"Predicate upload complete. {len(predicate_elements)} new predicates uploaded, {already_uploaded_predicates} predicates were already in the database.")
     else:
         print(f"No new predicates to upload. {already_uploaded_predicates} predicates were already in the database.")
@@ -201,5 +206,5 @@ def synthie_parser(split, number_of_samples=10):
 
 
 if (__name__ == "__main__"):
-    relation_df, entity_df, docs = synthie_parser("test", 5)
+    relation_df, entity_df, docs = synthie_parser("test", 50)
     print("Test Parsing Finished")

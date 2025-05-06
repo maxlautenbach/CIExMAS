@@ -72,8 +72,8 @@ def few_shot_generator(num_docs_to_display=3, target_agent="extractor"):
 if __name__ == "__main__":
     # Default number of documents to display is 3
     # This can be changed by passing a number as a command-line argument
-    num_docs = 3
-    agent_type = "uri_mapping"  # Default agent type
+    num_docs = 10
+    agent_type = "extractor"  # Default agent type
     
     if len(sys.argv) > 1:
         try:

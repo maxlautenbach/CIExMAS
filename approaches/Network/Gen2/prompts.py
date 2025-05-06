@@ -43,6 +43,74 @@ Diesel_engine (Types: [reciprocating engine,automotive product]); discoverer or 
 
 --------------------------------------------------------------------------------
 
+Text: Johan and Peewit is a Belgian comic series created by Peyo. It is written in French. The highest judicial authority in Belgium is the Court of Cassation.
+<triples>
+Johan_and_Peewit (Types: [comic book series]); country of origin; Belgium (Types: [country,federation,sovereign state])
+Johan_and_Peewit (Types: [comic book series]); language of work or name; French_language (Types: [Oïl,Southern European language,natural language,language,modern language])
+Johan_and_Peewit (Types: [comic book series]); author; Peyo (Types: [Human])
+Belgium (Types: [country,federation,sovereign state]); highest judicial authority; Court_of_Cassation_(Belgium) (Types: [Supreme_court,court of cassation])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: "Before the Winter Chill" is a 2013 French drama film directed by Philippe Claudel. The film was produced by France 3 and TF1 Group.
+<triples>
+Before_the_Winter_Chill (Types: [Film]); production company; France_3 (Types: [television station,television channel])
+Before_the_Winter_Chill (Types: [Film]); genre; Drama_(film_and_television) (Types: [Film,drama fiction,film genre])
+Before_the_Winter_Chill (Types: [Film]); production company; TF1_Group (Types: [organization])
+Before_the_Winter_Chill (Types: [Film]); director; Philippe_Claudel (Types: [Human])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: Lyeth v. Hoey was a case heard by the Supreme Court of the United States. The Supreme Court is the highest court in the United States, and is located in Washington, D.C.
+<triples>
+Lyeth_v._Hoey (Types: [Legal_case]); court; Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court])
+Lyeth_v._Hoey (Types: [Legal_case]); country; United_States (Types: [country,federal republic,superpower,constitutional republic,sovereign state,democratic republic])
+Lyeth_v._Hoey (Types: [Legal_case]); instance of; Legal_case (Types: [conflict,legal transaction,work,strife,trial,legal concept])
+Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); instance of; Supreme_court (Types: [appellate court])
+Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); different from; State_supreme_court (Types: [court,Supreme_court,United States state court])
+Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); headquarters location; Washington,_D.C. (Types: [federal capital])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: The Oxford Companion to Classical Literature is a reference work in the series of Oxford Companions and was written by Paul Harvey (diplomat), who was educated at Rugby School. It was published by Oxford University Press and is a Reference work.
+<triples>
+The_Oxford_Companion_to_Classical_Literature (Types: [written work]); part of the series; Oxford_Companions (Types: [Book_series])
+The_Oxford_Companion_to_Classical_Literature (Types: [written work]); author; Paul_Harvey_(diplomat) (Types: [Human])
+The_Oxford_Companion_to_Classical_Literature (Types: [written work]); publisher; Oxford_University_Press (Types: [organization,university press,book publisher,publisher,open-access publisher])
+The_Oxford_Companion_to_Classical_Literature (Types: [written work]); genre; Reference_work (Types: [document,project,publication,tertiary source,learning material,written work,literary genre])
+Oxford_Companions (Types: [Book_series]); instance of; Book_series (Types: [serial,series of creative works,group of manifestations,book set,written work])
+Paul_Harvey_(diplomat) (Types: [Human]); educated at; Rugby_School (Types: [boarding school,public school,independent school])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: The OpenFDA is an Open Data portal by the Food and Drug Administration.
+<triples>
+Food_and_Drug_Administration (Types: [United States federal agency,food safety organization]); Open Data portal; OpenFDA (Types: [])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: Česlovas Kudaba is a professor at Vilnius University.
+<triples>
+Česlovas_Kudaba (Types: [Human]); employer; Vilnius_University (Types: [public university,Business,open-access publisher])
+</triples>
+
+--------------------------------------------------------------------------------
+
+Text: Kingsgrove North High School is located in Kingsgrove, New South Wales, Australia, where the Ndjébbana language is used.
+<triples>
+Kingsgrove_North_High_School (Types: [high school]); located in the administrative territorial entity; Kingsgrove (Types: [suburb])
+Kingsgrove_North_High_School (Types: [high school]); located in the administrative territorial entity; New_South_Wales (Types: [state of Australia])
+Kingsgrove_North_High_School (Types: [high school]); country; Australia (Types: [country,federation,sovereign state])
+Australia (Types: [country,federation,sovereign state]); language used; Ndjébbana_language (Types: [Maningrida,language,modern language])
+</triples>
+
+--------------------------------------------------------------------------------
+
 END OF EXAMPLE OUTPUT
 
 Text: {text}
@@ -65,25 +133,12 @@ To process the task you have access to the following tools:
 - URI Search Tool
     - ID: uri_search_tool
     - Description: Takes a |-separated list of search terms with search and optional filter modes. Returns the 3 most similar URIs per term.
-    - Input format: Term1([SearchMode1-FilterMode1]|Term2[SearchMode2-FilterMode2]...
-    - Search Modes:
-        - 'LABEL': Search using rdfs:label (recommended for first attempts)
-        - 'DESCR': Search using a textual description (especially useful for predicates/entities not found via label)
+    - Input format: Term1[FilterMode1]|Term2[FilterMode2]...
     - Filter Modes:
-        - '-Q': Filter for entities. Include the expected type of the entity in the search term. I.e. 'Angela Merkel (human)[LABEL-Q]'
-        - '-P': Filter for predicates
-    - Example: <input>Angela Merkel (human)[LABEL-Q]|chancellor of Germany from 2005 to 2021[DESCR-Q]|work location[LABEL-P]</input>
-
-- Network Traversal Tool
-    - ID: network_traversal_tool
-    - Description: Returns super- and sub-properties of given predicate URIs using SPARQL.
-    - Input: RDF triples in turtle format containing the predicates to explore
-    - Example: 
-      <input>
-      @prefix wd: <http://www.wikidata.org/entity/>.
-      wd:Q123 wd:P166 wd:Q456.
-      wd:Q789 wd:P361 wd:Q101.
-      </input>
+        - 'Q': Filter for entities. Include the expected type of the entity in the search term. I.e. 'Angela Merkel (human)[Q]'
+        - 'X' (Recommended to search for predicates): Filter for predicate. Search term must be the whole triples as a sentence, as this mode similarity searches between the whole triples as a sentence and an predicate example sentence. I.e. search for 'member of political party' -> <tool_input>Angela Merkel is member of the political party CDU[PX]</tool_input>
+        - 'P': Filter for predicate. Similarity search between rdfs:label of the predicate in the knowledge graph and the search term.
+    - Example: <input>Angela Merkel (human)[Q]|CDU (political party)[Q]|Angela Merkel is member of the political party CDU[PX]</input>
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -100,20 +155,15 @@ Guidelines:
 - Use the URI Search Tool to find URIs for subjects and objects. The results will be written into Last Agent/Tool Response.
 - Only change or add the URIs, URI-Labels and URI-Descriptions. Strictly use them from the search results.
 - Call yourself, if you need to refine the triples further.
-- Check if the description of the predicate matches the context of the triple. If not, save the intermediate results and search for the specific predicate using the URI Search Tool and alternative search terms.
-- Use the Network Traversal Tool to find super- and sub-properties of predicates.
-  - The Network Traversal Tool input should be valid turtle format RDF triples containing the predicates you want to explore.
-  - You can include one or more predicates in a single turtle document.
-  - The tool will extract all predicates from the triples and return their super- and sub-properties.
-  - Check if a sub-property can be implied by the text. (I.e. Angela Merkel was member of the Kabinett Kohl V. -> possible replacement predicate: family -> family can not be implied by the text, so the current predicate is taken.) 
+- Check if the example and description of the predicate matches the context of the triple. If not, save the intermediate results and search for the specific predicate using the URI Search Tool and alternative search terms.
 - Save intermediate results using the mapping output.
 
 
 Chain of Thought:
-1. Get first URI Mapping
-2. Check if the results are satisfying and are matching the text and the triples, if not, refine the search terms and call the URI Search Tool again.
-3. Call the Network Traversal Tool with predicates formatted as turtle triples.
-4. Check if the results can be used. If yes, build them into the triples and call the next agent.
+1. Get first URI Mapping by search for all subject, predicate and object URIs using the URI Search Tool. Use the filter modes 'Q' for subjects and objects and 'PX' for predicates.
+2. Save the intermediate results using the mapping output.
+3. Check if the results are satisfying and are matching the text and the triples, if not, refine the search terms, consider a different mode for predicates and call the URI Search Tool again.
+4. Check if the results are final. If yes, build them into the triples and call the next agent.
 
 Your Instruction: {agent_instruction}
                                                                  
@@ -161,83 +211,6 @@ Example Network Traversal Tool Input:
 wd:Q4711171 wd:P149 wd:Q850107.
 wd:Q4711171 wd:P84 wd:Q47035008.
 </tool_input>
-
-Example Processing:
-Text: The politician Angela Merkel is member of the CDU.
-Triples: 
-Angela_Merkel (Types: [politician]); member of; CDU (Types: [political party])
-Angela_Merkel (Types: [politician]); occupation; politician (Types: [profession])
-
-1. URI Search with Instruction: Angela Merkel (human)[LABEL-Q]|CDU (political party)[LABEL-Q]|politician (profession)[LABEL-Q]|member of[LABEL-P]|occupation[LABEL-P]
-2. Built in pre-liminary triples based on the URI Search Tool results:
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P463, URI-Label: 'member of', URI-Description: 'organization, club or musical group to which the subject belongs. Do not use for membership in ethnic or social groups, nor for holding a political position, such as a member of parliament (use P39 for that)'); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106, URI-Label: 'occupation', URI-Description: 'occupation of a person; see also "field of work" (Property:P101), "position held" (Property:P39)'); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
-
-3. Network Traversal Search with Instruction:
-@prefix wd: <http://www.wikidata.org/entity/>.
-wd:Q567 wd:P463 wd:Q49762.
-wd:Q567 wd:P106 wd:Q82955.
-
-4. Network Traversal Search brought up: 
-
-Possible Predicate Replacements:
-
-## Possible Predicate Replacements for Triple: http://www.wikidata.org/entity/Q567, http://www.wikidata.org/entity/P463, http://www.wikidata.org/entity/Q49762
-
-### Current Predicate Example:
-Property: http://www.wikidata.org/entity/P463
-Label: member of
-Example: Diana Ross; member of; The Supremes
-Super-properties (1):
-
-URI: http://www.wikidata.org/entity/P361
-Label: part of
-Example: Lake Ontario; part of; Great Lakes
-Subject matches type restriction: None
-Object matches type restriction: None
-
-Sub-properties (3):
-
-URI: http://www.wikidata.org/entity/P4100
-Label: parliamentary group
-Example: Matteo Renzi; parliamentary group; Italia Viva
-Subject matches type restriction: human
-Object matches type restriction: political party
-
-URI: http://www.wikidata.org/entity/P102
-Label: member of political party
-Example: Deng Xiaoping; member of political party; Chinese Communist Party
-Subject matches type restriction: human
-Object matches type restriction: political organization
-
-URI: http://www.wikidata.org/entity/P102
-Label: member of political party
-Example: Deng Xiaoping; member of political party; Chinese Communist Party
-Subject matches type restriction: human
-Object matches type restriction: political party
-
-## Possible Predicate Replacements for Triple: http://www.wikidata.org/entity/Q567, http://www.wikidata.org/entity/P106, http://www.wikidata.org/entity/Q82955
-
-### Current Predicate Example:
-Property: http://www.wikidata.org/entity/P106
-Label: occupation
-Example: Yuri Gagarin; occupation; astronaut
-Super-properties (0):
-
-Sub-properties (1):
-
-URI: http://www.wikidata.org/entity/P3001
-Label: retirement age
-Example: Australia; retirement age; 67
-Subject matches type restriction: None
-Object matches type restriction: None
-
-
-5. Update predicate URI for "member of" with more relevant predicates "member of political party" and "parliamentary group", because the CDU is a political party and a political organization and those predicate are especially restricted to this type. In addition, the context of the text/triples matches the predicate:
-
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P102, URI-Label: member of political party); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P4100, URI-Label: parliamentary group); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106, URI-Label: occupation); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
 
 """)
 

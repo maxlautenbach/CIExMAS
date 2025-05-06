@@ -50,7 +50,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     if goto_match:
         goto = goto_match.group(1).strip()
     else:
-        update["agent_instruction"] =  "You did not provide a valid goto instruction. Please provide a valid goto instruction."
+        update["agent_instruction"] = "You did not provide a valid goto instruction. Please provide a valid goto instruction."
         goto = "extractor"
 
     if state["debug"]:

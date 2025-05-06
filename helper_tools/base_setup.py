@@ -130,6 +130,12 @@ if os.getenv("VECTOR_STORE") == "qdrant":
         embedding=embeddings
     )
 
+    example_vector_store = QdrantVectorStore(
+        client=client,
+        collection_name="wikidata_examples",
+        embedding=embeddings
+    )
+
 else:
     vector_store = FAISS(
         embedding_function=embeddings,
