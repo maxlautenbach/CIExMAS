@@ -59,7 +59,7 @@ In addition, return which agent to call next:
 """)
 
 uri_mapping_and_refinement_prompt = PromptTemplate.from_template("""
-You are an expert in creating uri mappings and refining triples (i.e. by replacing predicates for more specific ones). Therefore, you will receive a text and a set of triples extracted from the text. Out of this context you have to search URIs for subjects, predicates and objects. 
+You are an expert in creating uri mappings and refining triples. Therefore, you will receive a text and a set of triples extracted from the text. Out of this context you have to search URIs for subjects, predicates and objects. 
 
 To process the task you have access to the following tools:
 - URI Search Tool
@@ -98,20 +98,25 @@ In addition, you can decide which agent to call next, when you are ready with yo
     
 Guidelines:
 - Use the URI Search Tool to find URIs for subjects and objects. The results will be written into Last Agent/Tool Response.
+- Only change or add the URIs, URI-Labels and URI-Descriptions. Strictly use them from the search results.
 - Call yourself, if you need to refine the triples further.
-- Refine the search terms, if the results are not satisfying.
+- Check if the description of the predicate matches the context of the triple. If not, save the intermediate results and search for the specific predicate using the URI Search Tool and alternative search terms.
 - Use the Network Traversal Tool to find super- and sub-properties of predicates.
   - The Network Traversal Tool input should be valid turtle format RDF triples containing the predicates you want to explore.
   - You can include one or more predicates in a single turtle document.
   - The tool will extract all predicates from the triples and return their super- and sub-properties.
+  - Check if a sub-property can be implied by the text. (I.e. Angela Merkel was member of the Kabinett Kohl V. -> possible replacement predicate: family -> family can not be implied by the text, so the current predicate is taken.) 
 - Save intermediate results using the mapping output.
+
 
 Chain of Thought:
 1. Get first URI Mapping
-2. Check if the results are satisfying, if not, refine the search terms and call the URI Search Tool again.
+2. Check if the results are satisfying and are matching the text and the triples, if not, refine the search terms and call the URI Search Tool again.
 3. Call the Network Traversal Tool with predicates formatted as turtle triples.
 4. Check if the results can be used. If yes, build them into the triples and call the next agent.
 
+Your Instruction: {agent_instruction}
+                                                                 
 Call Trace: {call_trace}
                                                                  
 Last Call: {last_call}
@@ -132,9 +137,9 @@ AND/OR
 
 MAPPING OUTPUT:
 <triples>
-Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1); Predicate1; Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1)
-Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2); Predicate2; Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2)
-Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3); Predicate3; Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3)
+Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1); Predicate1 (URI: UriP1, URI-Label: Uri-LabelP1, URI-Description: URI-DescriptionP1); Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1)
+Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2); Predicate2 (URI: UriP2, URI-Label: Uri-LabelP2, URI-Description: URI-DescriptionP2); Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2)
+Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3); Predicate3 (URI: UriP3, URI-Label: Uri-LabelP3, URI-Description: URI-DescriptionP3); Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3)
 </triples>
 
 AND/OR
@@ -145,8 +150,8 @@ AGENT CALL:
 Example Mapping Output:
 Text: The Albert S. Sholes House is a bungalow designed by architect Richard H. Martin Jr.
 <triples>
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architectural style (URI: http://www.wikidata.org/entity/P149); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107, URI-Label: Bungalow)
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architect (URI: http://www.wikidata.org/entity/P84); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008, URI-Label: Richard_H._Martin_Jr.)
+Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architectural style (URI: http://www.wikidata.org/entity/P149, URI-Label: 'architectural style', URI-Description: 'architectural style of a structure'); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107, URI-Label: Bungalow)
+Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architect (URI: http://www.wikidata.org/entity/P84, URI-Label: 'architect', URI-Description: 'person or architectural firm responsible for designing this building'); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008, URI-Label: Richard_H._Martin_Jr.)
 </triples>
 
 Example Network Traversal Tool Input:
@@ -164,9 +169,9 @@ Angela_Merkel (Types: [politician]); member of; CDU (Types: [political party])
 Angela_Merkel (Types: [politician]); occupation; politician (Types: [profession])
 
 1. URI Search with Instruction: Angela Merkel (human)[LABEL-Q]|CDU (political party)[LABEL-Q]|politician (profession)[LABEL-Q]|member of[LABEL-P]|occupation[LABEL-P]
-2. Built in pre-liminary triples:
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P463); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
-Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
+2. Built in pre-liminary triples based on the URI Search Tool results:
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P463, URI-Label: 'member of', URI-Description: 'organization, club or musical group to which the subject belongs. Do not use for membership in ethnic or social groups, nor for holding a political position, such as a member of parliament (use P39 for that)'); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
+Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); occupation (URI:http://www.wikidata.org/entity/P106, URI-Label: 'occupation', URI-Description: 'occupation of a person; see also "field of work" (Property:P101), "position held" (Property:P39)'); politician (Types: [politician], URI: http://www.wikidata.org/entity/Q82955, URI-Label: politician)
 
 3. Network Traversal Search with Instruction:
 @prefix wd: <http://www.wikidata.org/entity/>.
@@ -228,7 +233,7 @@ Subject matches type restriction: None
 Object matches type restriction: None
 
 
-5. Update predicate URI for "member of" with more relevant predicates "member of political party" and "parliamentary group" and build the triples:
+5. Update predicate URI for "member of" with more relevant predicates "member of political party" and "parliamentary group", because the CDU is a political party and a political organization and those predicate are especially restricted to this type. In addition, the context of the text/triples matches the predicate:
 
 Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P102, URI-Label: member of political party); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
 Angela_Merkel (Types: [politician], URI: http://www.wikidata.org/entity/Q567, URI-Label: Angela Merkel); member of (URI:http://www.wikidata.org/entity/P4100, URI-Label: parliamentary group); Christian Democratic Union (Types: [political party], URI: http://www.wikidata.org/entity/Q49762, URI-Label: Christian Democratic Union)
@@ -260,7 +265,10 @@ Text: {text}
 Triples {triples}
 
 Guidelines:
-- Stricly use the URIs that are provided in the triples you get later in this prompt (especially for predicates).
+- Strictly use the URIs that are provided in the triples you get later in this prompt (especially for predicates).
+- Each triple is in the following format: Subject (Types: [Type A], URI: UriS, URI-Label: Uri-LabelS); Predicate (URI: UriP, URI-Label: Uri-LabelP, URI-Description: URI-DescriptionP); Object (Types: [Type B], URI: UriO, URI-Label: Uri-LabelO)
+- Every field starting with "URI" is the corresponding URI, that was found by the URI Search Tool.
+- Check if the description of the predicate matches the context of the triple. If not, you can call one of the mentioned agents to refine the triples.
 
 Your output should be in one of the following formats:
 
@@ -272,6 +280,7 @@ OR
 
 AGENT CALL:
 <goto>ONE OF [extractor,uri_mapping_and_refinement]</goto>
+<agent_instruction>INSERT YOUR AGENT INSTRUCTION HERE</agent_instruction>
 
 EXAMPLE FINAL OUTPUT:
 Text: The Albert S. Sholes House is a bungalow designed by architect Richard H. Martin Jr.

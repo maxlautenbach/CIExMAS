@@ -178,5 +178,11 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2258.xlsx": {
         "short_description": "First Attempt"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1115.xlsx": {
+        "short_description": "NTT-PE-SU"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1117.xlsx": {
+        "short_description": "NTT-PE-SU"
     }
 }

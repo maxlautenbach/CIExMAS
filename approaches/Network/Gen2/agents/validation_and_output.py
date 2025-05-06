@@ -39,6 +39,12 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         "last_call": "validation_and_output",
         "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
     }
+    
+    agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
+    if agent_instruction_match:
+        agent_instruction = agent_instruction_match.group(1).strip()
+        update["agent_instruction"] = agent_instruction
+
     goto = "validation_and_output"
 
     # If triples are found, parse them and add to the state
