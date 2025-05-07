@@ -85,7 +85,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./approaches/Network/Gen2/slurm/agent_system.py test 50 'NTT-PE-SU'
+python3 ./approaches/Network/Gen2/slurm/agent_system.py test 50 'R/UST-D/NTT'
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."
