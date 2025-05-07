@@ -24,10 +24,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             
             # Extract mode from term using regex
             if "[" in term and "]" in term:
-                mode_match = re.search(r'\[([QP]|PX)\]', term)
+                mode_match = re.search(r'\[([QPX])\]', term)
                 if mode_match:
                     mode = mode_match.group(1)
-                    clean_term = re.sub(r'\[([QP]|PX)\]', '', term).strip()
+                    clean_term = re.sub(r'\[([QPX])\]', '', term).strip()
             
             # Default behavior if no mode is specified
             if not mode:
@@ -71,13 +71,13 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     search_response += f"     Description: {doc.metadata['description']}\n"
                     search_response += f"     Similarity Score: {sim_score}\n"
                     
-            elif mode == 'PX':
-                # Search in examples collection - this is for predicate examples
+            elif mode == 'X':
+                # Search in examples collection
                 results = example_vector_store.similarity_search_with_score(
                     clean_term, 
                     k=3
                 )
-                search_response += f'Most Similar Search Results for "{clean_term}" - Search Mode [PX]:\n'
+                search_response += f'Most Similar Search Results for "{clean_term}" - Search Mode [X]:\n'
                 
                 for idx, (doc, sim_score) in enumerate(results):
                     search_response += f"  {idx+1}. Label: {doc.metadata['label']}\n"

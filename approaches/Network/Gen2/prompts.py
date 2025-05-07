@@ -24,41 +24,31 @@ Albert_S._Sholes_House (Types: [house]); architect; Richard_H._Martin_Jr. (Types
 
 --------------------------------------------------------------------------------
 
-Text: Krasnoyarsky District, Astrakhan Oblast is located in Astrakhan Oblast and uses Samara Time and Moscow Time.
-<triples>
-Krasnoyarsky_District,_Astrakhan_Oblast (Types: [municipal district]); located in the administrative territorial entity; Astrakhan_Oblast (Types: [oblast of Russia,administrative region])
-Krasnoyarsky_District,_Astrakhan_Oblast (Types: [municipal district]); located in time zone; Samara_Time (Types: [time zone,local mean time])
-Krasnoyarsky_District,_Astrakhan_Oblast (Types: [municipal district]); located in time zone; Moscow_Time (Types: [time zone])
-</triples>
-
---------------------------------------------------------------------------------
-
 Text: The Tata Aria, a car made by Tata Motors, is powered by a diesel engine, a type of internal combustion engine invented by Rudolf Diesel.
 <triples>
-Tata_Aria (Types: [Car,automobile model]); powered by; Diesel_engine (Types: [reciprocating engine,automotive product])
+Tata_Aria (Types: [Car,automobile model]); instance of; Car (Types: [motor vehicle,road vehicle,multi-track vehicle])
 Tata_Aria (Types: [Car,automobile model]); brand; Tata_Motors (Types: [automobile manufacturer,public company,Business])
-Tata_Aria (Types: [Car,automobile model]); subclass of; Car (Types: [motor vehicle,road vehicle,multi-track vehicle])
+Tata_Aria (Types: [Car,automobile model]); powered by; Diesel_engine (Types: [reciprocating engine,automotive product])
 Diesel_engine (Types: [reciprocating engine,automotive product]); discoverer or inventor; Rudolf_Diesel (Types: [Human])
 </triples>
 
 --------------------------------------------------------------------------------
 
-Text: Johan and Peewit is a Belgian comic series created by Peyo. It is written in French. The highest judicial authority in Belgium is the Court of Cassation.
+Text: Johan and Peewit is a Belgian comic series created by Peyo. It is written in French.
 <triples>
 Johan_and_Peewit (Types: [comic book series]); country of origin; Belgium (Types: [country,federation,sovereign state])
-Johan_and_Peewit (Types: [comic book series]); language of work or name; French_language (Types: [Oïl,Southern European language,natural language,language,modern language])
 Johan_and_Peewit (Types: [comic book series]); author; Peyo (Types: [Human])
-Belgium (Types: [country,federation,sovereign state]); highest judicial authority; Court_of_Cassation_(Belgium) (Types: [Supreme_court,court of cassation])
+Johan_and_Peewit (Types: [comic book series]); language of work or name; French_language (Types: [Oïl,Southern European language,natural language,language,modern language])
 </triples>
 
 --------------------------------------------------------------------------------
 
 Text: "Before the Winter Chill" is a 2013 French drama film directed by Philippe Claudel. The film was produced by France 3 and TF1 Group.
 <triples>
-Before_the_Winter_Chill (Types: [Film]); production company; France_3 (Types: [television station,television channel])
 Before_the_Winter_Chill (Types: [Film]); genre; Drama_(film_and_television) (Types: [Film,drama fiction,film genre])
-Before_the_Winter_Chill (Types: [Film]); production company; TF1_Group (Types: [organization])
 Before_the_Winter_Chill (Types: [Film]); director; Philippe_Claudel (Types: [Human])
+Before_the_Winter_Chill (Types: [Film]); production company; France_3 (Types: [television station,television channel])
+Before_the_Winter_Chill (Types: [Film]); production company; TF1_Group (Types: [organization])
 </triples>
 
 --------------------------------------------------------------------------------
@@ -69,7 +59,6 @@ Lyeth_v._Hoey (Types: [Legal_case]); court; Supreme_Court_of_the_United_States (
 Lyeth_v._Hoey (Types: [Legal_case]); country; United_States (Types: [country,federal republic,superpower,constitutional republic,sovereign state,democratic republic])
 Lyeth_v._Hoey (Types: [Legal_case]); instance of; Legal_case (Types: [conflict,legal transaction,work,strife,trial,legal concept])
 Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); instance of; Supreme_court (Types: [appellate court])
-Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); different from; State_supreme_court (Types: [court,Supreme_court,United States state court])
 Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); headquarters location; Washington,_D.C. (Types: [federal capital])
 </triples>
 
@@ -87,26 +76,9 @@ Paul_Harvey_(diplomat) (Types: [Human]); educated at; Rugby_School (Types: [boar
 
 --------------------------------------------------------------------------------
 
-Text: The OpenFDA is an Open Data portal by the Food and Drug Administration.
-<triples>
-Food_and_Drug_Administration (Types: [United States federal agency,food safety organization]); Open Data portal; OpenFDA (Types: [])
-</triples>
-
---------------------------------------------------------------------------------
-
 Text: Česlovas Kudaba is a professor at Vilnius University.
 <triples>
 Česlovas_Kudaba (Types: [Human]); employer; Vilnius_University (Types: [public university,Business,open-access publisher])
-</triples>
-
---------------------------------------------------------------------------------
-
-Text: Kingsgrove North High School is located in Kingsgrove, New South Wales, Australia, where the Ndjébbana language is used.
-<triples>
-Kingsgrove_North_High_School (Types: [high school]); located in the administrative territorial entity; Kingsgrove (Types: [suburb])
-Kingsgrove_North_High_School (Types: [high school]); located in the administrative territorial entity; New_South_Wales (Types: [state of Australia])
-Kingsgrove_North_High_School (Types: [high school]); country; Australia (Types: [country,federation,sovereign state])
-Australia (Types: [country,federation,sovereign state]); language used; Ndjébbana_language (Types: [Maningrida,language,modern language])
 </triples>
 
 --------------------------------------------------------------------------------
@@ -133,12 +105,12 @@ To process the task you have access to the following tools:
 - URI Search Tool
     - ID: uri_search_tool
     - Description: Takes a |-separated list of search terms with search and optional filter modes. Returns the 3 most similar URIs per term.
-    - Input format: Term1[FilterMode1]|Term2[FilterMode2]...
-    - Filter Modes:
-        - 'Q': Filter for entities. Include the expected type of the entity in the search term. I.e. 'Angela Merkel (human)[Q]'
-        - 'X' (Recommended to search for predicates): Filter for predicate. Search term must be the whole triples as a sentence, as this mode similarity searches between the whole triples as a sentence and an predicate example sentence. I.e. search for 'member of political party' -> <tool_input>Angela Merkel is member of the political party CDU[PX]</tool_input>
-        - 'P': Filter for predicate. Similarity search between rdfs:label of the predicate in the knowledge graph and the search term.
-    - Example: <input>Angela Merkel (human)[Q]|CDU (political party)[Q]|Angela Merkel is member of the political party CDU[PX]</input>
+    - Input format: Term1[SearchMode1]|Term2[SearchMode2]...
+    - Search Modes:
+        - 'Q': Searches for entities. The term must include the expected type of the entity. I.e. 'Angela Merkel (human)[Q]'
+        - 'X' (Recommended for predicates): Search for predicate example triples. Term must be the whole triples as a sentence. I.e. <tool_input>Angela Merkel is member of the political party CDU[X]</tool_input>
+        - 'P': Searches for predicate labels - Do not include the whole triple. I.e. <tool_input>member of the political party[P]</tool_input>
+    - Example: <input>Angela Merkel (human)[Q]|CDU (political party)[Q]|Angela Merkel is member of the political party CDU[X]</input>
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -152,18 +124,15 @@ In addition, you can decide which agent to call next, when you are ready with yo
     - Description: Maps and refines the triples with URIs.
     
 Guidelines:
-- Use the URI Search Tool to find URIs for subjects and objects. The results will be written into Last Agent/Tool Response.
-- Only change or add the URIs, URI-Labels and URI-Descriptions. Strictly use them from the search results.
-- Call yourself, if you need to refine the triples further.
-- Check if the example and description of the predicate matches the context of the triple. If not, save the intermediate results and search for the specific predicate using the URI Search Tool and alternative search terms.
-- Save intermediate results using the mapping output.
-
+- Use the URI Search Tool to find URIs for subjects and objects. The results of the tool will be written into Last Agent/Tool Response.
+- Only change or add the URIs, URI-Labels and URI-Descriptions fields. Strictly use them from the search results.
 
 Chain of Thought:
-1. Get first URI Mapping by search for all subject, predicate and object URIs using the URI Search Tool. Use the filter modes 'Q' for subjects and objects and 'PX' for predicates.
-2. Save the intermediate results using the mapping output.
-3. Check if the results are satisfying and are matching the text and the triples, if not, refine the search terms, consider a different mode for predicates and call the URI Search Tool again.
-4. Check if the results are final. If yes, build them into the triples and call the next agent.
+1. Get first URI Mapping by search for all subject, predicate and object URIs using the URI Search Tool. Use the filter modes 'Q' for subjects and objects and 'X' (not 'P' for the first search) for predicates.
+2. The search results must be saved into the mapping output.
+3. Check if the results are satisfying and are matching the text and the triples. If not, add a note to the non-found entity/predicate and search using alternative search terms or an alternative search mode 'P' for non-found predicates. Stay in Step 3. If yes, go to Step 4.
+4. If a predicate URI was found using [P] mode, make a second search with the full triple using the label from [P] mode using the [X] mode.
+5. Check if the results are final. If yes, build them into the triples and call the next agent.
 
 Your Instruction: {agent_instruction}
                                                                  
@@ -187,9 +156,9 @@ AND/OR
 
 MAPPING OUTPUT:
 <triples>
-Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1); Predicate1 (URI: UriP1, URI-Label: Uri-LabelP1, URI-Description: URI-DescriptionP1); Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1)
-Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2); Predicate2 (URI: UriP2, URI-Label: Uri-LabelP2, URI-Description: URI-DescriptionP2); Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2)
-Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3); Predicate3 (URI: UriP3, URI-Label: Uri-LabelP3, URI-Description: URI-DescriptionP3); Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3)
+Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1, Note: NoteS1); Predicate1 (URI: UriP1, URI-Label: Uri-LabelP1, URI-Description: URI-DescriptionP1, Note: NoteP1); Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1, Note: NoteO1)
+Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2, Note: NoteS2); Predicate2 (URI: UriP2, URI-Label: Uri-LabelP2, URI-Description: URI-DescriptionP2, Note: NoteP2); Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2, Note: NoteO2)
+Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3, Note: NoteS3); Predicate3 (URI: UriP3, URI-Label: Uri-LabelP3, URI-Description: URI-DescriptionP3, Note: NoteP3); Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3, Note: NoteO3)
 </triples>
 
 AND/OR
@@ -240,6 +209,7 @@ Triples {triples}
 Guidelines:
 - Strictly use the URIs that are provided in the triples you get later in this prompt (especially for predicates).
 - Each triple is in the following format: Subject (Types: [Type A], URI: UriS, URI-Label: Uri-LabelS); Predicate (URI: UriP, URI-Label: Uri-LabelP, URI-Description: URI-DescriptionP); Object (Types: [Type B], URI: UriO, URI-Label: Uri-LabelO)
+- Check if there are any notes left from the previous agents. If yes, think about how to solve them.
 - Every field starting with "URI" is the corresponding URI, that was found by the URI Search Tool.
 - Check if the description of the predicate matches the context of the triple. If not, you can call one of the mentioned agents to refine the triples.
 
