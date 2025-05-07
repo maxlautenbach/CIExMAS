@@ -19,6 +19,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     agent_id = "validation_and_output"
     agent_instruction = state.get("agent_instruction", "")
     
+    # Define available gotos for this agent
+    available_gotos = ["extractor", "uri_mapping_and_refinement", "END", "validation_and_output"]
+    
     response_chain = prompt | model
 
     config = {}
@@ -50,6 +53,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # If triples are found, parse them and add to the state
     if goto_match:
         goto = goto_match.group(1).strip()
+        # Check if the specified goto is valid for this agent
+        if goto not in available_gotos:
+            update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
+            goto = "validation_and_output"
     else:
         update["agent_instruction"] = "\nSYSTEM MESSAGE: RegEx r'<goto>(.*?)</goto>' doesn't find any match, so the result could not be extracted.\n please fix."
 

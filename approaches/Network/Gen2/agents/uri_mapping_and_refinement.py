@@ -17,6 +17,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     agent_id = "uri_mapping_and_refinement"
     agent_instruction = state.get("agent_instruction", "")
     
+    # Define available gotos for this agent
+    available_gotos = ["extractor", "validation_and_output", "uri_mapping_and_refinement", "uri_search_tool", "network_traversal_tool"]
+    
     response_chain = prompt | model
 
     goto="extractor"
@@ -53,7 +56,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # If tool ID is found, add it to the state
     if goto_match:
         goto = goto_match.group(1).strip()
-        
+        # Check if the specified goto is valid for this agent
+        if goto not in available_gotos:
+            update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
+            goto = "uri_mapping_and_refinement"
     
     # If tool input is found, add it to the state
     if tool_input_match:
