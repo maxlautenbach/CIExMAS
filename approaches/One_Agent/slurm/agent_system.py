@@ -76,7 +76,7 @@ for i in tqdm(range(len(docs))):
         response = {"messages":[e]}
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
 
-    evaluation_log.append([doc_id, *evaluate_doc(turtle_string,doc_id, triple_df), response["messages"][-1]])
+    evaluation_log.append([doc_id, *evaluate_doc(turtle_string,doc_id, triple_df), response["messages"][-1], trace_id])
 
 evaluation_log_df = pd.DataFrame(
     evaluation_log,
@@ -88,7 +88,7 @@ evaluation_log_df = pd.DataFrame(
         "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
         "Correct Pred Predicates Parents", "Correct Pred Predicates Related",
         "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
-        "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String"
+        "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String", "Langfuse Trace ID"
     ]
 )
 

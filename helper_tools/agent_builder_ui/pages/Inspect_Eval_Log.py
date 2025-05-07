@@ -46,7 +46,7 @@ if uploaded_file:
     st.write(report)
     for _, row in evaluation_log_df.iterrows():
         with st.container(border=True):
-            score = calculate_scores_from_array(row.to_list()[1:-1])
+            score = calculate_scores_from_array(row.to_list()[1:(22-len(row))])
             st.write(stss.docs.loc[row["Doc ID"]]["text"])
             st.write(score.loc["Triple"]["F1-Score"])
             result_string = str(row["Result String"])
@@ -69,5 +69,7 @@ if uploaded_file:
                 st.divider()
                 st.write("*Score*")
                 st.write(score)
+                if row.get("Langfuse Trace ID"):
+                    st.write(f"[Langfuse Trace: {row['Langfuse Trace ID']}](https://langfuse.webwerkstatt-lautenbach.de/project/cm90430l30006qb07xe6fz6t9/traces?peek={row['Langfuse Trace ID']})")
 
 

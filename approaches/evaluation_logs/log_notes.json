@@ -174,7 +174,8 @@
         "short_description": "First Attempt"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2043.xlsx": {
-        "short_description": "First Attempt"
+        "short_description": "First Attempt",
+        "description": "\t- Basic Implementation of Three Agents and Two Tools\n\t\t\u25cb Agents: Extractor, URI Mapping & Refinement, Validation & Output\n\t\t\u25cb Tools: URI Search Tool, Network Traversal Search\n\t- Few-Shot Prompting for Extractor (Doc ID: 10, 11, 12), Validation & Output (Doc ID: 10)\n\t- Used Sleek State\nSimple Robustness Measures (Check Turtle, Check goto)"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2258.xlsx": {
         "short_description": "First Attempt"
@@ -183,7 +184,8 @@
         "short_description": "NTT-PE-SU"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-06-1552.xlsx": {
-        "short_description": "NTT-PE-SU"
+        "short_description": "NTT-PE-SU",
+        "description": "\t- Restricted Network Traversal Tool\n\t\t\u25cb Taking whole triples\n\t\t\u25cb Runnning Traversal while checking type constraints -> Wikidata Limited\n\t\t\u25cb Output of property usage examples\n\t- Introduced Call Trace\n\t- Enabled Agent Instruction for refinements\n\t- Prompt Engineering\n\t\t\u25cb Adapt Call Trace and Agent Instruction\nIntroduced examples for better usage of Network Traversal Tool"
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1751.xlsx": {
         "short_description": "R/UST-D/NTT"
@@ -192,6 +194,9 @@
         "short_description": "R/UST-D/NTT"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-1212.xlsx": {
+        "short_description": "R/UST-D/NTT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1101.xlsx": {
         "short_description": "R/UST-D/NTT"
     }
 }
