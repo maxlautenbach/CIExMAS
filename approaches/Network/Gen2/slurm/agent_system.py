@@ -23,6 +23,7 @@ from approaches.Network.Gen2.agents.uri_mapping_and_refinement import agent as u
 from approaches.Network.Gen2.agents.validation_and_output import agent as validation_and_output
 from approaches.Network.Gen2.agents.uri_search_tool import agent as uri_search_tool
 from approaches.Network.Gen2.agents.network_traversal_search import agent as network_traversal_search
+from approaches.Network.Gen2.agents.turtle_to_labels_tool import agent as turtle_to_labels_tool
 from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
 import json
@@ -53,6 +54,7 @@ builder.add_node("uri_mapping_and_refinement", uri_mapping_and_refinement)
 builder.add_node("validation_and_output", validation_and_output)
 builder.add_node("uri_search_tool", uri_search_tool)
 builder.add_node("network_traversal_tool", network_traversal_search)
+builder.add_node("turtle_to_labels_tool", turtle_to_labels_tool)
 
 builder.add_edge(START, "extractor")
 

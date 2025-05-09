@@ -20,6 +20,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Define available gotos for this agent
     available_gotos = ["extractor", "validation_and_output", "uri_mapping_and_refinement", "uri_search_tool", "network_traversal_tool"]
     
+    # Define available agents (excluding tools)
+    available_agents = ["extractor", "validation_and_output", "uri_mapping_and_refinement"]
+    
     response_chain = prompt | model
 
     goto="extractor"
@@ -39,6 +42,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Extract tool ID and tool input from the response
     goto_match = re.search(r'<goto>(.*?)</goto>', content, re.DOTALL)
     tool_input_match = re.search(r'<tool_input>(.*?)</tool_input>', content, re.DOTALL)
+    agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
 
     # Initialize the update dict with the last agent response
     update = {
@@ -60,6 +64,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         if goto not in available_gotos:
             update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
             goto = "uri_mapping_and_refinement"
+        elif goto in available_agents and not agent_instruction_match:
+            # Clear agent_instruction when calling another agent without new instruction
+            update["agent_instruction"] = ""
     
     # If tool input is found, add it to the state
     if tool_input_match:

@@ -201,5 +201,17 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-2127.xlsx": {
         "short_description": "R/UST-D/NTT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1628.xlsx": {
+        "short_description": "R/UST-D/NTT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1518.xlsx": {
+        "short_description": "R/PE-TLT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1521.xlsx": {
+        "short_description": "R/PE-TLT"
+    },
+    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-09-1014.xlsx": {
+        "short_description": "R/PE-TLT"
     }
 }

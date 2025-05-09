@@ -118,15 +118,28 @@ def upload_wikidata_elements(elements_dict, type):
 
             
             # Create document objects
-            label_doc = Document(page_content=label, metadata={"uri": uri, "description": description, "type": element_type})
-            description_doc = Document(page_content=description, metadata={"uri": uri, "label": label, "type": element_type})
 
-            label_docs.append(label_doc)
-            description_docs.append(description_doc)
 
             if type == "predicates" and example != "":
+                label_doc = Document(page_content=label,
+                                     metadata={"uri": uri, "description": description, "type": element_type, "example": example})
+                description_doc = Document(page_content=description,
+                                           metadata={"uri": uri, "label": label, "type": element_type, "example": example})
+
+                label_docs.append(label_doc)
+                description_docs.append(description_doc)
+
                 example_doc = Document(page_content=example, metadata={"uri": uri, "label": label, "description": description, "type": element_type})
                 example_docs.append(example_doc)
+
+            else:
+                label_doc = Document(page_content=label,
+                                     metadata={"uri": uri, "description": description, "type": element_type})
+                description_doc = Document(page_content=description,
+                                           metadata={"uri": uri, "label": label, "type": element_type})
+
+                label_docs.append(label_doc)
+                description_docs.append(description_doc)
 
             # Track the upload in Redis with type information
             element_info_upload(uri, label, description)

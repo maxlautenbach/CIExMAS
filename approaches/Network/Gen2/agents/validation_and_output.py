@@ -20,7 +20,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     agent_instruction = state.get("agent_instruction", "")
     
     # Define available gotos for this agent
-    available_gotos = ["extractor", "uri_mapping_and_refinement", "END", "validation_and_output"]
+    available_gotos = ["extractor", "uri_mapping_and_refinement", "END", "validation_and_output", "turtle_to_labels_tool"]
+    
+    # Define available agents (excluding tools and END)
+    available_agents = ["extractor", "uri_mapping_and_refinement", "validation_and_output"]
     
     response_chain = prompt | model
 
@@ -34,7 +37,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Extract entities from the response
     content = response.content
 
+    # Extract tool ID and tool input from the response
     goto_match = re.search(r'<goto>(.*?)</goto>', content, re.DOTALL)
+    tool_input_match = re.search(r'<tool_input>(.*?)</tool_input>', content, re.DOTALL)
+    agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
 
     # Initialize the update dict with the last agent response
     update = {
@@ -42,24 +48,32 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         "last_call": "validation_and_output",
         "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
     }
-    
-    agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
+
+    # If agent instruction is found, add it to the state
     if agent_instruction_match:
         agent_instruction = agent_instruction_match.group(1).strip()
         update["agent_instruction"] = agent_instruction
 
     goto = "validation_and_output"
 
-    # If triples are found, parse them and add to the state
+    # If tool ID is found, add it to the state
     if goto_match:
         goto = goto_match.group(1).strip()
         # Check if the specified goto is valid for this agent
         if goto not in available_gotos:
             update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
             goto = "validation_and_output"
+        elif goto in available_agents and not agent_instruction_match:
+            # Clear agent_instruction when calling another agent without new instruction
+            update["agent_instruction"] = ""
     else:
         update["agent_instruction"] = "\nSYSTEM MESSAGE: RegEx r'<goto>(.*?)</goto>' doesn't find any match, so the result could not be extracted.\n please fix."
+        goto = "validation_and_output"
 
+    # If tool input is found, add it to the state
+    if tool_input_match:
+        tool_input = tool_input_match.group(1).strip()
+        update["tool_input"] = tool_input
 
     if goto == "END":
         turtle_match = re.search(r'<ttl>(.*?)</ttl>', content, re.DOTALL)
@@ -75,7 +89,6 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         else:
             update["agent_instruction"] = "\nSYSTEM MESSAGE: RegEx r'<ttl>(.*?)</ttl>' doesn't find any match, so the result could not be extracted.\n please fix."
             goto = "validation_and_output"
-
 
     if state["debug"]:
         state.update(update)

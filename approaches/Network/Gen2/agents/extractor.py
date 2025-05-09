@@ -19,6 +19,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Define available gotos for this agent
     available_gotos = ["extractor", "validation_and_output", "uri_mapping_and_refinement"]
     
+    # Define available agents (excluding tools)
+    available_agents = ["extractor", "validation_and_output", "uri_mapping_and_refinement"]
+    
     response_chain = prompt | model
 
     config = {}
@@ -35,6 +38,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     triples_match = re.search(r'<triples>(.*?)</triples>', content, re.DOTALL)
 
     goto_match = re.search(r'<goto>(.*?)</goto>', content, re.DOTALL)
+    agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
     
     # Initialize the update dict with the last agent response
     update = {
@@ -56,6 +60,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         if goto not in available_gotos:
             update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
             goto = "extractor"
+        elif goto in available_agents and not agent_instruction_match:
+            # Clear agent_instruction when calling another agent without new instruction
+            update["agent_instruction"] = ""
     else:
         update["agent_instruction"] = "You did not provide a valid goto instruction. Please provide a valid goto instruction."
         goto = "extractor"

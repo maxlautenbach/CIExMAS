@@ -39,7 +39,6 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     search_response += f"  {idx+1}. Label: {doc.page_content}\n"
                     search_response += f"     URI: {doc.metadata['uri']}\n"
                     search_response += f"     Description: {doc.metadata['description']}\n"
-                    search_response += f"     Similarity Score: {sim_score}\n"
                 search_response += "\n"
                 continue
             
@@ -69,8 +68,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     search_response += f"  {idx+1}. Label: {doc.page_content}\n"
                     search_response += f"     URI: {doc.metadata['uri']}\n"
                     search_response += f"     Description: {doc.metadata['description']}\n"
-                    search_response += f"     Similarity Score: {sim_score}\n"
-                    
+                    if doc.metadata.get("example"):
+                        search_response += f"     Example: {doc.metadata['example']}\n"
+
             elif mode == 'X':
                 # Search in examples collection
                 results = example_vector_store.similarity_search_with_score(
@@ -84,8 +84,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     search_response += f"     URI: {doc.metadata['uri']}\n"
                     search_response += f"     Description: {doc.metadata['description']}\n"
                     search_response += f"     Example: {doc.page_content}\n"
-                    search_response += f"     Similarity Score: {sim_score}\n"
-            
+
             search_response += "\n"
 
         state_update = {
