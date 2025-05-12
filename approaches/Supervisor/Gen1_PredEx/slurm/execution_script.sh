@@ -85,7 +85,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./approaches/Supervisor/Gen1_PredEx/slurm/agent_system.py test 50
+python3 ./approaches/Supervisor/Gen1_PredEx/slurm/agent_system.py test_text 50 'Init Test'
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."

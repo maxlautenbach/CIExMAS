@@ -52,7 +52,6 @@ def extract_model_info(file_path):
 
     # Split by underscores to get components
     parts = model_info.split("-")[:-4]
-    print(parts)
     provider = parts[0]
     model_id = "-".join(parts[1:])
     

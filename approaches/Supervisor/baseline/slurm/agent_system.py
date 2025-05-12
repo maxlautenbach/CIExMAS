@@ -38,7 +38,7 @@ try:
     number_of_samples = int(sys.argv[2])
     description = sys.argv[3]
 except IndexError:
-    split = "test"
+    split = "test_text"
     number_of_samples = 50
     description = None
 
