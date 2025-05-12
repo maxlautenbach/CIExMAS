@@ -32,7 +32,7 @@ def few_shot_generator(num_docs_to_display=3, target_agent="extractor"):
     print("Loading training dataset with 50 examples...")
     
     # Parse the SynthIE dataset with 50 examples from training set
-    triple_df, entity_df, docs = parser.synthie_parser("train", 50)
+    triple_df, entity_df, docs = parser.synthie_parser("train_text", 50)
     
     # Filter for documents with ID >= 10
     filtered_docs = docs[docs["docid"] >= 10]

@@ -48,11 +48,11 @@ def extract_model_info(file_path):
     filename = os.path.basename(file_path)
     
     # Remove the evaluation_log- prefix and .xlsx suffix
-    model_info = filename.replace("evaluation_log-", "").replace(".xlsx", "").replace("-converted", "").replace("_", "-")
-    
+    model_info = filename.split("evaluation_log-")[1].replace(".xlsx", "").replace("-converted", "").replace("_", "-")
 
     # Split by underscores to get components
-    parts = model_info.split("-")[2:-4]
+    parts = model_info.split("-")[:-4]
+    print(parts)
     provider = parts[0]
     model_id = "-".join(parts[1:])
     

@@ -16,69 +16,38 @@ In addition, you have to decide which agent to call next, when you are ready wit
 
 Example Output:
 
-Text: The Albert S. Sholes House is a bungalow designed by architect Richard H. Martin Jr.
+Text: Pozoantiguo is a municipality in Spain, and its patron saint is John the Baptist. It shares borders with Fuentesecas, Abezames, Villardondiego, Toro, Zamora, and Pinilla de Toro. John the Baptist is an iconographic symbol of a cup.
 <triples>
-Albert_S._Sholes_House (Types: [house]); architectural style; Bungalow (Types: [house,architectural style])
-Albert_S._Sholes_House (Types: [house]); architect; Richard_H._Martin_Jr. (Types: [Human])
+Pozoantiguo (Types: [Municipalities_of_Spain]); patron saint; John_the_Baptist (Types: [human biblical figure])
+Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Fuentesecas (Types: [Municipalities_of_Spain])
+Pozoantiguo (Types: [Municipalities_of_Spain]); instance of; Municipalities_of_Spain (Types: [municipality,municipio,administrative territorial entity of Spain,LAU 2,third-order administrative division,local territorial entity])
+Pozoantiguo (Types: [Municipalities_of_Spain]); country; Spain (Types: [country,nation state,realm,sovereign state,Mediterranean country])
+Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Abezames (Types: [Municipalities_of_Spain])
+Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Villardondiego (Types: [Municipalities_of_Spain])
+Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Toro,_Zamora (Types: [Municipalities_of_Spain])
+Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Pinilla_de_Toro (Types: [Municipalities_of_Spain])
+John_the_Baptist (Types: [human biblical figure]); iconographic symbol; Cup (Types: [physical container,drinking vessel,vessel])
 </triples>
 
 --------------------------------------------------------------------------------
 
-Text: The Tata Aria, a car made by Tata Motors, is powered by a diesel engine, a type of internal combustion engine invented by Rudolf Diesel.
+Text: Blood Scent is a groove metal song performed by STEMM, following their earlier release, Songs for the Incurable Heart.
 <triples>
-Tata_Aria (Types: [Car,automobile model]); instance of; Car (Types: [motor vehicle,road vehicle,multi-track vehicle])
-Tata_Aria (Types: [Car,automobile model]); brand; Tata_Motors (Types: [automobile manufacturer,public company,Business])
-Tata_Aria (Types: [Car,automobile model]); powered by; Diesel_engine (Types: [reciprocating engine,automotive product])
-Diesel_engine (Types: [reciprocating engine,automotive product]); discoverer or inventor; Rudolf_Diesel (Types: [Human])
+Blood_Scent (Types: [Album]); genre; Groove_metal (Types: [extreme metal,music genre])
+Blood_Scent (Types: [Album]); performer; STEMM (Types: [musical group])
+Blood_Scent (Types: [Album]); follows; Songs_for_the_Incurable_Heart (Types: [Album])
 </triples>
 
 --------------------------------------------------------------------------------
 
-Text: Johan and Peewit is a Belgian comic series created by Peyo. It is written in French.
+Text: Miho Nakayama was born in Koganei, Tokyo and is a J-pop singer. She has won the Golden Arrow Award and the Blue Ribbon Award for Best Actress. She is a human. Koganei, Tokyo shares a border with Nishitōkyō.
 <triples>
-Johan_and_Peewit (Types: [comic book series]); country of origin; Belgium (Types: [country,federation,sovereign state])
-Johan_and_Peewit (Types: [comic book series]); author; Peyo (Types: [Human])
-Johan_and_Peewit (Types: [comic book series]); language of work or name; French_language (Types: [Oïl,Southern European language,natural language,language,modern language])
-</triples>
-
---------------------------------------------------------------------------------
-
-Text: "Before the Winter Chill" is a 2013 French drama film directed by Philippe Claudel. The film was produced by France 3 and TF1 Group.
-<triples>
-Before_the_Winter_Chill (Types: [Film]); genre; Drama_(film_and_television) (Types: [Film,drama fiction,film genre])
-Before_the_Winter_Chill (Types: [Film]); director; Philippe_Claudel (Types: [Human])
-Before_the_Winter_Chill (Types: [Film]); production company; France_3 (Types: [television station,television channel])
-Before_the_Winter_Chill (Types: [Film]); production company; TF1_Group (Types: [organization])
-</triples>
-
---------------------------------------------------------------------------------
-
-Text: Lyeth v. Hoey was a case heard by the Supreme Court of the United States. The Supreme Court is the highest court in the United States, and is located in Washington, D.C.
-<triples>
-Lyeth_v._Hoey (Types: [Legal_case]); court; Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court])
-Lyeth_v._Hoey (Types: [Legal_case]); country; United_States (Types: [country,federal republic,superpower,constitutional republic,sovereign state,democratic republic])
-Lyeth_v._Hoey (Types: [Legal_case]); instance of; Legal_case (Types: [conflict,legal transaction,work,strife,trial,legal concept])
-Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); instance of; Supreme_court (Types: [appellate court])
-Supreme_Court_of_the_United_States (Types: [Supreme_court,United States article III court]); headquarters location; Washington,_D.C. (Types: [federal capital])
-</triples>
-
---------------------------------------------------------------------------------
-
-Text: The Oxford Companion to Classical Literature is a reference work in the series of Oxford Companions and was written by Paul Harvey (diplomat), who was educated at Rugby School. It was published by Oxford University Press and is a Reference work.
-<triples>
-The_Oxford_Companion_to_Classical_Literature (Types: [written work]); part of the series; Oxford_Companions (Types: [Book_series])
-The_Oxford_Companion_to_Classical_Literature (Types: [written work]); author; Paul_Harvey_(diplomat) (Types: [Human])
-The_Oxford_Companion_to_Classical_Literature (Types: [written work]); publisher; Oxford_University_Press (Types: [organization,university press,book publisher,publisher,open-access publisher])
-The_Oxford_Companion_to_Classical_Literature (Types: [written work]); genre; Reference_work (Types: [document,project,publication,tertiary source,learning material,written work,literary genre])
-Oxford_Companions (Types: [Book_series]); instance of; Book_series (Types: [serial,series of creative works,group of manifestations,book set,written work])
-Paul_Harvey_(diplomat) (Types: [Human]); educated at; Rugby_School (Types: [boarding school,public school,independent school])
-</triples>
-
---------------------------------------------------------------------------------
-
-Text: Česlovas Kudaba is a professor at Vilnius University.
-<triples>
-Česlovas_Kudaba (Types: [Human]); employer; Vilnius_University (Types: [public university,Business,open-access publisher])
+Miho_Nakayama (Types: [Human]); place of birth; Koganei,_Tokyo (Types: [city of Japan,big city])
+Miho_Nakayama (Types: [Human]); genre; J-pop (Types: [A-pop,music genre])
+Miho_Nakayama (Types: [Human]); award received; Golden_Arrow_Award (Types: [award])
+Miho_Nakayama (Types: [Human]); award received; Blue_Ribbon_Award_for_Best_Actress (Types: [Blue Ribbon Awards,film award category,award for best leading actress])
+Miho_Nakayama (Types: [Human]); instance of; Human (Types: [natural person,omnivore,person,individual animal,mammal,organisms known by a particular common name])
+Koganei,_Tokyo (Types: [city of Japan,big city]); shares border with; Nishitōkyō (Types: [city of Japan,big city])
 </triples>
 
 --------------------------------------------------------------------------------

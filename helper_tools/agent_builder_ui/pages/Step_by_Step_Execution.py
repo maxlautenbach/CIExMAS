@@ -24,6 +24,11 @@ stss = st.session_state
 if "dataset_cache" not in stss:
     stss.dataset_cache = dict()
 
+if "split" not in stss:
+    stss.split = "train_text"
+if "number_of_samples" not in stss:
+    stss.number_of_samples = 5
+
 def reset_state():
     target_doc = stss.docs.iloc[stss.doc_index]
     text = target_doc["text"]
@@ -34,9 +39,9 @@ def reset_state():
     stss.agent_trace = []
 
 
-if "relation_df" not in stss:
-    split = "train"
-    number_of_samples = 11
+def update_dataset():
+    split = stss.split
+    number_of_samples = stss.number_of_samples
     try:
         stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{split}-{number_of_samples}"]
     except KeyError:
@@ -44,6 +49,27 @@ if "relation_df" not in stss:
         stss.dataset_cache[f"{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
     stss.entity_set = stss.entity_df[['entity', 'entity_uri']].drop_duplicates()
     stss.predicate_set_df = stss.relation_df[["predicate", "predicate_uri"]].drop_duplicates()
+    stss.doc_index = 0
+    reset_state()
+
+st.sidebar.selectbox(
+    "Dataset Split",
+    ("train", "test", "test_text", "train_text"),
+    key="split",
+    index=("train", "test", "test_text", "train_text").index(stss.split),
+    on_change=update_dataset
+)
+
+st.sidebar.number_input(
+    "Number of Samples",
+    min_value=1,
+    value=stss.number_of_samples,
+    key="number_of_samples",
+    on_change=update_dataset
+)
+
+if "relation_df" not in stss:
+    update_dataset()
 
 if "doc_index" not in stss:
     stss.doc_index = 0

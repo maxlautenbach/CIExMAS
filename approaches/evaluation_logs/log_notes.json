@@ -213,5 +213,15 @@
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-09-1014.xlsx": {
         "short_description": "R/PE-TLT"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1110.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1132.xlsx": {
+        "short_description": "R/PE"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1330.xlsx": {
+        "short_description": "Init Test",
+        "description": ""
     }
 }
