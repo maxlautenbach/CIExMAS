@@ -10,12 +10,37 @@ from tqdm import tqdm
 import gzip
 from dotenv import load_dotenv
 import git
+from helper_tools.sort_jsonl import sort_jsonl_file
 
 from helper_tools.wikidata_loader import get_property_example
 
 repo = git.Repo(search_parent_directories=True)
 
 load_dotenv(repo.working_dir + "/.env")
+
+
+def is_jsonl_sorted(filename, doc_id_key="docid", number_of_samples=None):
+    """
+    Check if a JSONL file is sorted by docid.
+    
+    Args:
+        filename (str): Path to the JSONL file
+        doc_id_key (str): Key to use for checking sort order
+        number_of_samples (int, optional): Number of samples to check. If None, checks all samples.
+        
+    Returns:
+        bool: True if file is sorted, False otherwise
+    """
+    last_id = None
+    with jsonlines.open(filename) as reader:
+        for i, entry in enumerate(reader):
+            if number_of_samples is not None and i >= number_of_samples:
+                break
+            current_id = entry.get(doc_id_key)
+            if last_id is not None and current_id < last_id:
+                return False
+            last_id = current_id
+    return True
 
 
 def add_wikidata_prefix(uri):
@@ -119,11 +144,17 @@ def babelscape_parser(filename, number_of_samples=10):
     relation_key = "relations"
     if "rebel" in filename:
         relation_key = "triples"
-    elif "sdg_code_davinci_002" in filename:
+    elif "sdg_code_davinci_002" in filename or "sdg_text_davinci_003" in filename:
         relation_key = "triplets"
         doc_id_key = "id"
     elif "redfm" in filename:
         relation_key = "relations"
+
+    # Check if file is sorted
+    if not is_jsonl_sorted(filename, doc_id_key, number_of_samples):
+        print(f"File {filename} is not sorted by {doc_id_key} in the first {number_of_samples} samples. Sorting now...")
+        sort_jsonl_file(filename)
+        print("Sorting complete. Re-parsing file...")
 
     data = []
 
@@ -195,8 +226,18 @@ def redfm_parser(split, lang="en", number_of_samples=10):
 
 def synthie_parser(split, number_of_samples=10):
     file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/synthIE")
-    gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
-    filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
+    
+    # Define the file paths based on split type
+    if split == "test_text":
+        gz_filename = f'{file_path}/sdg_text_davinci_003/test.jsonl.gz'
+        filename = f'{file_path}/sdg_text_davinci_003/test.jsonl'
+    elif split == "train_text":
+        gz_filename = f'{file_path}/sdg_text_davinci_003/val.jsonl.gz'
+        filename = f'{file_path}/sdg_text_davinci_003/val.jsonl'
+    else:
+        gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
+        filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
+    
     if not os.path.exists(filename):
         with gzip.open(gz_filename, 'rb') as f_in:
             with open(filename, 'wb') as f_out:
@@ -206,5 +247,5 @@ def synthie_parser(split, number_of_samples=10):
 
 
 if (__name__ == "__main__"):
-    relation_df, entity_df, docs = synthie_parser("test", 50)
+    relation_df, entity_df, docs = synthie_parser("test_text", 50)
     print("Test Parsing Finished")
