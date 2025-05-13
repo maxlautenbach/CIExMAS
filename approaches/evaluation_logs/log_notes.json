@@ -226,5 +226,8 @@
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-09-1510.xlsx": {
         "short_description": "R/PE-TLT"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-12-1810.xlsx": {
+        "short_description": "Init Test"
     }
 }
