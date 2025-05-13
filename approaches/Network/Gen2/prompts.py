@@ -75,6 +75,7 @@ To process the task you have access to the following tools:
     - ID: uri_search_tool
     - Description: Takes a |-separated list of search terms with search and optional filter modes. Returns the 3 most similar URIs per term.
     - Input format: Term1[SearchMode1]|Term2[SearchMode2]...
+    - Input Restriction: Max. 10 Terms per input
     - Search Modes:
         - 'Q': Searches for entities. The term must include the expected type of the entity. I.e. 'Angela Merkel (human)[Q]'
         - 'X': Search for property example triples. The term should be in the form of an example sentence like this: 'Subject (Type) Property Object (Type)[X]'. I.e. <tool_input>Angela Merkel (human) is member of the political party CDU (political party)[X]</tool_input>
@@ -96,9 +97,10 @@ In addition, you can decide which agent to call next, when you are ready with yo
 Guidelines:
 - Use the URI Search Tool to find URIs for subjects, objects and properties. The results of the tool will be written into Last Agent/Tool Response.
 - Use 'P' and 'X' at the same time to find the best matching property URI.
-- Only change or add the URIs, URI-Labels and URI-Descriptions fields. Strictly use them from the search results.
+- Only change or add the URIs, URI-Labels and URI-Descriptions fields strictly based on the Output on Last Call.
 - You need to save intermediate results in the triples output, otherwise they will get lost.
 - Keep your output short and concise.
+- If you use to many search terms, try to search the entities first and the properties in a separate call.
 
 Chain of Thought:
 1. Get first URI Mapping by search for all subject, property and object URIs using the URI Search Tool. Use all modes 'Q' for subjects/objects, 'X' for property example sentences and 'P' for property labels.
@@ -119,7 +121,7 @@ Text: {text}
 
 Triples {triples}
 
-Your can include the following:
+You can include the following (please include exactly one goto tag):
 
 TOOL USAGE:
 <goto>ONE OF [uri_search_tool]</goto>
@@ -176,6 +178,12 @@ Output on Last Call: {last_response}
 Text: {text}
 
 Triples {triples}
+
+Example Chain of Thought:
+1. Execute Turtle To Labels Tool to get the triples labeled.
+2. Check if the triples are correct.
+3. If not, call the next agent.
+4. If yes, output the final triples and the turtle string.
 
 Guidelines:
 - Strictly use the URIs that are provided in the triples you get later in this prompt (especially for properties).

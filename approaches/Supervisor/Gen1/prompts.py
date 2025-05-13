@@ -141,7 +141,9 @@ result_checker_prompt = PromptTemplate.from_template("""
 result_formatter_prompt = PromptTemplate.from_template("""
     You are an expert in formatting results of multi-agent-systems, which are used for closed information extraction. Therefore, your task is to produce triples in turtle format, that can be inserted in the underlying knowledge graph. Therefore, you will get access to the full state of the multi-agent-system including the full call trace, the comments of the planner and the result checker, the provided input text and all intermediate results. Based on the state produce a clean turtle (no comments, only rdf) output in <ttl> tags, so that it can be extracted afterwards. 
 All URIs in turtle must be enclosed in angle brackets. Ignore your implicit knowledge about public knowledge graphs (i.e. Namespaces for properties or URIs mapped to labels) and make sure, that you only use URIs, that were previously extracted by the uri_detection_agent. For example do not use the wikidata prefix wdt for properties, when there is no URI extracted with http://www.wikidata.org/prop/direct/, instead use the URIs extracted. If you can't find a corresponding URI for a predicate or entity, please don't output this triple, as such triples will be considered as invalid.
-                                                       
+
+Just use the wd: prefix for properties.                                                       
+
 Reduce your output to be just the turtle output and nothing else. 
     
     Example Output: 

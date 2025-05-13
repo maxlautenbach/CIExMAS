@@ -227,7 +227,28 @@
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-09-1510.xlsx": {
         "short_description": "R/PE-TLT"
     },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1400.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-12-1438.xlsx": {
+        "short_description": "Init Test"
+    },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-12-1810.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-0950.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1024.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1034.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1418.xlsx": {
+        "short_description": "Init Test"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1504.xlsx": {
         "short_description": "Init Test"
     }
 }

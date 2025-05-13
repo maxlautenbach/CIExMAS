@@ -25,7 +25,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     
     response_chain = prompt | model
 
-    goto="extractor"
+    goto="uri_mapping_and_refinement"
     config = {}
 
     if state["debug"]:
@@ -64,10 +64,13 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         if goto not in available_gotos:
             update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
             goto = "uri_mapping_and_refinement"
-        elif goto in available_agents and not agent_instruction_match:
+        elif not agent_instruction_match:
             # Clear agent_instruction when calling another agent without new instruction
             update["agent_instruction"] = ""
     
+    else:
+        update["agent_instruction"] = "SYSTEM MESSAGE: You didn't provide a goto. Please provide a valid goto tag."
+
     # If tool input is found, add it to the state
     if tool_input_match:
         tool_input = tool_input_match.group(1).strip()

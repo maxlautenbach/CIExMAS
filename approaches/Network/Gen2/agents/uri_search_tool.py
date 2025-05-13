@@ -15,6 +15,20 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         tool_input = state.get("tool_input", "")
         
         search_terms = state["tool_input"].split("|")
+        
+        # Validate maximum number of terms
+        if len(search_terms) > 10:
+            error_message = f"SYSTEM MESSAGE: Error - Maximum of 10 search terms allowed. Received {len(search_terms)} terms."
+            state_update = {
+                "tool_input": "",
+                "agent_instruction": error_message,
+                "call_trace": state.get("call_trace", []) + [("uri_search_tool", state.get("tool_input", ""))]
+            }
+            if state["debug"]:
+                state.update(state_update)
+                return state, error_message
+            return Command(goto="uri_mapping_and_refinement", update=state_update)
+        
         search_response = ""
         
         for term in search_terms:

@@ -60,7 +60,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         if goto not in available_gotos:
             update["agent_instruction"] = f"\nSYSTEM MESSAGE: The specified goto '{goto}' is not valid for this agent. Valid options are: {', '.join(available_gotos)}. Please provide a valid goto instruction."
             goto = "extractor"
-        elif goto in available_agents and not agent_instruction_match:
+        elif not agent_instruction_match:
             # Clear agent_instruction when calling another agent without new instruction
             update["agent_instruction"] = ""
     else:
