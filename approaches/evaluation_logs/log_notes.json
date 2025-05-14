@@ -250,5 +250,20 @@
     },
     "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1504.xlsx": {
         "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-1822.xlsx": {
+        "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-2034.xlsx": {
+        "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0207.xlsx": {
+        "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0718.xlsx": {
+        "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0824.xlsx": {
+        "short_description": "Init Test"
     }
 }
