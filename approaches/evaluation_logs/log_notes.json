@@ -265,5 +265,8 @@
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0824.xlsx": {
         "short_description": "Init Test"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-2047.xlsx": {
+        "short_description": "Init Test"
     }
 }
