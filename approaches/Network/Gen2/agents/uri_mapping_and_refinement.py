@@ -67,6 +67,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         elif not agent_instruction_match:
             # Clear agent_instruction when calling another agent without new instruction
             update["agent_instruction"] = ""
+        elif agent_instruction_match:
+            update["agent_instruction"] = agent_instruction_match.group(1).strip()
     
     else:
         update["agent_instruction"] = "SYSTEM MESSAGE: You didn't provide a goto. Please provide a valid goto tag."

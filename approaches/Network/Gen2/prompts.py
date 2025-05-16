@@ -18,36 +18,36 @@ Example Output:
 
 Text: Pozoantiguo is a municipality in Spain, and its patron saint is John the Baptist. It shares borders with Fuentesecas, Abezames, Villardondiego, Toro, Zamora, and Pinilla de Toro. John the Baptist is an iconographic symbol of a cup.
 <triples>
-Pozoantiguo (Types: [Municipalities_of_Spain]); patron saint; John_the_Baptist (Types: [human biblical figure])
-Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Fuentesecas (Types: [Municipalities_of_Spain])
-Pozoantiguo (Types: [Municipalities_of_Spain]); instance of; Municipalities_of_Spain (Types: [municipality,municipio,administrative territorial entity of Spain,LAU 2,third-order administrative division,local territorial entity])
-Pozoantiguo (Types: [Municipalities_of_Spain]); country; Spain (Types: [country,nation state,realm,sovereign state,Mediterranean country])
-Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Abezames (Types: [Municipalities_of_Spain])
-Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Villardondiego (Types: [Municipalities_of_Spain])
-Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Toro,_Zamora (Types: [Municipalities_of_Spain])
-Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Pinilla_de_Toro (Types: [Municipalities_of_Spain])
-John_the_Baptist (Types: [human biblical figure]); iconographic symbol; Cup (Types: [physical container,drinking vessel,vessel])
+1: Pozoantiguo (Types: [Municipalities_of_Spain]); patron saint; John_the_Baptist (Types: [human biblical figure])
+2: Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Fuentesecas (Types: [Municipalities_of_Spain])
+3: Pozoantiguo (Types: [Municipalities_of_Spain]); instance of; Municipalities_of_Spain (Types: [municipality,municipio,administrative territorial entity of Spain,LAU 2,third-order administrative division,local territorial entity])
+4: Pozoantiguo (Types: [Municipalities_of_Spain]); country; Spain (Types: [country,nation state,realm,sovereign state,Mediterranean country])
+5: Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Abezames (Types: [Municipalities_of_Spain])
+6: Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Villardondiego (Types: [Municipalities_of_Spain])
+7: Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Toro,_Zamora (Types: [Municipalities_of_Spain])
+8: Pozoantiguo (Types: [Municipalities_of_Spain]); shares border with; Pinilla_de_Toro (Types: [Municipalities_of_Spain])
+9: John_the_Baptist (Types: [human biblical figure]); iconographic symbol; Cup (Types: [physical container,drinking vessel,vessel])
 </triples>
 
 --------------------------------------------------------------------------------
 
 Text: Blood Scent is a groove metal song performed by STEMM, following their earlier release, Songs for the Incurable Heart.
 <triples>
-Blood_Scent (Types: [Album]); genre; Groove_metal (Types: [extreme metal,music genre])
-Blood_Scent (Types: [Album]); performer; STEMM (Types: [musical group])
-Blood_Scent (Types: [Album]); follows; Songs_for_the_Incurable_Heart (Types: [Album])
+1: Blood_Scent (Types: [Album]); genre; Groove_metal (Types: [extreme metal,music genre])
+2: Blood_Scent (Types: [Album]); performer; STEMM (Types: [musical group])
+3: Blood_Scent (Types: [Album]); follows; Songs_for_the_Incurable_Heart (Types: [Album])
 </triples>
 
 --------------------------------------------------------------------------------
 
 Text: Miho Nakayama was born in Koganei, Tokyo and is a J-pop singer. She has won the Golden Arrow Award and the Blue Ribbon Award for Best Actress. She is a human. Koganei, Tokyo shares a border with Nishitōkyō.
 <triples>
-Miho_Nakayama (Types: [Human]); place of birth; Koganei,_Tokyo (Types: [city of Japan,big city])
-Miho_Nakayama (Types: [Human]); genre; J-pop (Types: [A-pop,music genre])
-Miho_Nakayama (Types: [Human]); award received; Golden_Arrow_Award (Types: [award])
-Miho_Nakayama (Types: [Human]); award received; Blue_Ribbon_Award_for_Best_Actress (Types: [Blue Ribbon Awards,film award category,award for best leading actress])
-Miho_Nakayama (Types: [Human]); instance of; Human (Types: [natural person,omnivore,person,individual animal,mammal,organisms known by a particular common name])
-Koganei,_Tokyo (Types: [city of Japan,big city]); shares border with; Nishitōkyō (Types: [city of Japan,big city])
+1: Miho_Nakayama (Types: [Human]); place of birth; Koganei,_Tokyo (Types: [city of Japan,big city])
+2: Miho_Nakayama (Types: [Human]); genre; J-pop (Types: [A-pop,music genre])
+3: Miho_Nakayama (Types: [Human]); award received; Golden_Arrow_Award (Types: [award])
+4: Miho_Nakayama (Types: [Human]); award received; Blue_Ribbon_Award_for_Best_Actress (Types: [Blue Ribbon Awards,film award category,award for best leading actress])
+5: Miho_Nakayama (Types: [Human]); instance of; Human (Types: [natural person,omnivore,person,individual animal,mammal,organisms known by a particular common name])
+6: Koganei,_Tokyo (Types: [city of Japan,big city]); shares border with; Nishitōkyō (Types: [city of Japan,big city])
 </triples>
 
 --------------------------------------------------------------------------------
@@ -73,15 +73,13 @@ You are an expert in creating uri mappings and refining triples. Therefore, you 
 To process the task you have access to the following tools:
 - URI Search Tool
     - ID: uri_search_tool
-    - Description: Takes a |-separated list of search terms with search and optional filter modes. Returns the 3 most similar URIs per term.
-    - Input format: Term1[SearchMode1]|Term2[SearchMode2]...
-    - Input Restriction: Max. 10 Terms per input
+    - Description: Searches for URIs matching entities or properties.
+    - Input format: Term1[Mode]|Term2[Mode]|... (Max 10 terms)
     - Search Modes:
-        - 'Q': Searches for entities. The term must include the expected type of the entity. I.e. 'Angela Merkel (human)[Q]'
-        - 'X': Search for property example triples. The term should be in the form of an example sentence like this: 'Subject (Type) Property Object (Type)[X]'. I.e. <tool_input>Angela Merkel (human) is member of the political party CDU (political party)[X]</tool_input>
-        - 'P': Searches for property labels - Do not include the whole triple. I.e. <tool_input>architectural style[P]</tool_input>
-    Albert_S._Sholes_House (Types: [house]); architectural style; Bungalow (Types: [house,architectural style])
-    - Example: <tool_input>Albert_S._Sholes_House (house)[Q]|Bungalow (house,architectural style)[Q]|Albert_S._Sholes_House (house) architectural style Bungalow (house,architectural style)[X]|architectural style[P]</tool_input>
+        - [Q]: Entity search with type. Format: 'Entity (type)[Q]'
+        - [P]: Property search. Format: 'property[P]'
+        - [X]: Property by example. Example must be a sentence in the format: 'Subject (type) property Object (type)[X]'
+    - Example: <tool_input>Albert_S._Sholes_House (house)[Q]|architectural style[P]|Albert_S._Sholes_House (house) architectural style Bungalow (architectural style)[X]</tool_input>
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -100,7 +98,8 @@ Guidelines:
 - Only change or add the URIs, URI-Labels and URI-Descriptions fields strictly based on the Output on Last Call.
 - You need to save intermediate results in the triples output, otherwise they will get lost.
 - Keep your output short and concise.
-- If you use to many search terms, try to search the entities first and the properties in a separate call.
+- Do not use the URI Search Tool for the same term twice.
+- Only use the triples output, when you make an update to the triples.
 
 Chain of Thought:
 1. Get first URI Mapping by search for all subject, property and object URIs using the URI Search Tool. Use all modes 'Q' for subjects/objects, 'X' for property example sentences and 'P' for property labels.
@@ -128,12 +127,15 @@ TOOL USAGE:
 <tool_input>INSERT YOUR INPUT HERE</tool_input>
 
 AND/OR
+                                                                 
+INSTRUCTION FOR NEXT CALL:
+<agent_instruction>INSERT YOUR INSTRUCTION HERE</agent_instruction>
 
 TRIPLES OUTPUT:
 <triples>
-Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1, Note: NoteS1); Property1 (URI: UriP1, URI-Label: Uri-LabelP1, URI-Description: URI-DescriptionP1, Note: NoteP1); Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1, Note: NoteO1)
-Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2, Note: NoteS2); Property2 (URI: UriP2, URI-Label: Uri-LabelP2, URI-Description: URI-DescriptionP2, Note: NoteP2); Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2, Note: NoteO2)
-Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3, Note: NoteS3); Property3 (URI: UriP3, URI-Label: Uri-LabelP3, URI-Description: URI-DescriptionP3, Note: NoteP3); Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3, Note: NoteO3)
+1. Subject1 (Types: [Type A1], URI: UriS1, URI-Label: Uri-LabelS1, Note: NoteS1); Property1 (URI: UriP1, URI-Label: Uri-LabelP1, URI-Description: URI-DescriptionP1, Note: NoteP1); Object1 (Types: [Type B1], URI: UriO1, URI-Label: Uri-LabelO1, Note: NoteO1)
+2. Subject2 (Types: [Type A2], URI: UriS2, URI-Label: Uri-LabelS2, Note: NoteS2); Property2 (URI: UriP2, URI-Label: Uri-LabelP2, URI-Description: URI-DescriptionP2, Note: NoteP2); Object2 (Types: [Type B2], URI: UriO2, URI-Label: Uri-LabelO2, Note: NoteO2)
+3. Subject3 (Types: [Type A3], URI: UriS3, URI-Label: Uri-LabelS3, Note: NoteS3); Property3 (URI: UriP3, URI-Label: Uri-LabelP3, URI-Description: URI-DescriptionP3, Note: NoteP3); Object3 (Types: [Type B3], URI: UriO3, URI-Label: Uri-LabelO3, Note: NoteO3)
 </triples>
 
 AND/OR
@@ -144,8 +146,8 @@ AGENT CALL:
 Example Mapping Output:
 Text: The Albert S. Sholes House is a bungalow designed by architect Richard H. Martin Jr.
 <triples>
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architectural style (URI: http://www.wikidata.org/entity/P149, URI-Label: 'architectural style', URI-Description: 'architectural style of a structure'); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107, URI-Label: Bungalow)
-Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architect (URI: http://www.wikidata.org/entity/P84, URI-Label: 'architect', URI-Description: 'person or architectural firm responsible for designing this building'); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008, URI-Label: Richard_H._Martin_Jr.)
+1. Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architectural style (URI: http://www.wikidata.org/entity/P149, URI-Label: 'architectural style', URI-Description: 'architectural style of a structure'); Bungalow (Types: [house,architectural style], URI: http://www.wikidata.org/entity/Q850107, URI-Label: Bungalow)
+2. Albert_S._Sholes_House (Types: [house], URI: http://www.wikidata.org/entity/Q4711171, URI-Label: Albert_S._Sholes_House); architect (URI: http://www.wikidata.org/entity/P84, URI-Label: 'architect', URI-Description: 'person or architectural firm responsible for designing this building'); Richard_H._Martin_Jr. (Types: [Human], URI: http://www.wikidata.org/entity/Q47035008, URI-Label: Richard_H._Martin_Jr.)
 </triples>
 
 """)
@@ -179,21 +181,18 @@ Text: {text}
 
 Triples {triples}
 
-Example Chain of Thought:
-1. Execute Turtle To Labels Tool to get the triples labeled.
-2. Check if the triples are correct.
-3. If not, call the next agent.
-4. If yes, output the final triples and the turtle string.
-
 Guidelines:
-- Strictly use the URIs that are provided in the triples you get later in this prompt (especially for properties).
-- Each triple is in the following format: Subject (Types: [Type A], URI: UriS, URI-Label: Uri-LabelS); Property (URI: UriP, URI-Label: Uri-LabelP, URI-Description: URI-DescriptionP); Object (Types: [Type B], URI: UriO, URI-Label: Uri-LabelO)
-- Check if there are any notes left from the previous agents. If yes, think about how to solve them.
-- Every field starting with "URI" is the corresponding URI, that was found by the URI Search Tool.
-- Check if the description of the property matches the context of the triple. If not, you can call one of the mentioned agents to refine the triples.
-- Only use the @prefix wd: <http://www.wikidata.org/entity/>. Do not use any other prefixes.
-- Use the Turtle to Labels Tool exactly once before outputting the final triples. IF THE LAST CALL WAS TURTLE TO LABELS TOOL, DO NOT CALL IT AGAIN.
-- Do not include two-gotos in your output. Only one goto is allowed.
+- ALWAYS validate before output:
+  1. Call Turtle to Labels Tool to verify URI labels
+  2. Check if property descriptions match triple context
+  3. Verify all notes from previous agents are resolved
+  4. Only proceed to final output if all validations pass
+- Use only URIs provided in the triples, following format: Subject (Types: [Type A], URI: UriS, URI-Label: Uri-LabelS); Property (URI: UriP, URI-Label: Uri-LabelP, URI-Description: URI-DescriptionP); Object (Types: [Type B], URI: UriO, URI-Label: Uri-LabelO)
+- If validation fails, call appropriate agent (uri_mapping_and_refinement or extractor)
+- Use only @prefix wd: <http://www.wikidata.org/entity/> for the turtle output
+- Include exactly one goto tag in your output
+- If there is a Note: Not Found, let the triple out and do not re-iterate.
+- If the labels has already been verified, do not call the Turtle to Labels Tool again.
 
 Your output should be in one of the following formats:
 

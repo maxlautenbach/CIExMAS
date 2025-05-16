@@ -35,8 +35,10 @@ def save_notes(notes):
 def extract_model_info(file_path):
     """Extract model information from file path."""
     filename = os.path.basename(file_path)
-    model_info = filename.replace("evaluation_log-", "").replace(".xlsx", "").replace("-converted", "").replace("_", "-")
-    parts = model_info.split("-")[2:-4]
+    model_info = filename.split("evaluation_log-")[1].replace(".xlsx", "").replace("-converted", "").replace("_", "-")
+
+    # Split by underscores to get components
+    parts = model_info.split("-")[:-4]
     provider = parts[0]
     model_id = "-".join(parts[1:])
     return f"{provider} - {model_id}"
@@ -165,16 +167,57 @@ with col1:
                 selected_file = file_path
                 break
     else:  # Edit Existing Note
-        # Get all files with notes
-        files_with_notes = list(notes.keys())
-        if not files_with_notes:
-            st.info("No notes exist yet. Please add a new note first.")
+        # Architecture selection
+        architectures = sorted(organized_files.keys())
+        selected_architecture = st.selectbox(
+            "Select Architecture",
+            architectures,
+            key="edit_architecture"
+        )
+        
+        # Datasplit selection
+        datasplits = sorted(organized_files[selected_architecture].keys())
+        selected_datasplit = st.selectbox(
+            "Select Datasplit",
+            datasplits,
+            key="edit_datasplit"
+        )
+        
+        # Model selection
+        models = sorted(organized_files[selected_architecture][selected_datasplit].keys())
+        selected_model = st.selectbox(
+            "Select Model",
+            models,
+            key="edit_model"
+        )
+        
+        # Get timestamps for the selected combination
+        timestamps = organized_files[selected_architecture][selected_datasplit][selected_model]
+        
+        # Filter files_with_notes based on the selected criteria
+        filtered_files = []
+        for ts, file_path in timestamps:
+            if os.path.basename(file_path) in notes:
+                filtered_files.append((ts, file_path))
+        
+        if not filtered_files:
+            st.info("No notes exist for the selected combination. Please select a different combination or add a new note.")
             st.stop()
         
-        selected_file = st.selectbox(
-            "Select File to Edit",
-            files_with_notes
+        # Show timestamp selection for files that have notes
+        timestamp_options = [ts[0].strftime("%Y-%m-%d %H:%M") for ts in filtered_files]
+        selected_timestamp = st.selectbox(
+            "Select Timestamp",
+            timestamp_options,
+            key="edit_timestamp"
         )
+        
+        # Get the selected file path
+        selected_file = None
+        for ts, file_path in filtered_files:
+            if ts.strftime("%Y-%m-%d %H:%M") == selected_timestamp:
+                selected_file = file_path
+                break
     
     if selected_file:
         # Get existing notes for selected file

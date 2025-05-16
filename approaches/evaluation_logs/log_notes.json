@@ -200,7 +200,8 @@
         "short_description": "R/UST-D/NTT"
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-2127.xlsx": {
-        "short_description": "R/UST-D/NTT"
+        "short_description": "R/UST-D/NTT",
+        "description": "\t- Removed Access to Network Traversal Tool\n\t- Restriction Check Implementation failed due to KG Quality\n\t- Remove Search Modes\n\t- Added Search Mode Example\n- Implemented Goto-Checks"
     },
     "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1628.xlsx": {
         "short_description": "R/UST-D/NTT"
@@ -225,7 +226,8 @@
         "description": ""
     },
     "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-09-1510.xlsx": {
-        "short_description": "R/PE-TLT"
+        "short_description": "R/PE-TLT",
+        "description": "- Added Turtle to Label Tool, to validate results\n- Prompt Engineering"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1400.xlsx": {
         "short_description": "Init Test"
@@ -234,7 +236,8 @@
         "short_description": "Init Test"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-12-1810.xlsx": {
-        "short_description": "Init Test"
+        "short_description": "Init Test",
+        "description": "\t- Updated Few-Shot Examples\n- Prompt Engineering"
     },
     "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-0950.xlsx": {
         "short_description": "Init Test"
@@ -267,6 +270,16 @@
         "short_description": "Init Test"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-2047.xlsx": {
-        "short_description": "Init Test"
+        "short_description": "R/UST",
+        "description": "- Limit Search Terms in URI Search Tool -> not exceed Tokens"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-15-1431.xlsx": {
+        "short_description": "R/UST"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-15-1504.xlsx": {
+        "short_description": "R/UST"
+    },
+    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-16-1123.xlsx": {
+        "short_description": "R/PE"
     }
 }
