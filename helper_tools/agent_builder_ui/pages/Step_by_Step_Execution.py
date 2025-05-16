@@ -126,11 +126,14 @@ if triples:
 uri_mapping = active_state.get("uri_mapping", {})
 if uri_mapping:
     with st.expander("URI Mapping:"):
-        for label, details in uri_mapping.items():
-            st.write(f"**{label}**")
-            for key, value in details.items():
-                st.write(f"  - {key}: {value}")
-            st.write("")
+        if isinstance(uri_mapping, str):
+            st.code(uri_mapping)
+        else:
+            for label, details in uri_mapping.items():
+                st.write(f"**{label}**")
+                for key, value in details.items():
+                    st.write(f"  - {key}: {value}")
+                st.write("")
 
 instruction = active_state.get("instruction", "")
 if not instruction:

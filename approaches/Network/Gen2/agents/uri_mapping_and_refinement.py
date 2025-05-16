@@ -1,3 +1,4 @@
+import copy
 import importlib
 import re
 from typing import Literal
@@ -22,7 +23,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     
     # Define available agents (excluding tools)
     available_agents = ["extractor", "validation_and_output", "uri_mapping_and_refinement"]
-    
+
     response_chain = prompt | model
 
     goto="uri_mapping_and_refinement"
@@ -43,11 +44,15 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     goto_match = re.search(r'<goto>(.*?)</goto>', content, re.DOTALL)
     tool_input_match = re.search(r'<tool_input>(.*?)</tool_input>', content, re.DOTALL)
     agent_instruction_match = re.search(r'<agent_instruction>(.*?)</agent_instruction>', content, re.DOTALL)
+    
+    # Extract URI mappings from the response
+    uri_mapping_match = re.search(r'<uri_mapping>(.*?)</uri_mapping>', content, re.DOTALL)
 
     # Initialize the update dict with the last agent response
     update = {
         "last_response": content,
-        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)]
+        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)],
+        "last_call": f"{agent_id} - INPUT: {state['agent_instruction']}"
     }
 
     # If triples are found, parse them and add to the state
@@ -56,6 +61,11 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         # Split the triples text into a list of triples
         triples_list = [triple.strip() for triple in triples_text.split('\n') if triple.strip()]
         update["triples"] = triples_list
+    
+    # If URI mappings are found, add them to the state as a string
+    if uri_mapping_match:
+        uri_mapping_text = uri_mapping_match.group(1).strip()
+        update["uri_mapping"] = uri_mapping_text
     
     # If tool ID is found, add it to the state
     if goto_match:

@@ -56,12 +56,12 @@ def few_shot_generator(num_docs_to_display=3, target_agent="extractor"):
         if len(doc_triples) == 0:
             print("  No triples found for this document")
         else:
-            for _, triple in doc_triples.iterrows():
+            for triple_index, (_, triple) in enumerate(doc_triples.iterrows()):
                 subject_type = get_types(triple['subject_uri'])
                 object_type = get_types(triple['object_uri'])
                 
                 if target_agent == "extractor":
-                    print(f"{triple['subject']} (Types: [{','.join(subject_type)}]); {triple['predicate']}; {triple['object']} (Types: [{','.join(object_type)}])")
+                    print(f"{triple_index+1}: {triple['subject']} ({','.join(subject_type)}); {triple['predicate']}; {triple['object']} ({','.join(object_type)})")
                 elif target_agent == "uri_mapping":
                     print(f"{triple['subject']} (Types: [{','.join(subject_type)}], URI: {triple['subject_uri']}); "
                           f"{triple['predicate']} (URI: {triple['predicate_uri']}); "
@@ -72,7 +72,7 @@ def few_shot_generator(num_docs_to_display=3, target_agent="extractor"):
 if __name__ == "__main__":
     # Default number of documents to display is 3
     # This can be changed by passing a number as a command-line argument
-    num_docs = 10
+    num_docs = 3
     agent_type = "extractor"  # Default agent type
     
     if len(sys.argv) > 1:

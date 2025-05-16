@@ -18,4 +18,5 @@ class cIEState(TypedDict):
     tool_input: str
     messages: List[str]
     debug: bool
+    uri_mapping: str
     call_trace: List[Tuple[str, str]]  # List of (agent_id/tool_id, agent_instruction/tool_input) tuples
