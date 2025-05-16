@@ -29,7 +29,8 @@ AVAILABLE_MODELS = {
     ],
     "Cerebras": [
         {"model": "llama-4-scout-17b-16e-instruct", "rpm": 30},
-        {"model": "llama-3.3-70b", "rpm": 30}
+        {"model": "llama-3.3-70b", "rpm": 30},
+        {"model": "qwen-3-32b", "rpm": 30}
     ],
     "Cohere": [
         {"model": "command-a-03-2025", "rpm": 20},
