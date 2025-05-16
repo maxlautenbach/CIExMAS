@@ -93,7 +93,7 @@ In addition, you can decide which agent to call next, when you are ready with yo
     
 START OF EXAMPLES
 
-START OF INPUT 1
+START OF INPUT 1. Call
 
 Text: Blood Scent is a groove metal song performed by STEMM, following their earlier release, Songs for the Incurable Heart.
 
@@ -102,15 +102,17 @@ Triples:
 2: Blood_Scent (Album); performer; STEMM (musical group)
 3: Blood_Scent (Album); follows; Songs_for_the_Incurable_Heart (Album)
                                                         
-END OF INPUT 1
+END OF INPUT 1. Call
 
-START OF OUTPUT 1
+START OF OUTPUT 1. Call
+As the URI Mapping is empty, I have to call the URI Search Tool to get the URIs for the triples.
+
 <goto>uri_search_tool</goto>
 <tool_input>Blood_Scent (Album)[Q]|genre[P]|Blood_Scent (Album) genre Groove_metal (extreme metal,music genre)[X]|Groove_metal (extreme metal,music genre)[Q]|performer[P]|Blood_Scent (Album) performer STEMM (musical group)[X]|STEMM (musical group)[Q]|follows[P]|Blood_Scent (Album) follows Songs_for_the_Incurable_Heart (Album)[X]|Songs_for_the_Incurable_Heart (Album)[Q]</tool_input>
 
-END OF OUTPUT 1
+END OF OUTPUT 1. Call
 
-START OF INPUT 2
+START OF INPUT 2. Call
 Text: Blood Scent is a groove metal song performed by STEMM, following their earlier release, Songs for the Incurable Heart.
 
 Triples:
@@ -246,9 +248,11 @@ Most Similar Search Results for "Songs_for_the_Incurable_Heart (Album)" - Search
      URI: http://www.wikidata.org/entity/Q134556
      Description: group of single releases by an artist usually released at the same time with the same title and tracks but in different formats for consumption (digital, CD, LP)
                                                         
-END OF INPUT 2
+END OF INPUT 2. Call
 
-START OF OUTPUT 2
+START OF OUTPUT 2. Call
+As I now got URIs for all triples, I will create the final output with the URIs and labels and call the validation and output agent.
+
 <uri_mapping>
 Blood_Scent (Album) - Search mode applied [Q] - Applicable to [S1, S2, S3]
 URI: http://www.wikidata.org/entity/Q4927704
@@ -284,9 +288,11 @@ Songs_for_the_Incurable_Heart (Album) - Search mode applied [Q] - Applicable to 
 URI: http://www.wikidata.org/entity/Q7561421
 URI-Label: Songs_for_the_Incurable_Heart
 URI-Description: album by STEMM
+
 </uri_mapping>
 <goto>validation_and_output</goto>
-END OF OUTPUT 2
+
+END OF OUTPUT 2. Call
 
 END OF EXAMPLES
                                                                  
@@ -404,6 +410,8 @@ URI-Description: album by STEMM
 END OF INPUT 1
 
 START OF OUTPUT 1
+Before I output the triples, I will call the turtle to labels tool to get the labels for the URIs and check if the URIs from the URI-Mapping corresponds with the Triples.
+
 <goto>turtle_to_labels_tool</goto>
 <tool_input>@prefix wd: <http://www.wikidata.org/entity/> .
 wd:Q4927707 wd:P136 wd:Q241662.
@@ -471,6 +479,8 @@ Blood Scent performer STEMM
 END OF INPUT 2
 
 START OF OUTPUT 2
+All labels are correct, therefore I will now output the triples in turtle format and end the process.
+
 <goto>END</goto>
 <ttl>
 @prefix wd: <http://www.wikidata.org/entity/> .
