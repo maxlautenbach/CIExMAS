@@ -287,5 +287,8 @@
     },
     "train_text-5-evaluation_log-SambaNova_Llama-4-Maverick-17B-128E-Instruct-2025-05-16-1402.xlsx": {
         "short_description": "Model Change"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-16-1649.xlsx": {
+        "short_description": "R/UST-R/PE"
     }
 }
