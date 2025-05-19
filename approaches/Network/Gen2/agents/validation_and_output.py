@@ -1,5 +1,6 @@
 import importlib
 import re
+import html
 from langgraph.constants import END
 from typing import Literal
 
@@ -73,12 +74,16 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # If tool input is found, add it to the state
     if tool_input_match:
         tool_input = tool_input_match.group(1).strip()
+        # Unescape HTML entities in tool input
+        tool_input = html.unescape(tool_input)
         update["tool_input"] = tool_input
 
     if goto == "END":
         turtle_match = re.search(r'<ttl>(.*?)</ttl>', content, re.DOTALL)
         if turtle_match:
             turtle_string = turtle_match.group(1)
+            # Unescape HTML entities in turtle string
+            turtle_string = html.unescape(turtle_string)
             turtle_valid, error_message = validate_turtle_response(turtle_string)
             if turtle_valid:
                 update["messages"] = state["messages"] + [turtle_string]

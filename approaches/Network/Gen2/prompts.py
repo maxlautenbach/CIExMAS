@@ -78,6 +78,9 @@ To process the task you have access to the following tools:
         - [Q]: Entity search with type. Format: 'Entity (type)[Q]'
         - [P]: Property search. Format: 'property[P]'
         - [X]: Property by example. Example must be a sentence in the format: 'Subject (type) property Object (type)[X]'
+    - Guidelines:
+        - Always use all search terms simultaneously to maximize the chance of finding the correct URIs
+        - For properties, use [P] and [X] mode simultaneously to find the most specific property.
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -89,183 +92,61 @@ In addition, you can decide which agent to call next, when you are ready with yo
 - URI Mapping & Refinement (THIS AGENT)
     - ID: uri_mapping_and_refinement
     - Description: Maps and refines the triples with URIs.
-                                                          
+
+Output Options (can be combined):
+- Next Step: <goto>agent_id OR tool_id</goto>
+- Tool Input Propagation (if tool is next step): <tool_input>tool_input</tool_input>
+- Next Agent Instruction Propagation (if agent is next step): <agent_instruction>agent_instruction</agent_instruction>
+- URI Mapping Update: <uri_mapping>uri_mapping</uri_mapping>
+    - Format:
+        - Subject/Object Extracted Label (Type A1) OR Property Extracted Label - Search mode applied [Q|P|X] - Applicable to [S-Subject|P-Property|O-Object-Triple Numbers] -> i.e. Angela Merkel (Human) - Search mode applied [Q] - Applicable to [S1, S2, O3]
+        - URI: uri (from search results)
+        - URI-Label: uri_label (corresponding label from the search results)
+        - URI-Description: uri_description (corresponding description from the search results)
+    - IMPORTANT: The URI Mapping must be provided as a complete set. Include ALL entities and properties from the triples, even if they were previously mapped.
+    - For each entity/property in the triples, you must provide a mapping entry with one of these states:
+        - If searched and not found: Use "not found" for URI, URI-Label, and URI-Description
+        - If not yet searched: Use "not searched" for URI, URI-Label, and URI-Description
+        - If found: Use the actual URI, label, and description
+    - Do not provide partial updates - the entire mapping must be included each time.
+
 Guidelines:
-- The URI Mapping has to be based solely on the search results. Use the Label -> URI Label and Description -> URI Description to create the URI Mapping.
-- The URI Label and Description must match the one from the search results. Otherwise, the validation will fail.
+- Do not assume any search results or created them using your internal knowledge. Instead use the URI Search Tool to find the URIs.
+- If you search for an entity/property and don't find a URI, mark it as "not found" and accept this result - do not keep searching for it.
+- If you haven't searched for an entity/property yet, mark it as "not searched".
+- To use one of the output options, the corresponding tag must be included in the output.
+- Keep your output concise and to the point
+- IMPORTANT: Track which entities and properties have already been processed in the URI Mapping. Do not search for the same entity or property multiple times.
+- If an entity or property is already in the URI Mapping with a valid URI, reuse that mapping in your complete update.
+- Only search for entities and properties that are marked as "not searched" in the URI Mapping.
+- When updating the URI Mapping, provide a complete mapping that includes ALL entities and properties from the triples.
 
-START OF EXAMPLES
-
-START OF INPUT 1. Call
-
-Text: Blood Scent is a groove metal song performed by STEMM.
-
-Triples:
-1: Blood_Scent (Album); genre; Groove_metal (extreme metal,music genre)
-2: Blood_Scent (Album); performer; STEMM (musical group)
-                                                        
-END OF INPUT 1. Call
-
-START OF OUTPUT 1. Call
-As the URI Mapping is empty, I have to call the URI Search Tool to get the URIs for the triples.
-
-<goto>uri_search_tool</goto>
-<tool_input>Blood_Scent (Album)[Q]|genre[P]|Blood_Scent (Album) genre Groove_metal (extreme metal,music genre)[X]|Groove_metal (extreme metal,music genre)[Q]|performer[P]|Blood_Scent (Album) performer STEMM (musical group)[X]|STEMM (musical group)[Q]</tool_input>
-
-END OF OUTPUT 1. Call
-
-START OF INPUT 2. Call
-Text: Blood Scent is a groove metal song performed by STEMM.
-
-Triples:
-1: Blood_Scent (Album); genre; Groove_metal (extreme metal,music genre)
-2: Blood_Scent (Album); performer; STEMM (musical group)
-
-Similar Search Results for "Blood_Scent (Album)" - Search Mode [Q]:
-- Label: Blood_Scent
-  URI: http://www.wikidata.org/entity/Q4927704
-  Description: album by STEMM
-- Label: Album
-  URI: http://www.wikidata.org/entity/Q482994
-  Description: collection of recorded music, words, sounds
-- Label: Single_(music)
-  URI: http://www.wikidata.org/entity/Q134556
-  Description: group of single releases by an artist usually released at the same time with the same title and tracks but in different formats for consumption (digital, CD, LP)
-
-Similar Search Results for "genre" - Search Mode [P]:
-- Label: genre
-  URI: http://www.wikidata.org/entity/P136
-  Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-  Example: Grand Theft Auto V genre first-person shooter
-- Label: voice type
-  URI: http://www.wikidata.org/entity/P412
-  Description: person's voice type. expected values: soprano, mezzo-soprano, contralto, countertenor, tenor, baritone, bass (and derivatives)
-  Example: Sarah Brightman voice type soprano
-- Label: architectural style
-  URI: http://www.wikidata.org/entity/P149
-  Description: architectural style of a structure
-  Example: Notre-Dame de Paris architectural style French Gothic architecture
-
-Similar Search Results for "Blood_Scent (Album) genre Groove_metal (extreme metal,music genre)" - Search Mode [X]:
-- Label: genre
-  URI: http://www.wikidata.org/entity/P136
-  Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-  Example: Grand Theft Auto V genre first-person shooter
-- Label: country
-  URI: http://www.wikidata.org/entity/P17
-  Description: sovereign state that this item is in (not to be used for human beings)
-  Example: Germany country Germany
-- Label: peak bagging classification
-  URI: http://www.wikidata.org/entity/P8450
-  Description: recognised peak bagging classification of a mountain or hill
-  Example: Mount Everest peak bagging classification eight-thousander
-
-Similar Search Results for "Groove_metal (extreme metal,music genre)" - Search Mode [Q]:
-- Label: Groove_metal
-  URI: http://www.wikidata.org/entity/Q241662
-  Description: subgenre of heavy metal
-- Label: Groovin'_Blue
-  URI: http://www.wikidata.org/entity/Q25095540
-  Description: album by Curtis Amy
-- Label: Rock_music
-  URI: http://www.wikidata.org/entity/Q11399
-  Description: popular music genre
-
-Similar Search Results for "performer" - Search Mode [P]:
-- Label: performer
-  URI: http://www.wikidata.org/entity/P175
-  Description: actor, musician, band or other performer associated with this role or musical work
-  Example: Luke Skywalker performer Mark Hamill
-- Label: cast member
-  URI: http://www.wikidata.org/entity/P161
-  Description: actor performing live for a camera or audience [use "character role" (P453) as qualifier] [use "voice actor" (P725) for voice-only role]
-  Example: Titanic cast member Frances Fisher
-- Label: producer
-  URI: http://www.wikidata.org/entity/P162
-  Description: person(s) who produced the film, musical work, theatrical production, etc. (for film, this does not include executive producers, associate producers, etc.) [for production company, use P272, video games - use P178]
-  Example: Citizen Kane producer Orson Welles
-
-Similar Search Results for "Blood_Scent (Album) performer STEMM (musical group)" - Search Mode [X]:
-- Label: performer
-  URI: http://www.wikidata.org/entity/P175
-  Description: actor, musician, band or other performer associated with this role or musical work
-  Example: Luke Skywalker performer Mark Hamill
-- Label: field of this occupation
-  URI: http://www.wikidata.org/entity/P425
-  Description: field corresponding to this occupation or profession (use only for occupations/professions - for people use Property:P101, for companies use P452)
-  Example: painter field of this occupation art of painting
-- Label: organizer
-  URI: http://www.wikidata.org/entity/P664
-  Description: person or institution organizing an event
-  Example: Eurovision Song Contest organizer European Broadcasting Union
-
-Similar Search Results for "STEMM (musical group)" - Search Mode [Q]:
-- Label: STEMM
-  URI: http://www.wikidata.org/entity/Q596622
-  Description: American metal band
-- Label: Music
-  URI: http://www.wikidata.org/entity/Q638
-  Description: art/activity of creating art using sound
-- Label: Intelligent_dance_music
-  URI: http://www.wikidata.org/entity/Q660984
-  Description: style of electronic dance music
-
-                                                        
-END OF INPUT 2. Call
-
-START OF OUTPUT 2. Call
-As I now got URIs for all triples, I will create the final output with the URIs and labels and call the validation and output agent.
-
-<uri_mapping>
-Blood_Scent (Album) - Search mode applied [Q] - Applicable to [S1, S2]
-URI: http://www.wikidata.org/entity/Q4927704
-URI-Label: Blood_Scent
-URI-Description: album by STEMM
-
-genre - Search mode applied [P, X] - Applicable to [P1]
-URI: http://www.wikidata.org/entity/P136
-URI-Label: genre
-URI-Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-
-Groove_metal (extreme metal,music genre) - Search mode applied [Q] - Applicable to [O1]
-URI: http://www.wikidata.org/entity/Q241662
-URI-Label: Groove_metal
-URI-Description: subgenre of heavy metal
-
-performer - Search mode applied [P, X] - Applicable to [P2]
-URI: http://www.wikidata.org/entity/P175
-URI-Label: performer
-URI-Description: actor, musician, band or other performer associated with this role or musical work
-
-STEMM (musical group) - Search mode applied [Q] - Applicable to [O2]
-URI: http://www.wikidata.org/entity/Q596622
-URI-Label: STEMM
-URI-Description: American metal band
-</uri_mapping>
-<goto>validation_and_output</goto>
-
-END OF OUTPUT 2. Call
-
-END OF EXAMPLES
-                                                                 
-Additional Instructions: {agent_instruction}
+Additional Instructions/Error Handling: {agent_instruction}
 
 Text: {text}
 
 Triples: {triples}
+                                                                 
+URI Mapping: {uri_mapping}
+                                                                 
+Call Trace: {call_trace}
 
 Output for "{last_call}": {last_response}
 
-START OF YOUR OUTPUT:
+--------------------------------------------------------------------------------
 """)
 
 validation_and_output_prompt = PromptTemplate.from_template("""
 You are an expect in validating triples for closed information extraction and deciding whether a better result could be reached or not. You will receive a set of triples and the text they were extracted from. You have to check if the triples are valid and if they are not, you have to decide whether which agent to call next.
 
 To process the task you have access to the following tools:
-- Turtle to Labels Tool
+- Turtle to Labels Tool (Exact 1x required)
     - ID: turtle_to_labels_tool
-    - Description: Takes a turtle string and returns the corresponding labels for each URI in the triples. The Output will be written into the Output on Last Call field.
+    - Description: Takes a turtle string and returns the triples with their corresponding labels. The Output will be written into the "Output on Last Call"  field.
+    - Example Input:
+        @prefix wd: <http://www.wikidata.org/entity/>.
+        wd:Q567 wd:P102 wd:Q49762 .
+    - IMPORTANT: This tool MUST be called exactly once before ending the process. END can only be called if turtle_to_labels_tool is the last element in the call_trace.
 
 To continue you could call one of the following agents:
 - Extractor
@@ -275,149 +156,55 @@ To continue you could call one of the following agents:
     - ID: uri_mapping_and_refinement
     - Description: Maps the triples with URIs and refines the triples. 
 
+Decision Tree for Next Step:
+1. If call_trace is empty:
+   - Call turtle_to_labels_tool
+2. If call_trace ends with 'turtle_to_labels_tool':
+   - If labels match URIs OR entities are marked as "not found": Call END
+   - If labels don't match AND entities are not marked as "not found": Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
+3. If call_trace ends with any other tool/agent:
+   - Call turtle_to_labels_tool
+4. Never call turtle_to_labels_tool if it's the last call in the call_trace
+
+Output Options (can be combined):
+- Next Step: <goto>agent_id OR tool_id</goto>
+- Tool Input Propagation (if tool is next step): <tool_input>tool_input</tool_input>
+- Next Agent Instruction Propagation (if agent is next step): <agent_instruction>agent_instruction</agent_instruction>
+- Final Output (if END is next step): <ttl>Turtle String</ttl>
+    - Only use wd: prefix for URIs.
+    - Example Output:
+        <ttl>
+        @prefix wd: <http://www.wikidata.org/entity/>.
+        wd:Q567 wd:P102 wd:Q49762 .
+        </ttl>
 Guidelines:
-- DO NOT REPLACE URIs THAT WERE NOT FOUND IN THE ORIGINAL URI MAPPING.
+- Do only use the URIs from the URI Mapping. If you don't find a URI in the URI Mapping, just don't include the triple in the final output.
+- Restrict all turtle strings in your output to the http://wikidata.org/entity namespace and/or wd: prefix.
+- Keep your output concise and to the point. Do not repeat the inputs given.
+- You MUST call the turtle_to_labels_tool exactly once before ending the process.
+- Check the call_trace to ensure turtle_to_labels_tool was the last tool called before using END.
+- If the call_trace ends with 'turtle_to_labels_tool', you MUST either end the process or call another agent. Do not loop calling turtle_to_labels_tool.
+- NEVER call turtle_to_labels_tool if it's the last call in the call_trace.
+- No agent has access on the message history, so give them a meaningful agent instruction.
+- If an Entity is mapped as "not found", accept this result and do not try to find it again. These entities should be excluded from the turtle to label input and from the final output.
+- IMPORTANT: When entities are marked as "not found" in the URI Mapping, this is a valid final state. Do not try to find these entities again by calling the URI Mapping agent.
+- Include exactly one goto tag in your output. If you want to call the turtle_to_labels_tool, use <goto>turtle_to_labels_tool</goto>. If you want to end the process, use <goto>END</goto>. And so on...
 
-START OF EXAMPLES
+START OF INPUT
 
-START OF INPUT 1
-Text: Blood Scent is a groove metal song performed by STEMM.
-
-Triples:
-1: Blood_Scent (Album); genre; Groove_metal (extreme metal,music genre)
-2: Blood_Scent (Album); performer; STEMM (musical group)
-
-URI Mapping:
-Blood_Scent (Album) - Search mode applied [Q] - Applicable to [S1, S2]
-URI: http://www.wikidata.org/entity/Q4927704
-URI-Label: Blood_Scent
-URI-Description: album by STEMM
-
-genre - Search mode applied [P, X] - Applicable to [P1]
-URI: http://www.wikidata.org/entity/P136
-URI-Label: genre
-URI-Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-
-Groove_metal (extreme metal,music genre) - Search mode applied [Q] - Applicable to [O1]
-URI: http://www.wikidata.org/entity/Q241662
-URI-Label: Groove_metal
-URI-Description: subgenre of heavy metal
-
-performer - Search mode applied [P, X] - Applicable to [P2]
-URI: http://www.wikidata.org/entity/P175
-URI-Label: performer
-URI-Description: actor, musician, band or other performer associated with this role or musical work
-
-STEMM (musical group) - Search mode applied [Q] - Applicable to [O2]
-URI: http://www.wikidata.org/entity/Q596622
-URI-Label: STEMM
-URI-Description: American metal band
-
-Output of "URI Search Tool - INPUT: Blood_Scent (Album)[Q]|genre[P]|Blood_Scent (Album) genre Groove_metal (extreme metal,music genre)[X]|Groove_metal (extreme metal,music genre)[Q]|performer[P]|Blood_Scent (Album) performer STEMM (musical group)[X]|STEMM (musical group)[Q]": <uri_mapping>
-Blood_Scent (Album) - Search mode applied [Q] - Applicable to [S1, S2]
-URI: http://www.wikidata.org/entity/Q4927704
-URI-Label: Blood_Scent
-URI-Description: album by STEMM
-
-genre - Search mode applied [P, X] - Applicable to [P1]
-URI: http://www.wikidata.org/entity/P136
-URI-Label: genre
-URI-Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-
-Groove_metal (extreme metal,music genre) - Search mode applied [Q] - Applicable to [O1]
-URI: http://www.wikidata.org/entity/Q241662
-URI-Label: Groove_metal
-URI-Description: subgenre of heavy metal
-
-performer - Search mode applied [P, X] - Applicable to [P2]
-URI: http://www.wikidata.org/entity/P175
-URI-Label: performer
-URI-Description: actor, musician, band or other performer associated with this role or musical work
-
-STEMM (musical group) - Search mode applied [Q] - Applicable to [O2]
-URI: http://www.wikidata.org/entity/Q596622
-URI-Label: STEMM
-URI-Description: American metal band
-</uri_mapping>
-<goto>validation_and_output</goto>
-
-END OF INPUT 1
-
-START OF OUTPUT 1
-Before I output the triples, I will call the turtle to labels tool to get the labels for the URIs and check if the URIs from the URI-Mapping corresponds with the Triples.
-
-<goto>turtle_to_labels_tool</goto>
-<tool_input>@prefix wd: <http://www.wikidata.org/entity/> .
-wd:Q4927707 wd:P136 wd:Q241662.
-wd:Q4927707 wd:P175 wd:Q596622.
-</tool_input>
-
-END OF OUTPUT 1
-
-START OF INPUT 2
-
-Text: Blood Scent is a groove metal song performed by STEMM.
-
-Triples:
-1: Blood_Scent (Album); genre; Groove_metal (extreme metal,music genre)
-2: Blood_Scent (Album); performer; STEMM (musical group)
-
-URI Mapping:
-Blood_Scent (Album) - Search mode applied [Q] - Applicable to [S1, S2]
-URI: http://www.wikidata.org/entity/Q4927704
-URI-Label: Blood_Scent
-URI-Description: album by STEMM
-
-genre - Search mode applied [P, X] - Applicable to [P1]
-URI: http://www.wikidata.org/entity/P136
-URI-Label: genre
-URI-Description: creative work's genre or an artist's field of work (P101). Use main subject (P921) to relate creative works to their topic
-
-Groove_metal (extreme metal,music genre) - Search mode applied [Q] - Applicable to [O1]
-URI: http://www.wikidata.org/entity/Q241662
-URI-Label: Groove_metal
-URI-Description: subgenre of heavy metal
-
-performer - Search mode applied [P, X] - Applicable to [P2]
-URI: http://www.wikidata.org/entity/P175
-URI-Label: performer
-URI-Description: actor, musician, band or other performer associated with this role or musical work
-
-STEMM (musical group) - Search mode applied [Q] - Applicable to [O2]
-URI: http://www.wikidata.org/entity/Q596622
-URI-Label: STEMM
-URI-Description: American metal band
-
-Output of "Turtle to Labels Tool - INPUT: @prefix wd: <http://www.wikidata.org/entity/> .
-wd:Q4927707 wd:P136 wd:Q241662.
-wd:Q4927707 wd:P175 wd:Q596622.":
-
-Turtle to Labels Tool Output - 
-Blood Scent genre groove metal
-Blood Scent performer STEMM
-
-END OF INPUT 2
-
-START OF OUTPUT 2
-All labels are correct, therefore I will now output the triples in turtle format and end the process.
-
-<goto>END</goto>
-<ttl>
-@prefix wd: <http://www.wikidata.org/entity/> .
-wd:Q4927707 wd:P136 wd:Q241662.
-wd:Q4927707 wd:P175 wd:Q596622.
-</ttl>
-END OF OUTPUT 2
-
-END OF EXAMPLES
+Additional Instructions/Error Handling: {agent_instruction}
 
 Text: {text}
 
 Triples: {triples}
 
 URI Mapping: {uri_mapping}
+                                                            
+Call Trace: {call_trace}
 
 Output for "{last_call}": {last_response}
-
-START OF YOUR OUTPUT:
+                                                            
+END OF INPUT
+                                                            
+--------------------------------------------------------------------------------
 """)

@@ -290,5 +290,26 @@
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-16-1649.xlsx": {
         "short_description": "R/UST-R/PE"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1329.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1424.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1601.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1614.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1619.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1630.xlsx": {
+        "short_description": "R/PE-SU"
+    },
+    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1644.xlsx": {
+        "short_description": "R/PE-SU"
     }
 }
