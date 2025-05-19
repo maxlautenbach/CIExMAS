@@ -84,9 +84,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             
             state_update = {
                 "tool_input": "",
-                "last_call": "Turtle to Labels Tool - INPUT: " + turtle_string,
                 "last_response": response,
-                "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
+                "last_call": tool_id,
+                "call_trace": state.get("call_trace", []) + [tool_id]
             }
 
             if state["debug"]:

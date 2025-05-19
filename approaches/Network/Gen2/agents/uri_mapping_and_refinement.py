@@ -51,8 +51,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Initialize the update dict with the last agent response
     update = {
         "last_response": content,
-        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)],
-        "last_call": f"{agent_id} - INPUT: {state['agent_instruction']}"
+        "call_trace": state.get("call_trace", []) + [agent_id],
+        "last_call": agent_id
     }
 
     # If triples are found, parse them and add to the state

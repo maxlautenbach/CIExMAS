@@ -272,8 +272,8 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         return Command(goto="uri_mapping_and_refinement", update={
             "last_response": response, 
             "tool_input": "", 
-            "last_call": "Network Traversal Search Tool - INPUT: " + state["tool_input"],
-            "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
+            "last_call": tool_id,
+            "call_trace": state.get("call_trace", []) + [tool_id]
         })
         
     except Exception as e:

@@ -12,11 +12,11 @@ from helper_tools.base_setup import *
 class cIEState(TypedDict):
     text: str
     triples: List[str]
-    last_call: str
+    last_call: str  # Only stores agent_id or tool_id
     last_response: str
     agent_instruction: str
     tool_input: str
     messages: List[str]
     debug: bool
     uri_mapping: str
-    call_trace: List[Tuple[str, str]]  # List of (agent_id/tool_id, agent_instruction/tool_input) tuples
+    call_trace: List[str]  # List of agent_ids or tool_ids

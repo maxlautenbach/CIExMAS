@@ -63,10 +63,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     k=3,
                     filter=filter_condition
                 )
-                search_response += f'Most Similar Search Results for "{clean_term}" - Search Mode [{mode}]:\n'
+                search_response += f'Similar Search Results for "{clean_term}" - Search Mode [{mode}]:\n'
                 
                 for idx, (doc, sim_score) in enumerate(results):
-                    search_response += f"  {idx+1}. Label: {doc.page_content}\n"
+                    search_response += f"  - Label: {doc.page_content}\n"
                     search_response += f"     URI: {doc.metadata['uri']}\n"
                     search_response += f"     Description: {doc.metadata['description']}\n"
                     if doc.metadata.get("example"):
@@ -78,10 +78,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
                     clean_term, 
                     k=3
                 )
-                search_response += f'Most Similar Search Results for "{clean_term}" - Search Mode [X]:\n'
+                search_response += f'Similar Search Results for "{clean_term}" - Search Mode [X]:\n'
                 
                 for idx, (doc, sim_score) in enumerate(results):
-                    search_response += f"  {idx+1}. Label: {doc.metadata['label']}\n"
+                    search_response += f"  - Label: {doc.metadata['label']}\n"
                     search_response += f"     URI: {doc.metadata['uri']}\n"
                     search_response += f"     Description: {doc.metadata['description']}\n"
                     search_response += f"     Example: {doc.page_content}\n"
@@ -90,9 +90,9 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
 
         state_update = {
             "tool_input": "",
-            "last_call": "URI Search Tool - INPUT: " + state["tool_input"],
             "last_response": search_response,
-            "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
+            "last_call": tool_id,
+            "call_trace": state.get("call_trace", []) + [tool_id]
         }
 
         if state["debug"]:
