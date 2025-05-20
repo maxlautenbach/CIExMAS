@@ -110,7 +110,7 @@ def fetch_description_from_sparql(uri):
     except Exception:
         return "No Description Found"
 
-def get_types(uri):
+def get_types(uri, output_uri=False):
     query = f"""
         SELECT ?o WHERE {{
             <{uri}> wdt:P31 ?o .
@@ -118,9 +118,12 @@ def get_types(uri):
     """
     results = send_query(query)
     try:
-        type_list = get_superclasses(uri)
+        type_list = []
         for binding in results["results"]["bindings"]:
-            type_list.append(get_label(binding["o"]["value"]))
+            if output_uri:
+                type_list.append(binding["o"]["value"])
+            else:
+                type_list.append(get_label(binding["o"]["value"]))
         return type_list
     except Exception:
         return ["No Types Found"]

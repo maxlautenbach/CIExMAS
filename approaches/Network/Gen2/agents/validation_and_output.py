@@ -21,7 +21,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     agent_instruction = state.get("agent_instruction", "")
     
     # Define available gotos for this agent
-    available_gotos = ["extractor", "uri_mapping_and_refinement", "END", "validation_and_output", "turtle_to_labels_tool"]
+    available_gotos = ["extractor", "uri_mapping_and_refinement", "END", "validation_and_output", "turtle_to_labels_tool", "semantic_triple_checking_tool"]
     
     # Define available agents (excluding tools and END)
     available_agents = ["extractor", "uri_mapping_and_refinement", "validation_and_output"]

@@ -1,4 +1,6 @@
 import uuid
+import logging
+import pickle
 
 import faiss
 import git
@@ -14,6 +16,10 @@ from langfuse import Langfuse
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 repo = git.Repo(search_parent_directories=True)
 
 from dotenv import load_dotenv
@@ -25,7 +31,7 @@ load_dotenv(repo.working_dir + "/.env", override=True)
 llm_provider = os.getenv("LLM_MODEL_PROVIDER")
 model_id = os.getenv("LLM_MODEL_ID")
 req_per_second = int(os.getenv("LLM_RPM")) / 60
-print(f"Initializing {model_id} at {llm_provider} - {req_per_second * 60} RPM")
+logger.info(f"Initializing {model_id} at {llm_provider} - {req_per_second * 60} RPM")
 
 if req_per_second > 0:
     rate_limiter = InMemoryRateLimiter(requests_per_second=req_per_second, check_every_n_seconds=0.1)
@@ -99,6 +105,7 @@ elif llm_provider == "Cohere":
 embeddings = OllamaEmbeddings(
     model=os.getenv("EMBEDDING_MODEL_ID"),
 )
+logger.info(f"Embeddings model {os.getenv('EMBEDDING_MODEL_ID')} initialized")
 
 session_id = str(uuid.uuid4())
 
@@ -108,17 +115,17 @@ langfuse_handler = CallbackHandler(
     host=os.getenv("LANGFUSE_HOST"),
     session_id=session_id
 )
+logger.info("Langfuse handler initialized")
 
 langfuse_client = Langfuse(
     secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
     public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
     host=os.getenv("LANGFUSE_HOST"),
 )
-
-
+logger.info("Langfuse client initialized")
 
 if os.getenv("VECTOR_STORE") == "qdrant":
-
+    logger.info("Initializing Qdrant vector store")
     qdrant_url = os.getenv("QDRANT_URL")
     qdrant_port = os.getenv("QDRANT_PORT")
     qdrant_api_key = os.getenv("QDRANT_API_KEY")
@@ -128,6 +135,7 @@ if os.getenv("VECTOR_STORE") == "qdrant":
         collection_name="wikidata_labels",
         embedding=embeddings
     )
+    logger.info("Qdrant vector store initialized")
 
     label_vector_store = vector_store
 
@@ -136,20 +144,24 @@ if os.getenv("VECTOR_STORE") == "qdrant":
         collection_name="wikidata_descriptions",
         embedding=embeddings
     )
+    logger.info("Qdrant description vector store initialized")
 
     example_vector_store = QdrantVectorStore(
         client=client,
         collection_name="wikidata_examples",
         embedding=embeddings
     )
+    logger.info("Qdrant example vector store initialized")
 
 else:
+    logger.info("Initializing FAISS vector store")
     vector_store = FAISS(
         embedding_function=embeddings,
         index=faiss.IndexFlatL2(len(embeddings.embed_query("hello world"))),
         docstore=InMemoryDocstore(),
         index_to_docstore_id={},
     )
+    logger.info("FAISS vector store initialized")
 
     label_vector_store = vector_store
 
@@ -159,8 +171,25 @@ else:
         docstore=InMemoryDocstore(),
         index_to_docstore_id={},
     )
+    logger.info("FAISS description vector store initialized")
 
 wikidata_predicate_graph = Graph()
 wikidata_predicate_graph.parse(repo.working_dir + "/infrastructure/all_properties.ttl", format="ttl")
+logger.info("Wikidata predicate graph loaded")
+
+# Load class hierarchy from pickle if it exists, otherwise parse NT file
+pickle_path = os.path.join(repo.working_dir, "infrastructure/classes.pkl")
+if os.path.exists(pickle_path):
+    logger.info("Loading Wikidata class hierarchy from pickle file...")
+    with open(pickle_path, 'rb') as f:
+        wikidata_class_hierarchy = pickle.load(f)
+else:
+    logger.info("Pickle file not found, loading from NT file...")
+    wikidata_class_hierarchy = Graph()
+    wikidata_class_hierarchy.parse(repo.working_dir + "/infrastructure/classes.nt", format="nt")
+    with open(pickle_path, 'wb') as f:
+        pickle.dump(wikidata_class_hierarchy, f)
+logger.info("Wikidata class hierarchy loaded")
 
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql", agent="CIExMAS-SPARQL-Loader-Bot/1.0 (mlautenb@students.uni-mannheim.de)")
+logger.info("SPARQL wrapper initialized")

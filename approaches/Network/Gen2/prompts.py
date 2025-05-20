@@ -111,6 +111,11 @@ Output Options (can be combined):
     - Do not provide partial updates - the entire mapping must be included each time.
 
 Guidelines:
+- CRITICAL: NEVER assume or create search results. You MUST use the URI Search Tool to find URIs.
+- If you haven't searched for an entity/property using the URI Search Tool, mark it as "not searched" in the URI Mapping.
+- If you have searched and found no results, mark it as "not found" in the URI Mapping.
+- Making up or assuming URIs is strictly prohibited and will result in incorrect mappings.
+- Each entity and property MUST be explicitly searched using the URI Search Tool before being mapped.
 - Do not assume any search results or created them using your internal knowledge. Instead use the URI Search Tool to find the URIs.
 - If you search for an entity/property and don't find a URI, mark it as "not found" and accept this result - do not keep searching for it.
 - If you haven't searched for an entity/property yet, mark it as "not searched".
@@ -146,7 +151,16 @@ To process the task you have access to the following tools:
     - Example Input:
         @prefix wd: <http://www.wikidata.org/entity/>.
         wd:Q567 wd:P102 wd:Q49762 .
-    - IMPORTANT: This tool MUST be called exactly once before ending the process. END can only be called if turtle_to_labels_tool is the last element in the call_trace.
+    - IMPORTANT: This tool MUST be called exactly once before the semantic triple checking tool.
+    - CRITICAL: Only use URIs that are explicitly provided in the URI Mapping. Never make up or assume URIs.
+
+- Semantic Triple Checking Tool (Exact 1x required)
+    - ID: semantic_triple_checking_tool
+    - Description: Validates if all triples in a Turtle string are semantically correct by checking type constraints.
+    - Example Input:
+        @prefix wd: <http://www.wikidata.org/entity/>.
+        wd:Q567 wd:P102 wd:Q49762 .
+    - IMPORTANT: This tool MUST be called exactly once after the turtle_to_labels_tool and before ending the process.
 
 To continue you could call one of the following agents:
 - Extractor
@@ -158,13 +172,17 @@ To continue you could call one of the following agents:
 
 Decision Tree for Next Step:
 1. If call_trace is empty:
-   - Call turtle_to_labels_tool
+   - Generate turtle string ONLY using URIs from the URI Mapping
+   - Call turtle_to_labels_tool with the generated turtle string
 2. If call_trace ends with 'turtle_to_labels_tool':
-   - If labels match URIs OR entities are marked as "not found": Call END
+   - If labels match URIs OR entities are marked as "not found": Call semantic_triple_checking_tool
    - If labels don't match AND entities are not marked as "not found": Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
-3. If call_trace ends with any other tool/agent:
-   - Call turtle_to_labels_tool
-4. Never call turtle_to_labels_tool if it's the last call in the call_trace
+3. If call_trace ends with 'semantic_triple_checking_tool':
+   - If all type constraints are matched: Call END
+   - If type constraints are not matched: Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
+4. If call_trace ends with any other tool/agent:
+   - Generate turtle string ONLY using URIs from the URI Mapping
+   - Call turtle_to_labels_tool with the generated turtle string
 
 Output Options (can be combined):
 - Next Step: <goto>agent_id OR tool_id</goto>
@@ -177,18 +195,23 @@ Output Options (can be combined):
         @prefix wd: <http://www.wikidata.org/entity/>.
         wd:Q567 wd:P102 wd:Q49762 .
         </ttl>
-Guidelines:
-- Do only use the URIs from the URI Mapping. If you don't find a URI in the URI Mapping, just don't include the triple in the final output.
-- Restrict all turtle strings in your output to the http://wikidata.org/entity namespace and/or wd: prefix.
+
+CRITICAL GUIDELINES:
+- NEVER make up or assume URIs. Only use URIs that are explicitly provided in the URI Mapping.
+- If an entity is marked as "not found" in the URI Mapping, exclude it from the turtle string.
+- If an entity is marked as "not searched" in the URI Mapping, call uri_mapping_and_refinement to search for it.
+- The turtle string MUST only contain URIs that are explicitly provided in the URI Mapping.
+- Do not try to guess or create URIs based on entity names or descriptions.
+- If you cannot find a valid URI in the URI Mapping for an entity, exclude that triple from the turtle string.
 - Keep your output concise and to the point. Do not repeat the inputs given.
-- You MUST call the turtle_to_labels_tool exactly once before ending the process.
-- Check the call_trace to ensure turtle_to_labels_tool was the last tool called before using END.
-- If the call_trace ends with 'turtle_to_labels_tool', you MUST either end the process or call another agent. Do not loop calling turtle_to_labels_tool.
-- NEVER call turtle_to_labels_tool if it's the last call in the call_trace.
-- No agent has access on the message history, so give them a meaningful agent instruction.
+- You MUST call the tools in the following order:
+  1. turtle_to_labels_tool (exactly once)
+  2. semantic_triple_checking_tool (exactly once)
+  3. END
+- The process can ONLY be ended if the call_trace ends with 'semantic_triple_checking_tool' and all type constraints are matched.
 - If an Entity is mapped as "not found", accept this result and do not try to find it again. These entities should be excluded from the turtle to label input and from the final output.
 - IMPORTANT: When entities are marked as "not found" in the URI Mapping, this is a valid final state. Do not try to find these entities again by calling the URI Mapping agent.
-- Include exactly one goto tag in your output. If you want to call the turtle_to_labels_tool, use <goto>turtle_to_labels_tool</goto>. If you want to end the process, use <goto>END</goto>. And so on...
+- Include exactly one goto tag in your output. If you want to call a tool, use <goto>tool_id</goto>. If you want to end the process, use <goto>END</goto>. And so on...
 
 START OF INPUT
 
