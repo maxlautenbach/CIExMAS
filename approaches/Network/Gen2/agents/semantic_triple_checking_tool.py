@@ -42,7 +42,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             state_update = {
                 "tool_input": "",
                 "agent_instruction": f"SYSTEM MESSAGE: Invalid Turtle string: {error_message}",
-                "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
+                "call_trace": state.get("call_trace", []) + [tool_id]
             }
             if state["debug"]:
                 state.update(state_update)

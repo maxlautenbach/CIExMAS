@@ -17,7 +17,18 @@ def parse_turtle(turtle_string: str) -> List[Tuple[URIRef, URIRef, URIRef]]:
 
 def get_labels_for_uri(uri: str) -> str:
     """Get label for a Wikidata URI using SPARQL."""
-    # Use the full URI in the SPARQL query
+    # First check if the URI exists
+    existence_query = f"""
+    ASK {{
+        <{uri}> ?p ?o .
+    }}
+    """
+    
+    existence_response = send_query(existence_query)
+    if not existence_response or not existence_response.get('boolean', False):
+        return f"{uri} (URI does not exist)"
+    
+    # If URI exists, try to get the label
     query = f"""
     SELECT ?label
     WHERE {{
@@ -32,7 +43,7 @@ def get_labels_for_uri(uri: str) -> str:
         bindings = response['results']['bindings']
         if bindings and 'label' in bindings[0]:
             return bindings[0]['label']['value']
-    return uri
+    return f"{uri} (URI exists but has no English label)"
 
 def turtle_to_labels(turtle_string: str) -> str:
     """Convert turtle triples to their corresponding labels."""

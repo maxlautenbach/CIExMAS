@@ -77,10 +77,12 @@ To process the task you have access to the following tools:
     - Search Modes:
         - [Q]: Entity search with type. Format: 'Entity (type)[Q]'
         - [P]: Property search. Format: 'property[P]'
-        - [X]: Property by example. Example must be a sentence in the format: 'Subject (type) property Object (type)[X]'
+        - [X]: Property by example. Format: 'Subject (type) property Object (type)[X]'
     - Guidelines:
         - Always use all search terms simultaneously to maximize the chance of finding the correct URIs
-        - For properties, use [P] and [X] mode simultaneously to find the most specific property.
+        - For properties, ALWAYS use both [P] and [X] modes together to find the most specific property
+        - Example property search: 'architectural style[P]|Albert_S._Sholes_House (house) architectural style Bungalow (architectural style)[X]'
+        - This dual-mode approach helps find both general and context-specific property URIs
     
 In addition, you can decide which agent to call next, when you are ready with your task:
 - Extractor
@@ -195,6 +197,7 @@ Output Options (can be combined):
         @prefix wd: <http://www.wikidata.org/entity/>.
         wd:Q567 wd:P102 wd:Q49762 .
         </ttl>
+- Reasoning: <reasoning>One sentence explanation of the decision made</reasoning>
 
 CRITICAL GUIDELINES:
 - NEVER make up or assume URIs. Only use URIs that are explicitly provided in the URI Mapping.
@@ -212,6 +215,9 @@ CRITICAL GUIDELINES:
 - If an Entity is mapped as "not found", accept this result and do not try to find it again. These entities should be excluded from the turtle to label input and from the final output.
 - IMPORTANT: When entities are marked as "not found" in the URI Mapping, this is a valid final state. Do not try to find these entities again by calling the URI Mapping agent.
 - Include exactly one goto tag in your output. If you want to call a tool, use <goto>tool_id</goto>. If you want to end the process, use <goto>END</goto>. And so on...
+- CRITICAL: When calling any tool, you MUST include a <tool_input> tag with the appropriate input for that tool.
+- CRITICAL: You MUST include a <reasoning> tag with a single sentence explaining your decision for the next step.
+- CRITICAL: You MUST follow any additional instructions or error handling provided in the "Additional Instructions/Error Handling" field. These instructions take precedence over the default guidelines and MUST be respected in your decision-making process.
 
 START OF INPUT
 

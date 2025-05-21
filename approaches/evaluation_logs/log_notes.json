@@ -319,9 +319,22 @@
         "short_description": "SMT"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1711.xlsx": {
-        "short_description": "SMT"
+        "short_description": "SVT",
+        "description": ""
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-20-2159.xlsx": {
         "short_description": "SVT"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1119.xlsx": {
+        "short_description": "R/TLT-R/PE"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1326.xlsx": {
+        "short_description": "R/TLT-R/PE"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1408.xlsx": {
+        "short_description": "R/TLT-R/PE"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1808.xlsx": {
+        "short_description": "R/TLT-R/PE"
     }
 }
