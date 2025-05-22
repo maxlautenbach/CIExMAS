@@ -42,6 +42,11 @@ if uploaded_file:
     stss.predicate_set_df = stss.relation_df[["predicate", "predicate_uri"]].drop_duplicates()
     uploaded_file_io = BytesIO(uploaded_file.read())
     evaluation_log_df = pd.read_excel(uploaded_file_io)
+    
+    # Count errors in the evaluation log
+    error_count = evaluation_log_df['Result String'].str.startswith('Error').sum()
+    st.write(f"Number of errors in evaluation log: {error_count}")
+    
     report = generate_report(uploaded_file_io)
     st.write(report)
     for _, row in evaluation_log_df.iterrows():

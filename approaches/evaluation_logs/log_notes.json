@@ -338,6 +338,7 @@
         "short_description": "R/TLT-R/PE"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-21-2302.xlsx": {
-        "short_description": "SVT"
+        "short_description": "R/TLT-R/PE",
+        "description": ""
     }
 }
