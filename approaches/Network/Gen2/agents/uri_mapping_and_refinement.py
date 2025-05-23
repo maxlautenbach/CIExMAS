@@ -51,7 +51,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
     # Initialize the update dict with the last agent response
     update = {
         "last_response": content,
-        "call_trace": state.get("call_trace", []) + [agent_id],
+        "call_trace": state.get("call_trace", []) + [(agent_id, agent_instruction)],
         "last_call": agent_id
     }
 

@@ -63,10 +63,10 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             result = f"Triple: {subject} {predicate} {obj}\n"
             result += f"Subject Type Restriction Matched: {subject_restriction_matched}"
             if not subject_restriction_matched and unmatched_subject_constraints:
-                result += f" (Unmatched types: {', '.join(unmatched_subject_constraints)})"
+                result += f" (Unmatched Type Restriction: {' OR '.join(unmatched_subject_constraints)})"
             result += f"\nObject Type Restriction Matched: {object_restriction_matched}"
             if not object_restriction_matched and unmatched_object_constraints:
-                result += f" (Unmatched types: {', '.join(unmatched_object_constraints)})"
+                result += f" (Unmatched Type Restriction: {' OR '.join(unmatched_object_constraints)})"
             result += "\n"
             results.append(result)
 
@@ -76,7 +76,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             "tool_input": "",
             "last_response": response,
             "last_call": tool_id,
-            "call_trace": state.get("call_trace", []) + [tool_id]
+            "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
         }
 
         if state["debug"]:

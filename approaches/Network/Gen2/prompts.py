@@ -53,7 +53,15 @@ Text: Miho Nakayama was born in Koganei, Tokyo and is a J-pop singer. She has wo
 
 END OF EXAMPLE OUTPUT
 
+Additional Instructions/Error Handling: {agent_instruction}
+
 Text: {text}
+
+Triples: {triples}
+
+URI Mapping: {uri_mapping}
+                                                            
+Call Trace: {call_trace}
 
 Return the triples in this format:
 <triples>
@@ -181,7 +189,8 @@ Decision Tree for Next Step:
    - If labels don't match AND entities are not marked as "not found": Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
 3. If call_trace ends with 'semantic_triple_checking_tool':
    - If all type constraints are matched: Call END
-   - If type constraints are not matched: Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
+   - If type constraints are not matched AND call_trace contains 'uri_mapping_and_refinement' or 'extractor': Remove problematic triples and call END
+   - If type constraints are not matched AND call_trace does NOT contain 'uri_mapping_and_refinement' or 'extractor': Call extractor or uri_mapping_and_refinement with an instruction that describes the problem.
 4. If call_trace ends with any other tool/agent:
    - Generate turtle string ONLY using URIs from the URI Mapping
    - Call turtle_to_labels_tool with the generated turtle string
@@ -211,7 +220,9 @@ CRITICAL GUIDELINES:
   1. turtle_to_labels_tool (exactly once)
   2. semantic_triple_checking_tool (exactly once)
   3. END
-- The process can ONLY be ended if the call_trace ends with 'semantic_triple_checking_tool' and all type constraints are matched.
+- The process can ONLY be ended if:
+  a) The call_trace ends with 'semantic_triple_checking_tool' and all type constraints are matched, OR
+  b) The call_trace ends with 'semantic_triple_checking_tool' and type constraints are not matched, but the call_trace already contains 'uri_mapping_and_refinement' or 'extractor' (in this case, remove problematic triples)
 - If an Entity is mapped as "not found", accept this result and do not try to find it again. These entities should be excluded from the turtle to label input and from the final output.
 - IMPORTANT: When entities are marked as "not found" in the URI Mapping, this is a valid final state. Do not try to find these entities again by calling the URI Mapping agent.
 - Include exactly one goto tag in your output. If you want to call a tool, use <goto>tool_id</goto>. If you want to end the process, use <goto>END</goto>. And so on...

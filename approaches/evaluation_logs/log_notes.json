@@ -289,7 +289,8 @@
         "short_description": "Model Change"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-16-1649.xlsx": {
-        "short_description": "R/UST-R/PE"
+        "short_description": "R/UST-R/PE",
+        "description": "\t- Deleted Limitation to 10 Terms\n\t- Added prompting to refuse duplicate search terms\n"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1329.xlsx": {
         "short_description": "R/PE-SU"
@@ -313,7 +314,8 @@
         "short_description": "R/PE-SU"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-19-2128.xlsx": {
-        "short_description": "R/PE-SU"
+        "short_description": "R/PE-SU",
+        "description": "\t- Updated the State (Introduced URI Mapping, limited Call Trace/Last Call)\n\t- Rebuild Prompts from Scratch\n\t\t\u25cb Extractor with FSP\n\t\t\u25cb Other Agents with Guideline Prompts\n\n"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1653.xlsx": {
         "short_description": "SMT"
@@ -323,7 +325,8 @@
         "description": ""
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-20-2159.xlsx": {
-        "short_description": "SVT"
+        "short_description": "SVT",
+        "description": "Added Type Validation Tool with Loop-Free Class Hierarchies"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1119.xlsx": {
         "short_description": "R/TLT-R/PE"
@@ -339,6 +342,9 @@
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-21-2302.xlsx": {
         "short_description": "R/TLT-R/PE",
-        "description": ""
+        "description": "\t- More detailed error message Turtle to Label Tool\n\t- Prompt Engineering for better Instruction Following\n"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-23-1556.xlsx": {
+        "short_description": "R/SVT-R/PE-SU"
     }
 }

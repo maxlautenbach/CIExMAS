@@ -92,7 +92,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             "tool_input": "",
             "last_response": search_response,
             "last_call": tool_id,
-            "call_trace": state.get("call_trace", []) + [tool_id]
+            "call_trace": state.get("call_trace", []) + [(tool_id, tool_input)]
         }
 
         if state["debug"]:

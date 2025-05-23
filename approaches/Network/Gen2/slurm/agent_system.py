@@ -80,7 +80,7 @@ for i in tqdm(range(len(docs))):
             "debug": False,
             "call_trace": [],
             "uri_mapping": "",
-        }, config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Gen2", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
+        }, config={"run_id": trace_id, "recursion_limit": 40, "callbacks": [langfuse_handler], "tags":["Gen2", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         
         # Assuming the final result is in the last message
         if response["messages"]:
