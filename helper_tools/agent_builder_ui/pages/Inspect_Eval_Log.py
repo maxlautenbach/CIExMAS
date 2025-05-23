@@ -43,13 +43,43 @@ if uploaded_file:
     uploaded_file_io = BytesIO(uploaded_file.read())
     evaluation_log_df = pd.read_excel(uploaded_file_io)
     
-    # Count errors in the evaluation log
-    error_count = evaluation_log_df['Result String'].str.startswith('Error').sum()
-    st.write(f"Number of errors in evaluation log: {error_count}")
+    error_patterns = [
+        r'^Error',
+        r'error',
+        r'exception',
+        r'failed',
+        r'Recursion limit',
+        r'Traceback',
+        r'not found',
+        r'invalid',
+        r'crash',
+        r'cannot',
+        r'undefined',
+        r'unsupported',
+        r'failure',
+    ]
+    error_regex = '|'.join(error_patterns)
+
+    # Checkbox to exclude errors
+    exclude_errors = st.checkbox("Exclude Errors")
+    filtered_df = evaluation_log_df
+    if exclude_errors:
+        filtered_df = evaluation_log_df[~evaluation_log_df['Result String'].str.contains(error_regex, case=False, regex=True)]
+
+    # Count errors in the evaluation log using a list of common error patterns
     
-    report = generate_report(uploaded_file_io)
+    error_count = evaluation_log_df['Result String'].str.contains(error_regex, case=False, regex=True).sum()
+    st.write(f"Number of errors in evaluation log: {error_count}")
+    error_percentage = (error_count / len(evaluation_log_df)) * 100 if len(evaluation_log_df) > 0 else 0
+    st.write(f"Percentage of errors in evaluation log: {error_percentage:.1f}%")
+
+    # Schreibe das gefilterte DataFrame korrekt als Excel in einen Buffer
+    excel_buffer = BytesIO()
+    filtered_df.to_excel(excel_buffer, index=False)
+    excel_buffer.seek(0)
+    report = generate_report(excel_buffer)
     st.write(report)
-    for _, row in evaluation_log_df.iterrows():
+    for _, row in filtered_df.iterrows():
         with st.container(border=True):
             score = calculate_scores_from_array(row.to_list()[1:(22-len(row))])
             st.write(stss.docs.loc[row["Doc ID"]]["text"])

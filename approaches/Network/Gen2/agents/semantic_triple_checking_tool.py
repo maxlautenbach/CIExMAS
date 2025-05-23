@@ -56,13 +56,18 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         # Validate each triple
         results = []
         for subject, predicate, obj in graph:
-            subject_restriction_matched, object_restriction_matched = validate_triple(
+            subject_restriction_matched, unmatched_subject_constraints, object_restriction_matched, unmatched_object_constraints = validate_triple(
                 str(subject), str(predicate), str(obj)
             )
             
             result = f"Triple: {subject} {predicate} {obj}\n"
-            result += f"Subject Type Restriction Matched: {subject_restriction_matched}\n"
-            result += f"Object Type Restriction Matched: {object_restriction_matched}\n"
+            result += f"Subject Type Restriction Matched: {subject_restriction_matched}"
+            if not subject_restriction_matched and unmatched_subject_constraints:
+                result += f" (Unmatched types: {', '.join(unmatched_subject_constraints)})"
+            result += f"\nObject Type Restriction Matched: {object_restriction_matched}"
+            if not object_restriction_matched and unmatched_object_constraints:
+                result += f" (Unmatched types: {', '.join(unmatched_object_constraints)})"
+            result += "\n"
             results.append(result)
 
         response = "Semantic Triple Checking Results:\n\n" + "\n".join(results)

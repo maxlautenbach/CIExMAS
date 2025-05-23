@@ -145,11 +145,40 @@ def main():
             model_name = f"{architecture} - {provider} - {display_model_id} ({run_info})"
             model_names[file_path] = model_name
     
+    # Checkbox to exclude errors
+    exclude_errors = st.checkbox("Exclude Errors")
+    error_patterns = [
+        r'^Error',
+        r'error',
+        r'exception',
+        r'failed',
+        r'Recursion limit',
+        r'Traceback',
+        r'not found',
+        r'invalid',
+        r'crash',
+        r'cannot',
+        r'undefined',
+        r'unsupported',
+        r'failure',
+    ]
+    error_regex = '|'.join(error_patterns)
+
     # Generate reports for all files
     reports = []
     for file_path in filtered_files:
         if file_path in model_names:
-            report = generate_report(file_path)
+            if exclude_errors:
+                # Lade DataFrame, filtere Fehler, schreibe in Buffer
+                df = pd.read_excel(file_path)
+                filtered_df = df[~df['Result String'].str.contains(error_regex, case=False, regex=True, na=False)]
+                from io import BytesIO
+                excel_buffer = BytesIO()
+                filtered_df.to_excel(excel_buffer, index=False)
+                excel_buffer.seek(0)
+                report = generate_report(excel_buffer)
+            else:
+                report = generate_report(file_path)
             reports.append((model_names[file_path], report))
     
     # Get available metrics from the first report

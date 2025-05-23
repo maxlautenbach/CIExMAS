@@ -62,7 +62,9 @@ def validate_triple(subject_uri, property_uri, object_uri):
     Returns:
         tuple containing:
         - bool: Whether subject type constraints are matched
+        - list: List of subject type constraints that weren't matched (empty if matched)
         - bool: Whether object type constraints are matched
+        - list: List of object type constraints that weren't matched (empty if matched)
     """
     # Get subject type constraints
     subject_constraints_query = f"""
@@ -92,36 +94,46 @@ def validate_triple(subject_uri, property_uri, object_uri):
     
     # Check subject type constraints
     subject_restriction_matched = True  # Default to True if no constraints
+    unmatched_subject_constraints = []
     try:
         if subject_results["results"]["bindings"]:
             subject_restriction_matched = False  # Set to False if there are constraints
             for binding in subject_results["results"]["bindings"]:
                 if "subjectTypeConstraint" in binding:
                     constraint_uri = binding["subjectTypeConstraint"]["value"]
+                    constraint_label = binding.get("subjectTypeLabel", {}).get("value", constraint_uri)
                     if check_type_constraint(subject_uri, constraint_uri):
                         subject_restriction_matched = True
+                        unmatched_subject_constraints = []
                         break  # Stop at first match
+                    else:
+                        unmatched_subject_constraints.append(constraint_label)
     except Exception:
         pass
     
     # Check object type constraints
     object_restriction_matched = True  # Default to True if no constraints
+    unmatched_object_constraints = []
     try:
         if object_results["results"]["bindings"]:
             object_restriction_matched = False  # Set to False if there are constraints
             for binding in object_results["results"]["bindings"]:
                 if "objectTypeConstraint" in binding:
                     constraint_uri = binding["objectTypeConstraint"]["value"]
+                    constraint_label = binding.get("objectTypeLabel", {}).get("value", constraint_uri)
                     if check_type_constraint(object_uri, constraint_uri):
                         object_restriction_matched = True
+                        unmatched_object_constraints = []
                         break  # Stop at first match
+                    else:
+                        unmatched_object_constraints.append(constraint_label)
     except Exception:
         pass
             
-    return subject_restriction_matched, object_restriction_matched
+    return subject_restriction_matched, unmatched_subject_constraints, object_restriction_matched, unmatched_object_constraints
 
 
 if __name__ == "__main__":
-    results = validate_triple("http://www.wikidata.org/entity/Q567", "http://www.wikidata.org/entity/P4100",
-                      "http://www.wikidata.org/entity/Q1023134")
+    results = validate_triple("http://www.wikidata.org/entity/Q753291", "http://www.wikidata.org/entity/P2578",
+                      "http://www.wikidata.org/entity/Q43619")
     print(results)

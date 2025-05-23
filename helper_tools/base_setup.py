@@ -15,6 +15,7 @@ from langchain_qdrant import QdrantVectorStore
 from langfuse import Langfuse
 from langfuse.callback import CallbackHandler
 from qdrant_client import QdrantClient
+from .fuseki_handler import FusekiClient, check_datasets, init_db
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -24,7 +25,6 @@ repo = git.Repo(search_parent_directories=True)
 
 from dotenv import load_dotenv
 import os
-from rdflib import Graph
 
 load_dotenv(repo.working_dir + "/.env", override=True)
 
@@ -173,23 +173,16 @@ else:
     )
     logger.info("FAISS description vector store initialized")
 
-wikidata_predicate_graph = Graph()
-wikidata_predicate_graph.parse(repo.working_dir + "/infrastructure/all_properties.ttl", format="ttl")
-logger.info("Wikidata predicate graph loaded")
+# Initialize Fuseki datasets if they don't exist
+datasets_status = check_datasets()
+if not all(status['exists'] for status in datasets_status.values()):
+    logger.info("Initializing Fuseki datasets...")
+    init_db()
 
-# Load class hierarchy from pickle if it exists, otherwise parse NT file
-pickle_path = os.path.join(repo.working_dir, "infrastructure/classes.pkl")
-if os.path.exists(pickle_path):
-    logger.info("Loading Wikidata class hierarchy from pickle file...")
-    with open(pickle_path, 'rb') as f:
-        wikidata_class_hierarchy = pickle.load(f)
-else:
-    logger.info("Pickle file not found, loading from NT file...")
-    wikidata_class_hierarchy = Graph()
-    wikidata_class_hierarchy.parse(repo.working_dir + "/infrastructure/classes.nt", format="nt")
-    with open(pickle_path, 'wb') as f:
-        pickle.dump(wikidata_class_hierarchy, f)
-logger.info("Wikidata class hierarchy loaded")
+# Create Fuseki clients for the datasets
+wikidata_predicate_graph = FusekiClient("wikidata_predicates")
+wikidata_class_hierarchy = FusekiClient("wikidata_class_hierarchy")
+logger.info("Fuseki clients initialized")
 
 sparql = SPARQLWrapper("https://query.wikidata.org/sparql", agent="CIExMAS-SPARQL-Loader-Bot/1.0 (mlautenb@students.uni-mannheim.de)")
 logger.info("SPARQL wrapper initialized")
