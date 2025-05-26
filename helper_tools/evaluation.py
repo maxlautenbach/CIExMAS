@@ -185,7 +185,7 @@ def generate_pr_f1_score_predicates(correct_pred, detected_doc, total_predicted,
     return precision, recall, f1_score
 
 
-def generate_report(excel_file_path):
+def generate_report(excel_file_path, average_type="macro"):
     evaluation_log_df = pd.read_excel(excel_file_path)
 
     # Mapping der Spalten zu den jeweiligen Metriken
@@ -203,41 +203,82 @@ def generate_report(excel_file_path):
         "Entity": ["Correct Extracted Entities", "Gold Standard Entities", "Extracted Entities"]
     }
 
-    # Dictionaries für das Aufsummieren der Scores
-    metric_scores = {metric: {"precision": [], "recall": [], "f1": []} for metric in metric_map}
+    if average_type == "macro":
+        # Dictionaries für das Aufsummieren der Scores
+        metric_scores = {metric: {"precision": [], "recall": [], "f1": []} for metric in metric_map}
 
-    # Über alle Dokumente iterieren und Einzelwerte sammeln
-    for _, row in evaluation_log_df.iterrows():
-        for metric, columns in metric_map.items():
+        # Über alle Dokumente iterieren und Einzelwerte sammeln
+        for _, row in evaluation_log_df.iterrows():
+            for metric, columns in metric_map.items():
+                if metric in ["Predicate with Parents", "Predicate with Related"]:
+                    correct_pred_col, detected_doc_col, pred_col, gold_col = columns
+                    precision, recall, f1 = generate_pr_f1_score_predicates(
+                        row[correct_pred_col], row[detected_doc_col], row[pred_col], row[gold_col]
+                    )
+                else:
+                    correct_col, gold_col, pred_col = columns
+                    precision, recall, f1 = generate_pr_f1_score(
+                        row[correct_col], row[gold_col], row[pred_col]
+                    )
+                metric_scores[metric]["precision"].append(precision)
+                metric_scores[metric]["recall"].append(recall)
+                metric_scores[metric]["f1"].append(f1)
+
+        # Macro Average berechnen
+        macro_scores = {
+            metric: {
+                "Precision": sum(scores["precision"]) / len(scores["precision"]) if scores["precision"] else 0.0,
+                "Recall": sum(scores["recall"]) / len(scores["recall"]) if scores["recall"] else 0.0,
+                "F1-Score": sum(scores["f1"]) / len(scores["f1"]) if scores["f1"] else 0.0
+            }
+            for metric, scores in metric_scores.items()
+        }
+
+        # DataFrame erstellen
+        scores_df = pd.DataFrame.from_dict(macro_scores, orient="index")
+
+    elif average_type == "micro":
+        # Initialize sums for micro averaging
+        micro_sums = {metric: {"correct": 0, "gold": 0, "pred": 0} for metric in metric_map}
+        
+        # Sum up all raw counts across documents
+        for _, row in evaluation_log_df.iterrows():
+            for metric, columns in metric_map.items():
+                if metric in ["Predicate with Parents", "Predicate with Related"]:
+                    correct_pred_col, detected_doc_col, pred_col, gold_col = columns
+                    micro_sums[metric]["correct"] += row[correct_pred_col]
+                    micro_sums[metric]["gold"] += row[detected_doc_col]
+                    micro_sums[metric]["pred"] += row[pred_col]
+                else:
+                    correct_col, gold_col, pred_col = columns
+                    micro_sums[metric]["correct"] += row[correct_col]
+                    micro_sums[metric]["gold"] += row[gold_col]
+                    micro_sums[metric]["pred"] += row[pred_col]
+        
+        # Calculate final metrics using summed values
+        micro_scores = {}
+        for metric, sums in micro_sums.items():
             if metric in ["Predicate with Parents", "Predicate with Related"]:
-                correct_pred_col, detected_doc_col, pred_col, gold_col = columns
                 precision, recall, f1 = generate_pr_f1_score_predicates(
-                    row[correct_pred_col], row[detected_doc_col], row[pred_col], row[gold_col]
+                    sums["correct"], sums["gold"], sums["pred"], sums["gold"]
                 )
             else:
-                correct_col, gold_col, pred_col = columns
                 precision, recall, f1 = generate_pr_f1_score(
-                    row[correct_col], row[gold_col], row[pred_col]
+                    sums["correct"], sums["gold"], sums["pred"]
                 )
-            metric_scores[metric]["precision"].append(precision)
-            metric_scores[metric]["recall"].append(recall)
-            metric_scores[metric]["f1"].append(f1)
+            micro_scores[metric] = {
+                "Precision": precision,
+                "Recall": recall,
+                "F1-Score": f1
+            }
+        
+        # Create DataFrame
+        scores_df = pd.DataFrame.from_dict(micro_scores, orient="index")
+    
+    else:
+        raise ValueError("average_type must be either 'macro' or 'micro'")
 
-    # Macro Average berechnen
-    macro_scores = {
-        metric: {
-            "Precision": sum(scores["precision"]) / len(scores["precision"]) if scores["precision"] else 0.0,
-            "Recall": sum(scores["recall"]) / len(scores["recall"]) if scores["recall"] else 0.0,
-            "F1-Score": sum(scores["f1"]) / len(scores["f1"]) if scores["f1"] else 0.0
-        }
-        for metric, scores in metric_scores.items()
-    }
-
-    # DataFrame erstellen
-    macro_scores_df = pd.DataFrame.from_dict(macro_scores, orient="index")
-
-    # Ausgabe (optional)
-    return macro_scores_df
+    return scores_df
 
 
 def calculate_scores_from_array(values_array):

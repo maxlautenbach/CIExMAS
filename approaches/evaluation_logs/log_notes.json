@@ -348,6 +348,7 @@
         "short_description": "R/SVT-R/PE-SU"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-25-2110.xlsx": {
-        "short_description": "R/SVT-R/PE-SU"
+        "short_description": "R/SVT-R/PE-SU",
+        "description": "\t- Limiting Recursion Depth to 40\n\t- Prevent Looping by extending the call trace with instructions/inputs again & prompt engineering"
     }
 }

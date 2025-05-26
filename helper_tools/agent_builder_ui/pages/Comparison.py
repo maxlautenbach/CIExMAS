@@ -109,6 +109,13 @@ def main():
         datasplits
     )
     
+    # Add dropdown for averaging mode
+    averaging_mode = st.selectbox(
+        "Select Averaging Mode",
+        ["Macro", "Micro"],
+        index=0  # Default to Macro
+    )
+    
     # Filter files for selected datasplit
     filtered_files = [f for f in evaluation_files if extract_datasplit(f) == selected_datasplit]
     
@@ -176,9 +183,9 @@ def main():
                 excel_buffer = BytesIO()
                 filtered_df.to_excel(excel_buffer, index=False)
                 excel_buffer.seek(0)
-                report = generate_report(excel_buffer)
+                report = generate_report(excel_buffer, average_type=averaging_mode.lower())
             else:
-                report = generate_report(file_path)
+                report = generate_report(file_path, average_type=averaging_mode.lower())
             reports.append((model_names[file_path], report))
     
     # Get available metrics from the first report
@@ -249,7 +256,7 @@ def main():
         st.pyplot(fig, bbox_inches='tight')
         
         # Display the data table
-        st.subheader("Detailed Results")
+        st.subheader(f"Detailed Results ({averaging_mode} Avg.)")
         data = []
         for model_name, report in reports:
             row = {"Model": model_name}
