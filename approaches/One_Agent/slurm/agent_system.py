@@ -66,7 +66,7 @@ for i in tqdm(range(len(docs))):
     try:
         # noinspection PyTypeChecker
         response = graph.invoke({"text": text, "messages": [], "instruction": "", "debug": False},
-                                config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["One Agent", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
+                                config={"run_id": trace_id, "recursion_limit": 20, "callbacks": [langfuse_handler], "tags":["One Agent", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         turtle_string = response["messages"][-1]
         score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
                                            triple_df=triple_df))
