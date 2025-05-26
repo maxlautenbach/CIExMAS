@@ -20,8 +20,7 @@ from langgraph.graph import StateGraph, START, END
 from approaches.One_Agent.setup import cIEState
 from approaches.One_Agent.agents.main_agent import agent as main
 from approaches.One_Agent.agents.uri_search_tool import agent as uri_search_tool
-from approaches.One_Agent.agents.network_traversal_search import agent as network_traversal_search
-from approaches.One_Agent.agents.delete_message_tool import agent as delete_message_tool
+from approaches.One_Agent.agents.turtle_to_labels_tool import agent as turtle_to_labels_tool
 
 from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
@@ -49,8 +48,7 @@ predicate_set_df = triple_df[["predicate", "predicate_uri"]].drop_duplicates()
 builder = StateGraph(cIEState)
 builder.add_node("main_agent", main)
 builder.add_node("uri_search_tool", uri_search_tool)
-builder.add_node("network_traversal_tool", network_traversal_search)
-builder.add_node("delete_message_tool", delete_message_tool)
+builder.add_node("turtle_to_labels_tool", turtle_to_labels_tool)
 
 builder.add_edge(START, "main_agent")
 

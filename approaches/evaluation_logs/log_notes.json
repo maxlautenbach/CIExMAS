@@ -1,363 +1,366 @@
 {
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0354.xlsx": {
-        "short_description": "Robustness Increase",
-        "description": "Increased robustness, but checking RDF syntax and Agent IDs"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-1516.xlsx": {
-        "short_description": "Robustness Increase",
-        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-24-0001.xlsx": {
-        "short_description": "One-Shot/URI-Filter-Mode",
-        "description": "Implemented One-Shot Examples for all Extractors and for the Planner. Introduced a URI-Filter-Mode."
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-2018.xlsx": {
-        "short_description": "First Attempt",
-        "description": ""
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0849.xlsx": {
-        "short_description": "Robustness Increase",
-        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-21-2222.xlsx": {
-        "short_description": "Robustness Increase",
-        "description": "Increased robustness, by checking RDF syntax and Agent IDs"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-01-1222-converted.xlsx": {
-        "short_description": "Dec. URI Hallucination",
-        "description": "Decreasing URI Hallucination, by adapting the prompt."
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-25-1041.xlsx": {
-        "short_description": "URI Filter Mode"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1156.xlsx": {
-        "short_description": "URI Filter Mode"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1516.xlsx": {
-        "short_description": "URI Filter Mode"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1614.xlsx": {
-        "short_description": "PE-RI",
-        "description": ""
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1643.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1951.xlsx": {
-        "short_description": "EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2141.xlsx": {
-        "short_description": "EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2218.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0822.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0839.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0843.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0930.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-1010.xlsx": {
-        "short_description": "PE-RI-EMC"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1147.xlsx": {
-        "short_description": "Temp 0"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1148.xlsx": {
-        "short_description": "Temp 0",
-        "description": ""
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1149.xlsx": {
-        "short_description": "Temp 1"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1151.xlsx": {
-        "short_description": "Temp 1"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1158.xlsx": {
-        "short_description": "Temp Standard"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1325.xlsx": {
-        "short_description": "Temp 0.7"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1338.xlsx": {
-        "short_description": "Temp 0.3"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1342.xlsx": {
-        "short_description": "Temp 1.5"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1349.xlsx": {
-        "short_description": "Temp 1"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1350.xlsx": {
-        "short_description": "Temp 1"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1606.xlsx": {
-        "short_description": "Network Traversal"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1422.xlsx": {
-        "short_description": "RI-PE-NTT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1433.xlsx": {
-        "short_description": "RI-PE-NTT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1505.xlsx": {
-        "short_description": "RI-PE-NTT"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-29-1633.xlsx": {
-        "short_description": "RI-PE-NTT",
-        "description": "\t- Robustness Increase\n\t\t\u25cb Filter False Inputs to URI Agent leading to to errors -> Output Instruction\n\t- Prompt Engineering\n\t\t\u25cb Search more specific predicates -> Doesn't work (Replaced by Network Traversal Tool)\n\t\t\u25cb Do not search twice for proper names\n\t\t\u25cb Different Separator like |\n\t\t\u25cb Use prefixes -> Turtle output more likely to be correct.\n\t\t\u25cb Include Description of Search Results\n\t- Network Traversal Tool\nUploaded all Wikidata predicates"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1703.xlsx": {
-        "short_description": "Sleek State"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1705.xlsx": {
-        "short_description": "Sleek State"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-0804.xlsx": {
-        "short_description": "Sleek State"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1126.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1127.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1129.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1130.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1136.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1138.xlsx": {
-        "short_description": "PE-DMT"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1615.xlsx": {
-        "short_description": "PE"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1629.xlsx": {
-        "short_description": "PE"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1631.xlsx": {
-        "short_description": "PE"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1635.xlsx": {
-        "short_description": "PE"
-    },
-    "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1638.xlsx": {
-        "short_description": "PE"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1708.xlsx": {
-        "short_description": "PE-DMT",
-        "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Entity Type Naming\n\t\t\u25cb Output Limiting\n\t\t\u25cb Advice - Only one next tag used\n\t\t\u25cb Hint for transitive relations\n\t- Network Traversal Tool takes now multiple search terms\n\t- Delete Message Tool implemented\nAgent should delete message from the output"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1825.xlsx": {
-        "short_description": "PE",
-        "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Domain/Range extraction\n\t\t\u25cb Include type and domain/range in search\n\t\t\u25cb wd: prefix only\n"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1626.xlsx": {
-        "short_description": "First Attempt"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1633.xlsx": {
-        "short_description": "First Attempt"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-1856.xlsx": {
-        "short_description": "First Attempt"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2043.xlsx": {
-        "short_description": "First Attempt",
-        "description": "\t- Basic Implementation of Three Agents and Two Tools\n\t\t\u25cb Agents: Extractor, URI Mapping & Refinement, Validation & Output\n\t\t\u25cb Tools: URI Search Tool, Network Traversal Search\n\t- Few-Shot Prompting for Extractor (Doc ID: 10, 11, 12), Validation & Output (Doc ID: 10)\n\t- Used Sleek State\nSimple Robustness Measures (Check Turtle, Check goto)"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2258.xlsx": {
-        "short_description": "First Attempt"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1117.xlsx": {
-        "short_description": "NTT-PE-SU"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-06-1552.xlsx": {
-        "short_description": "NTT-PE-SU",
-        "description": "\t- Restricted Network Traversal Tool\n\t\t\u25cb Taking whole triples\n\t\t\u25cb Runnning Traversal while checking type constraints -> Wikidata Limited\n\t\t\u25cb Output of property usage examples\n\t- Introduced Call Trace\n\t- Enabled Agent Instruction for refinements\n\t- Prompt Engineering\n\t\t\u25cb Adapt Call Trace and Agent Instruction\nIntroduced examples for better usage of Network Traversal Tool"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1751.xlsx": {
-        "short_description": "R/UST-D/NTT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1755.xlsx": {
-        "short_description": "R/UST-D/NTT"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-1212.xlsx": {
-        "short_description": "R/UST-D/NTT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1101.xlsx": {
-        "short_description": "R/UST-D/NTT"
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-2127.xlsx": {
-        "short_description": "R/UST-D/NTT",
-        "description": "\t- Removed Access to Network Traversal Tool\n\t- Restriction Check Implementation failed due to KG Quality\n\t- Remove Search Modes\n\t- Added Search Mode Example\n- Implemented Goto-Checks"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1628.xlsx": {
-        "short_description": "R/UST-D/NTT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1518.xlsx": {
-        "short_description": "R/PE-TLT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1521.xlsx": {
-        "short_description": "R/PE-TLT"
-    },
-    "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-09-1014.xlsx": {
-        "short_description": "R/PE-TLT"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1110.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1132.xlsx": {
-        "short_description": "R/PE"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1330.xlsx": {
-        "short_description": "Init Test",
-        "description": ""
-    },
-    "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-09-1510.xlsx": {
-        "short_description": "R/PE-TLT",
-        "description": "- Added Turtle to Label Tool, to validate results\n- Prompt Engineering"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1400.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-12-1438.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-12-1810.xlsx": {
-        "short_description": "Init Test",
-        "description": "\t- Updated Few-Shot Examples\n- Prompt Engineering"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-0950.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1024.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1034.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1418.xlsx": {
-        "short_description": "Init Test"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1504.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-1822.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-2034.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0207.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0718.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0824.xlsx": {
-        "short_description": "Init Test"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-2047.xlsx": {
-        "short_description": "R/UST",
-        "description": "- Limit Search Terms in URI Search Tool -> not exceed Tokens"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-15-1431.xlsx": {
-        "short_description": "R/UST"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-15-1504.xlsx": {
-        "short_description": "R/UST"
-    },
-    "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-16-1123.xlsx": {
-        "short_description": "R/UST-R/PE"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-4-scout-17b-16e-instruct-2025-05-16-1356.xlsx": {
-        "short_description": "Model Change"
-    },
-    "train_text-5-evaluation_log-SambaNova_Llama-4-Maverick-17B-128E-Instruct-2025-05-16-1402.xlsx": {
-        "short_description": "Model Change"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-16-1649.xlsx": {
-        "short_description": "R/UST-R/PE",
-        "description": "\t- Deleted Limitation to 10 Terms\n\t- Added prompting to refuse duplicate search terms\n"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1329.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1424.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1601.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1614.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1619.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1630.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1644.xlsx": {
-        "short_description": "R/PE-SU"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-19-2128.xlsx": {
-        "short_description": "R/PE-SU",
-        "description": "\t- Updated the State (Introduced URI Mapping, limited Call Trace/Last Call)\n\t- Rebuild Prompts from Scratch\n\t\t\u25cb Extractor with FSP\n\t\t\u25cb Other Agents with Guideline Prompts\n\n"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1653.xlsx": {
-        "short_description": "SMT"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1711.xlsx": {
-        "short_description": "SVT",
-        "description": ""
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-20-2159.xlsx": {
-        "short_description": "SVT",
-        "description": "Added Type Validation Tool with Loop-Free Class Hierarchies"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1119.xlsx": {
-        "short_description": "R/TLT-R/PE"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1326.xlsx": {
-        "short_description": "R/TLT-R/PE"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1408.xlsx": {
-        "short_description": "R/TLT-R/PE"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1808.xlsx": {
-        "short_description": "R/TLT-R/PE"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-21-2302.xlsx": {
-        "short_description": "R/TLT-R/PE",
-        "description": "\t- More detailed error message Turtle to Label Tool\n\t- Prompt Engineering for better Instruction Following\n"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-23-1556.xlsx": {
-        "short_description": "R/SVT-R/PE-SU"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-25-2110.xlsx": {
-        "short_description": "R/SVT-R/PE-SU",
-        "description": "\t- Limiting Recursion Depth to 40\n\t- Prevent Looping by extending the call trace with instructions/inputs again & prompt engineering"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1019.xlsx": {
-        "short_description": "R/PE-D/DMT-D/NTT"
-    },
-    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1029.xlsx": {
-        "short_description": "R/PE-D/DMT-D/NTT"
-    },
-    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-26-1553.xlsx": {
-        "short_description": "R/PE-D/DMT-D/NTT"
-    }
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0354.xlsx": {
+    "short_description": "Robustness Increase",
+    "description": "Increased robustness, but checking RDF syntax and Agent IDs"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-1516.xlsx": {
+    "short_description": "Robustness Increase",
+    "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-24-0001.xlsx": {
+    "short_description": "One-Shot/URI-Filter-Mode",
+    "description": "Implemented One-Shot Examples for all Extractors and for the Planner. Introduced a URI-Filter-Mode."
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-2018.xlsx": {
+    "short_description": "First Attempt",
+    "description": ""
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0849.xlsx": {
+    "short_description": "Robustness Increase",
+    "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-21-2222.xlsx": {
+    "short_description": "Robustness Increase",
+    "description": "Increased robustness, by checking RDF syntax and Agent IDs"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-01-1222-converted.xlsx": {
+    "short_description": "Dec. URI Hallucination",
+    "description": "Decreasing URI Hallucination, by adapting the prompt."
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-25-1041.xlsx": {
+    "short_description": "URI Filter Mode"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1156.xlsx": {
+    "short_description": "URI Filter Mode"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1516.xlsx": {
+    "short_description": "URI Filter Mode"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1614.xlsx": {
+    "short_description": "PE-RI",
+    "description": ""
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-25-1643.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-1951.xlsx": {
+    "short_description": "EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2141.xlsx": {
+    "short_description": "EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-25-2218.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0822.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0839.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0843.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-0930.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-28-1010.xlsx": {
+    "short_description": "PE-RI-EMC"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1147.xlsx": {
+    "short_description": "Temp 0"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1148.xlsx": {
+    "short_description": "Temp 0",
+    "description": ""
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1149.xlsx": {
+    "short_description": "Temp 1"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1151.xlsx": {
+    "short_description": "Temp 1"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-28-1158.xlsx": {
+    "short_description": "Temp Standard"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1325.xlsx": {
+    "short_description": "Temp 0.7"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1338.xlsx": {
+    "short_description": "Temp 0.3"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1342.xlsx": {
+    "short_description": "Temp 1.5"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1349.xlsx": {
+    "short_description": "Temp 1"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1350.xlsx": {
+    "short_description": "Temp 1"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-28-1606.xlsx": {
+    "short_description": "Network Traversal"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1422.xlsx": {
+    "short_description": "RI-PE-NTT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1433.xlsx": {
+    "short_description": "RI-PE-NTT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1505.xlsx": {
+    "short_description": "RI-PE-NTT"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-29-1633.xlsx": {
+    "short_description": "RI-PE-NTT",
+    "description": "\t- Robustness Increase\n\t\t\u25cb Filter False Inputs to URI Agent leading to to errors -> Output Instruction\n\t- Prompt Engineering\n\t\t\u25cb Search more specific predicates -> Doesn't work (Replaced by Network Traversal Tool)\n\t\t\u25cb Do not search twice for proper names\n\t\t\u25cb Different Separator like |\n\t\t\u25cb Use prefixes -> Turtle output more likely to be correct.\n\t\t\u25cb Include Description of Search Results\n\t- Network Traversal Tool\nUploaded all Wikidata predicates"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1703.xlsx": {
+    "short_description": "Sleek State"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-29-1705.xlsx": {
+    "short_description": "Sleek State"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-0804.xlsx": {
+    "short_description": "Sleek State"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1126.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1127.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1129.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1130.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1136.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-04-30-1138.xlsx": {
+    "short_description": "PE-DMT"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1615.xlsx": {
+    "short_description": "PE"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1629.xlsx": {
+    "short_description": "PE"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1631.xlsx": {
+    "short_description": "PE"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1635.xlsx": {
+    "short_description": "PE"
+  },
+  "train-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-04-30-1638.xlsx": {
+    "short_description": "PE"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1708.xlsx": {
+    "short_description": "PE-DMT",
+    "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Entity Type Naming\n\t\t\u25cb Output Limiting\n\t\t\u25cb Advice - Only one next tag used\n\t\t\u25cb Hint for transitive relations\n\t- Network Traversal Tool takes now multiple search terms\n\t- Delete Message Tool implemented\nAgent should delete message from the output"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-30-1825.xlsx": {
+    "short_description": "PE",
+    "description": "\t- Prompt Engineering\n\t\t\u25cb Explicit Domain/Range extraction\n\t\t\u25cb Include type and domain/range in search\n\t\t\u25cb wd: prefix only\n"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1626.xlsx": {
+    "short_description": "First Attempt"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-01-1633.xlsx": {
+    "short_description": "First Attempt"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-1856.xlsx": {
+    "short_description": "First Attempt"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2043.xlsx": {
+    "short_description": "First Attempt",
+    "description": "\t- Basic Implementation of Three Agents and Two Tools\n\t\t\u25cb Agents: Extractor, URI Mapping & Refinement, Validation & Output\n\t\t\u25cb Tools: URI Search Tool, Network Traversal Search\n\t- Few-Shot Prompting for Extractor (Doc ID: 10, 11, 12), Validation & Output (Doc ID: 10)\n\t- Used Sleek State\nSimple Robustness Measures (Check Turtle, Check goto)"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-01-2258.xlsx": {
+    "short_description": "First Attempt"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1117.xlsx": {
+    "short_description": "NTT-PE-SU"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-06-1552.xlsx": {
+    "short_description": "NTT-PE-SU",
+    "description": "\t- Restricted Network Traversal Tool\n\t\t\u25cb Taking whole triples\n\t\t\u25cb Runnning Traversal while checking type constraints -> Wikidata Limited\n\t\t\u25cb Output of property usage examples\n\t- Introduced Call Trace\n\t- Enabled Agent Instruction for refinements\n\t- Prompt Engineering\n\t\t\u25cb Adapt Call Trace and Agent Instruction\nIntroduced examples for better usage of Network Traversal Tool"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1751.xlsx": {
+    "short_description": "R/UST-D/NTT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-06-1755.xlsx": {
+    "short_description": "R/UST-D/NTT"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-1212.xlsx": {
+    "short_description": "R/UST-D/NTT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1101.xlsx": {
+    "short_description": "R/UST-D/NTT"
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-07-2127.xlsx": {
+    "short_description": "R/UST-D/NTT",
+    "description": "\t- Removed Access to Network Traversal Tool\n\t- Restriction Check Implementation failed due to KG Quality\n\t- Remove Search Modes\n\t- Added Search Mode Example\n- Implemented Goto-Checks"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-07-1628.xlsx": {
+    "short_description": "R/UST-D/NTT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1518.xlsx": {
+    "short_description": "R/PE-TLT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-08-1521.xlsx": {
+    "short_description": "R/PE-TLT"
+  },
+  "train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-09-1014.xlsx": {
+    "short_description": "R/PE-TLT"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1110.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1132.xlsx": {
+    "short_description": "R/PE"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1330.xlsx": {
+    "short_description": "Init Test",
+    "description": ""
+  },
+  "test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-09-1510.xlsx": {
+    "short_description": "R/PE-TLT",
+    "description": "- Added Turtle to Label Tool, to validate results\n- Prompt Engineering"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-12-1400.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-12-1438.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-12-1810.xlsx": {
+    "short_description": "Init Test",
+    "description": "\t- Updated Few-Shot Examples\n- Prompt Engineering"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-0950.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1024.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1034.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1418.xlsx": {
+    "short_description": "Init Test"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-13-1504.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-1822.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-13-2034.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0207.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0718.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-0824.xlsx": {
+    "short_description": "Init Test"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-14-2047.xlsx": {
+    "short_description": "R/UST",
+    "description": "- Limit Search Terms in URI Search Tool -> not exceed Tokens"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-15-1431.xlsx": {
+    "short_description": "R/UST"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-15-1504.xlsx": {
+    "short_description": "R/UST"
+  },
+  "train_text-5-evaluation_log-DeepInfra_meta-llama-Llama-3.3-70B-Instruct-2025-05-16-1123.xlsx": {
+    "short_description": "R/UST-R/PE"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-4-scout-17b-16e-instruct-2025-05-16-1356.xlsx": {
+    "short_description": "Model Change"
+  },
+  "train_text-5-evaluation_log-SambaNova_Llama-4-Maverick-17B-128E-Instruct-2025-05-16-1402.xlsx": {
+    "short_description": "Model Change"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-16-1649.xlsx": {
+    "short_description": "R/UST-R/PE",
+    "description": "\t- Deleted Limitation to 10 Terms\n\t- Added prompting to refuse duplicate search terms\n"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1329.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1424.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1601.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-19-1614.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1619.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1630.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "train_text-5-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-05-19-1644.xlsx": {
+    "short_description": "R/PE-SU"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-19-2128.xlsx": {
+    "short_description": "R/PE-SU",
+    "description": "\t- Updated the State (Introduced URI Mapping, limited Call Trace/Last Call)\n\t- Rebuild Prompts from Scratch\n\t\t\u25cb Extractor with FSP\n\t\t\u25cb Other Agents with Guideline Prompts\n\n"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1653.xlsx": {
+    "short_description": "SMT"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-20-1711.xlsx": {
+    "short_description": "SVT",
+    "description": ""
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-20-2159.xlsx": {
+    "short_description": "SVT",
+    "description": "Added Type Validation Tool with Loop-Free Class Hierarchies"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1119.xlsx": {
+    "short_description": "R/TLT-R/PE"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1326.xlsx": {
+    "short_description": "R/TLT-R/PE"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1408.xlsx": {
+    "short_description": "R/TLT-R/PE"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-21-1808.xlsx": {
+    "short_description": "R/TLT-R/PE"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-21-2302.xlsx": {
+    "short_description": "R/TLT-R/PE",
+    "description": "\t- More detailed error message Turtle to Label Tool\n\t- Prompt Engineering for better Instruction Following\n"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-23-1556.xlsx": {
+    "short_description": "R/SVT-R/PE-SU"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-25-2110.xlsx": {
+    "short_description": "R/SVT-R/PE-SU",
+    "description": "\t- Limiting Recursion Depth to 40\n\t- Prevent Looping by extending the call trace with instructions/inputs again & prompt engineering"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1019.xlsx": {
+    "short_description": "R/PE-D/DMT-D/NTT"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1029.xlsx": {
+    "short_description": "R/PE-D/DMT-D/NTT"
+  },
+  "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-26-1553.xlsx": {
+    "short_description": "R/PE-D/DMT-D/NTT"
+  },
+  "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1537.xlsx": {
+    "short_description": "R/PE-TLT"
+  }
 }
