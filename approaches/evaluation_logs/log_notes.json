@@ -356,5 +356,8 @@
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1029.xlsx": {
         "short_description": "R/PE-D/DMT-D/NTT"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-26-1553.xlsx": {
+        "short_description": "R/PE-D/DMT-D/NTT"
     }
 }
