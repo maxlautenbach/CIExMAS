@@ -9,7 +9,7 @@ from qdrant_client.http import models
 
 
 def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
-    try:
+    try:        
         search_terms = state["instruction"].split("|")
         
         search_response = ""

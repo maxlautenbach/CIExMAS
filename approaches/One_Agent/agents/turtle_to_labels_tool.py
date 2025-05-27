@@ -1,5 +1,6 @@
 import re
 import traceback
+import html
 from typing import List, Tuple, Literal
 from rdflib import Graph, URIRef
 from helper_tools.wikidata_loader import send_query
@@ -10,6 +11,8 @@ def parse_turtle(turtle_string: str) -> List[Tuple[URIRef, URIRef, URIRef]]:
     """Parse turtle string into list of triples using rdflib."""
     g = Graph()
     try:
+        # Unescape HTML entities in turtle string
+        turtle_string = html.unescape(turtle_string)
         g.parse(data=turtle_string, format="turtle")
         return list(g.triples((None, None, None)))
     except Exception as e:
@@ -124,3 +127,11 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
             state.update(state_update)
             return state, f"Error in turtle to labels tool: {str(e)}"
         return Command(goto="main_agent", update=state_update) 
+    
+
+if __name__ == "__main__":
+    state = {
+        "instruction": "@prefix wd: &lt;http://www.wikidata.org/entity/&gt; . wd:Q7654799 wd:P178 wd:Q631844 . wd:Q7654799 wd:P921 wd:Q210272 . wd:Q7654799 wd:P1056 wd:Q54872 . wd:Q7654799 wd:P366 wd:Q2115 . wd:Q7654799 wd:P366 wd:Q2063 . wd:Q7654799 wd:P366 wd:Q6108942 . wd:Q2115 wd:P941 wd:Q207819",
+        "messages": [],
+        "call_trace": [],
+    }

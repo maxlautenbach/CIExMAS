@@ -1,5 +1,6 @@
 import importlib
 import re
+import html
 from typing import Literal
 
 from langgraph.constants import END
@@ -46,6 +47,7 @@ def agent(state: cIEState) -> Command[Literal] | tuple[cIEState, str]:
         turtle_match = re.search(r'<ttl>(.*?)</ttl>', response, re.DOTALL)
         if turtle_match:
             turtle_string = turtle_match.group(1)
+            turtle_string = html.unescape(turtle_string)
             turtle_valid, error_message = validate_turtle_response(turtle_string)
             if turtle_valid:
                 id = END
