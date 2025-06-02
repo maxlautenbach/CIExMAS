@@ -358,7 +358,8 @@
         "short_description": "R/PE-D/DMT-D/NTT"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-26-1553.xlsx": {
-        "short_description": "R/PE-D/DMT-D/NTT"
+        "short_description": "R/PE-D/DMT-D/NTT",
+        "description": "\t- Reworked Prompt based on Gen2 Prompts\n\t- Included Few-Shot Examples for Triples\n- Simplified Search Mode -> Q,P,X"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-26-1537.xlsx": {
         "short_description": "R/PE-TLT"
@@ -367,7 +368,8 @@
         "short_description": "R/PE-TLT"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-27-1449.xlsx": {
-        "short_description": "R/PE-TLT"
+        "short_description": "R/PE-TLT",
+        "description": "\t- Added Turtle to Labels Tool to reduce Hallucinations\n\t- Refined Prompt to include reasoning & being more robust\n\n"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-05-27-1512.xlsx": {
         "short_description": "SVT"
@@ -382,7 +384,8 @@
         "short_description": "SVT-R/PE"
     },
     "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-05-27-1800.xlsx": {
-        "short_description": "R/PE-SVT"
+        "short_description": "R/PE-SVT",
+        "description": "\t- Added Semantic Validation Tool\n\t- Shortened Prompt, as of Context Overflow Problems\n"
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-02-1314.xlsx": {
         "short_description": "Optimized with DSPy"
