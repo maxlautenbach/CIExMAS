@@ -54,46 +54,54 @@ def check_inter_predicate_relations(predicate_a, predicate_b):
     return inter_predicate_relations
 
 
-def evaluate_doc(turtle_string, doc_id, triple_df):
-    pred_triple_df, error = parse_turtle(turtle_string)
-    doc_triple_df = triple_df[triple_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
-    correct_triple_df = pred_triple_df.merge(doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
-                                                 on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
+def _calculate_metrics(pred_triple_df, gold_triple_df):
+    """
+    Helper function to calculate all evaluation metrics from two triple DataFrames.
+    
+    Args:
+        pred_triple_df (pd.DataFrame): DataFrame containing predicted triples
+        gold_triple_df (pd.DataFrame): DataFrame containing gold standard triples
+        
+    Returns:
+        tuple: A tuple containing all evaluation metrics
+    """
+    correct_triple_df = pred_triple_df.merge(gold_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
+                                           on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
 
     # Subjects
     extracted_subjects = len(set(pred_triple_df["subject_uri"]))
-    gold_standard_subjects = len(set(doc_triple_df["subject_uri"]))
+    gold_standard_subjects = len(set(gold_triple_df["subject_uri"]))
     correct_extracted_subjects = len(
-        set(pred_triple_df["subject_uri"]).intersection(set(doc_triple_df["subject_uri"])))
+        set(pred_triple_df["subject_uri"]).intersection(set(gold_triple_df["subject_uri"])))
 
     # Predicates
     extracted_predicates = len(set(pred_triple_df["predicate_uri"]))
-    gold_standard_predicates = len(set(doc_triple_df["predicate_uri"]))
+    gold_standard_predicates = len(set(gold_triple_df["predicate_uri"]))
     correct_extracted_predicates = len(
-        set(pred_triple_df["predicate_uri"]).intersection(set(doc_triple_df["predicate_uri"])))
+        set(pred_triple_df["predicate_uri"]).intersection(set(gold_triple_df["predicate_uri"])))
 
     # Objects
     extracted_objects = len(set(pred_triple_df["object_uri"]))
-    gold_standard_objects = len(set(doc_triple_df["object_uri"]))
+    gold_standard_objects = len(set(gold_triple_df["object_uri"]))
     correct_extracted_objects = len(
-        set(pred_triple_df["object_uri"]).intersection(set(doc_triple_df["object_uri"])))
+        set(pred_triple_df["object_uri"]).intersection(set(gold_triple_df["object_uri"])))
 
     # Entities (Subjects + Objects)
     extracted_entities = len(set(pred_triple_df["subject_uri"]).union(set(pred_triple_df["object_uri"])))
-    gold_standard_entities = len(set(doc_triple_df["subject_uri"]).union(set(doc_triple_df["object_uri"])))
+    gold_standard_entities = len(set(gold_triple_df["subject_uri"]).union(set(gold_triple_df["object_uri"])))
     correct_extracted_entities = len(
         set(pred_triple_df["subject_uri"]).union(set(pred_triple_df["object_uri"]))
-        .intersection(set(doc_triple_df["subject_uri"]).union(set(doc_triple_df["object_uri"])))
+        .intersection(set(gold_triple_df["subject_uri"]).union(set(gold_triple_df["object_uri"])))
     )
 
     # Triples with Parent and Related Predicates
-    correct_triples_df = pred_triple_df.merge(doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
-                                                on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
+    correct_triples_df = pred_triple_df.merge(gold_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
+                                            on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
     incorrect_triples_df = \
     pred_triple_df.merge(correct_triples_df, how="outer", indicator=True).query('_merge=="left_only"')[
         ["subject_uri", "predicate_uri", "object_uri"]]
     partial_matching_triples_df = incorrect_triples_df.merge(
-        doc_triple_df[["subject_uri", "predicate_uri", "object_uri"]], on=["subject_uri", "object_uri"], how="inner")
+        gold_triple_df[["subject_uri", "predicate_uri", "object_uri"]], on=["subject_uri", "object_uri"], how="inner")
     correct_triples_with_parent_predicates_df = []
     correct_triples_with_related_predicates_df = []
     for i, row in partial_matching_triples_df.iterrows():
@@ -105,41 +113,41 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
 
     correct_triples_with_parent_predicates_df = pd.DataFrame(correct_triples_with_parent_predicates_df).drop(
         "predicate_uri_x", axis=1, errors='ignore').rename(columns={"predicate_uri_y": "predicate_uri"},
-                                                           errors='ignore')
+                                                         errors='ignore')
     correct_triples_with_parent_predicates_df = pd.concat(
         [correct_triples_with_parent_predicates_df, correct_triples_df]).drop_duplicates()
     correct_triples_with_related_predicates_df = pd.DataFrame(correct_triples_with_related_predicates_df).drop(
         "predicate_uri_x", axis=1, errors='ignore').rename(columns={"predicate_uri_y": "predicate_uri"},
-                                                           errors='ignore')
+                                                         errors='ignore')
     correct_triples_with_related_predicates_df = pd.concat(
         [correct_triples_with_related_predicates_df, correct_triples_df]).drop_duplicates()
 
     # Predicates including Parent and Related Predicates
     pred_predicate_set = set(pred_triple_df["predicate_uri"])
-    doc_predicate_set = set(doc_triple_df["predicate_uri"])
+    gold_predicate_set = set(gold_triple_df["predicate_uri"])
     detected_predicates_doc_parent = set()  # For doc predicates detected through parent relationships
     detected_predicates_doc_related = set()  # For doc predicates detected through related relationships
     correct_pred_predicates_parent = set()  # New variable for correct predicates from pred
     correct_pred_predicates_related = set()  # New variable for correct predicates from pred
     
-    for doc_predicate in doc_predicate_set:
+    for gold_predicate in gold_predicate_set:
         found = False
         for pred_predicate in pred_predicate_set:
-            if pred_predicate == doc_predicate:
+            if pred_predicate == gold_predicate:
                 correct_pred_predicates_parent.add(pred_predicate)
                 correct_pred_predicates_related.add(pred_predicate)
-                detected_predicates_doc_parent.add(doc_predicate)
-                detected_predicates_doc_related.add(doc_predicate)
+                detected_predicates_doc_parent.add(gold_predicate)
+                detected_predicates_doc_related.add(gold_predicate)
                 found = True
                 break
-            inter_predicate_relations = check_inter_predicate_relations(pred_predicate, doc_predicate)
+            inter_predicate_relations = check_inter_predicate_relations(pred_predicate, gold_predicate)
             if "parentPropertyOf" in inter_predicate_relations:
                 correct_pred_predicates_parent.add(pred_predicate)
-                detected_predicates_doc_parent.add(doc_predicate)
+                detected_predicates_doc_parent.add(gold_predicate)
                 found = True
             if len(inter_predicate_relations) > 0:
                 correct_pred_predicates_related.add(pred_predicate)
-                detected_predicates_doc_related.add(doc_predicate)
+                detected_predicates_doc_related.add(gold_predicate)
                 found = True
                 break
     
@@ -149,8 +157,16 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
     correct_pred_predicates_related_count = len(correct_pred_predicates_related)
 
     return len(correct_triple_df), len(correct_triples_with_parent_predicates_df), len(
-        correct_triples_with_related_predicates_df), len(doc_triple_df), len(
+        correct_triples_with_related_predicates_df), len(gold_triple_df), len(
         pred_triple_df), extracted_subjects, gold_standard_subjects, correct_extracted_subjects, extracted_predicates, gold_standard_predicates, correct_extracted_predicates, detected_predicates_doc_parent_count, detected_predicates_doc_related_count, correct_pred_predicates_parent_count, correct_pred_predicates_related_count, extracted_objects, gold_standard_objects, correct_extracted_objects, extracted_entities, gold_standard_entities, correct_extracted_entities
+
+
+def evaluate_doc(turtle_string, doc_id, triple_df):
+    pred_triple_df, error = parse_turtle(turtle_string)
+    if error != "Success":
+        raise ValueError(f"Error parsing turtle string: {error}")
+    doc_triple_df = triple_df[triple_df["docid"] == doc_id][["subject_uri", "predicate_uri", "object_uri"]]
+    return _calculate_metrics(pred_triple_df, doc_triple_df)
 
 
 def generate_pr_f1_score(correct, gold_standard, total_predicted):
@@ -403,6 +419,24 @@ def convert_eval_log(path, dataset_cache):
     return dataset_cache
 
 
+def compare_turtle_strings(predicted_turtle_string, ground_truth_turtle_string):
+    """
+    Compare two turtle strings directly and return evaluation metrics.
+    
+    Args:
+        predicted_turtle_string (str): The predicted turtle string to evaluate
+        ground_truth_turtle_string (str): The ground truth turtle string to compare against
+        
+    Returns:
+        tuple: A tuple containing all evaluation metrics in the same order as evaluate_doc
+    """
+    pred_triple_df, pred_error = parse_turtle(predicted_turtle_string)
+    gold_triple_df, gold_error = parse_turtle(ground_truth_turtle_string)
+    
+    if pred_error != "Success" or gold_error != "Success":
+        raise ValueError(f"Error parsing turtle strings. Predicted error: {pred_error}, Ground truth error: {gold_error}")
+    
+    return _calculate_metrics(pred_triple_df, gold_triple_df)
 
 
 if __name__ == "__main__":
