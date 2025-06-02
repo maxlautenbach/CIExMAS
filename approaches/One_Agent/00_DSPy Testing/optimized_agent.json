@@ -1,0 +1,92 @@
+{
+  "react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "text": "The General Administration of Quality Supervision, Inspection and Quarantine was replaced by the State Administration for Market Regulation and is a government agency under the parent organization, the State Council of the People's Republic of China. Its headquarters is located in Haidian District, China.",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo extract triples from the given text and map them onto the underlying knowledge graph, we first need to identify key entities and their relationships. The text mentions \"The General Administration of Quality Supervision, Inspection and Quarantine,\" \"the State Administration for Market Regulation,\" and \"the State Council of the People's Republic of China\" as entities. It also mentions the relationship between these entities, such as one being replaced by another and their hierarchical structure. We need to find URIs for these entities and possibly for the relationship types (e.g., \"replaced by,\" \"parent organization\") in the knowledge graph.\n\n[[ ## tool_name_0 ## ]]\nuri_search_tool\n\n[[ ## tool_args_0 ## ]]\n{\"search_terms\": [\"General Administration of Quality Supervision, Inspection and Quarantine[Q]\", \"State Administration for Market Regulation[Q]\", \"State Council of the People's Republic of China[Q]\", \"replaced by[P]\", \"parent organization[P]\"]}\n\n[[ ## observation_0 ## ]]\nSimilar Search Results for \"General Administration of Quality Supervision, Inspection and Quarantine\" - Search Mode [Q]:\n  - Label: General_Administration_of_Quality_Supervision,_Inspection_and_Quarantine\n     URI: http:\/\/www.wikidata.org\/entity\/Q18020434\n     Description: predecessor of the State Administration for Market Regulation\n  - Label: State_Administration_for_Market_Regulation\n     URI: http:\/\/www.wikidata.org\/entity\/Q50839256\n     Description: ministry-level executive agency, under direct authority of the State Council of the People's Republic of China\n  - Label: Standard_Generalized_Markup_Language\n     URI: http:\/\/www.wikidata.org\/entity\/Q207819\n     Description: markup language\n\nSimilar Search Results for \"State Administration for Market Regulation\" - Search Mode [Q]:\n  - Label: State_Administration_for_Market_Regulation\n     URI: http:\/\/www.wikidata.org\/entity\/Q50839256\n     Description: ministry-level executive agency, under direct authority of the State Council of the People's Republic of China\n  - Label: Government_agency\n     URI: http:\/\/www.wikidata.org\/entity\/Q327333\n     Description: organisational part of a government responsible for specific public services, such as health, judiciary, education, transportation, foreign affairs, etc\n  - Label: General_Administration_of_Quality_Supervision,_Inspection_and_Quarantine\n     URI: http:\/\/www.wikidata.org\/entity\/Q18020434\n     Description: predecessor of the State Administration for Market Regulation\n\nSimilar Search Results for \"State Council of the People's Republic of China\" - Search Mode [Q]:\n  - Label: State_Council_of_the_People's_Republic_of_China\n     URI: http:\/\/www.wikidata.org\/entity\/Q59261\n     Description: chief administrative authority of the People's Republic of China\n  - Label: China\n     URI: http:\/\/www.wikidata.org\/entity\/Q148\n     Description: country in East Asia\n  - Label: Government_of_Russia\n     URI: http:\/\/www.wikidata.org\/entity\/Q1140115\n     Description: highest federal executive body in the Russian Federation, headed by the Prime Minister\n\nSimilar Search Results for \"replaced by\" - Search Mode [P]:\n  - Label: replaced by\n     URI: http:\/\/www.wikidata.org\/entity\/P1366\n     Description: other person or item which continues the item by replacing it in its role. Use P156 (\"followed by\") if the item is not replaced nor identical, but adds to the series (e.g. books in a series).\n     Example: Canada East replaced by Quebec\n  - Label: used by\n     URI: http:\/\/www.wikidata.org\/entity\/P1535\n     Description: item or concept that makes use of the subject (use sub-properties when appropriate)\n     Example: paintbrush used by painter\n  - Label: different from\n     URI: http:\/\/www.wikidata.org\/entity\/P1889\n     Description: item that is different from another item, with which it may be confused\n     Example: coup d'\u00e9tat different from Golpe de Estado\n\nSimilar Search Results for \"parent organization\" - Search Mode [P]:\n  - Label: parent organization\n     URI: http:\/\/www.wikidata.org\/entity\/P749\n     Description: parent organization of an organization, opposite of subsidiaries (P355)\n     Example: Airbus parent organization Airbus SE\n  - Label: organizer\n     URI: http:\/\/www.wikidata.org\/entity\/P664\n     Description: person or institution organizing an event\n     Example: Eurovision Song Contest organizer European Broadcasting Union\n  - Label: chief operating officer\n     URI: http:\/\/www.wikidata.org\/entity\/P1789\n     Description: the chief operating officer of an organization\n     Example: Meta Platforms chief operating officer Sheryl Sandberg",
+        "next_thought": "We've received the URIs for the entities mentioned in the text, including \"General Administration of Quality Supervision, Inspection and Quarantine,\" \"State Administration for Market Regulation,\" and \"State Council of the People's Republic of China.\" We also have the URIs for the relationship types \"replaced by\" and \"parent organization.\" With this information, we can construct triples that represent the relationships between these entities according to the given text. The next step is to use these URIs to form the triples that will be used to create the `turtle_string`. Since we have all the necessary URIs, we can proceed to construct these triples and then mark the task as complete.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      },
+      {
+        "text": "The Journal of Colloid and Interface Science is a bibliographic review indexed in Scopus and published by Elsevier. Its main subject is chemical engineering, and it is written in the English language. It is based in the United States, and is owned by Elsevier, the same company that owns Scopus.",
+        "turtle_string": "<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P8875> <http:\/\/www.wikidata.org\/entity\/Q371467> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P921> <http:\/\/www.wikidata.org\/entity\/Q83588> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P407> <http:\/\/www.wikidata.org\/entity\/Q1860> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P123> <http:\/\/www.wikidata.org\/entity\/Q746413> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P495> <http:\/\/www.wikidata.org\/entity\/Q30> .\n<http:\/\/www.wikidata.org\/entity\/Q371467> <http:\/\/www.wikidata.org\/entity\/P127> <http:\/\/www.wikidata.org\/entity\/Q746413> ."
+      }
+    ],
+    "signature": {
+      "instructions": "You are a knowledge graph expert tasked with extracting triples from a given text and mapping them onto an underlying knowledge graph. You will be given a text and should extract triples out of it and map those triples onto the underlying knowledge graph. Your goal is to use one or more of the supplied tools, including the `uri_search_tool` and the `finish` tool, to collect any necessary information for producing a `turtle_string` that represents the extracted triples in Turtle format. To do this, you will interleave your thoughts, the next tool to use, and the arguments for that tool in each turn, and also when finishing the task. After each tool call, you will receive a resulting observation that gets appended to your trajectory. When writing your thoughts, you may reason about the current situation and plan for future steps. When selecting the next tool and its arguments, ensure that the tool is one of the supplied options and that the arguments are in the correct format.",
+      "fields": [
+        {
+          "prefix": "Text:",
+          "description": "${text}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "text": "The General Administration of Quality Supervision, Inspection and Quarantine was replaced by the State Administration for Market Regulation and is a government agency under the parent organization, the State Council of the People's Republic of China. Its headquarters is located in Haidian District, China.",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo extract triples from the given text and map them onto the underlying knowledge graph, we first need to identify key entities and their relationships. The text mentions \"The General Administration of Quality Supervision, Inspection and Quarantine,\" \"the State Administration for Market Regulation,\" and \"the State Council of the People's Republic of China\" as entities. It also mentions the relationship between these entities, such as one being replaced by another and their hierarchical structure. We need to find URIs for these entities and possibly for the relationship types (e.g., \"replaced by,\" \"parent organization\") in the knowledge graph.\n\n[[ ## tool_name_0 ## ]]\nuri_search_tool\n\n[[ ## tool_args_0 ## ]]\n{\"search_terms\": [\"General Administration of Quality Supervision, Inspection and Quarantine[Q]\", \"State Administration for Market Regulation[Q]\", \"State Council of the People's Republic of China[Q]\", \"replaced by[P]\", \"parent organization[P]\"]}\n\n[[ ## observation_0 ## ]]\nSimilar Search Results for \"General Administration of Quality Supervision, Inspection and Quarantine\" - Search Mode [Q]:\n  - Label: General_Administration_of_Quality_Supervision,_Inspection_and_Quarantine\n     URI: http:\/\/www.wikidata.org\/entity\/Q18020434\n     Description: predecessor of the State Administration for Market Regulation\n  - Label: State_Administration_for_Market_Regulation\n     URI: http:\/\/www.wikidata.org\/entity\/Q50839256\n     Description: ministry-level executive agency, under direct authority of the State Council of the People's Republic of China\n  - Label: Standard_Generalized_Markup_Language\n     URI: http:\/\/www.wikidata.org\/entity\/Q207819\n     Description: markup language\n\nSimilar Search Results for \"State Administration for Market Regulation\" - Search Mode [Q]:\n  - Label: State_Administration_for_Market_Regulation\n     URI: http:\/\/www.wikidata.org\/entity\/Q50839256\n     Description: ministry-level executive agency, under direct authority of the State Council of the People's Republic of China\n  - Label: Government_agency\n     URI: http:\/\/www.wikidata.org\/entity\/Q327333\n     Description: organisational part of a government responsible for specific public services, such as health, judiciary, education, transportation, foreign affairs, etc\n  - Label: General_Administration_of_Quality_Supervision,_Inspection_and_Quarantine\n     URI: http:\/\/www.wikidata.org\/entity\/Q18020434\n     Description: predecessor of the State Administration for Market Regulation\n\nSimilar Search Results for \"State Council of the People's Republic of China\" - Search Mode [Q]:\n  - Label: State_Council_of_the_People's_Republic_of_China\n     URI: http:\/\/www.wikidata.org\/entity\/Q59261\n     Description: chief administrative authority of the People's Republic of China\n  - Label: China\n     URI: http:\/\/www.wikidata.org\/entity\/Q148\n     Description: country in East Asia\n  - Label: Government_of_Russia\n     URI: http:\/\/www.wikidata.org\/entity\/Q1140115\n     Description: highest federal executive body in the Russian Federation, headed by the Prime Minister\n\nSimilar Search Results for \"replaced by\" - Search Mode [P]:\n  - Label: replaced by\n     URI: http:\/\/www.wikidata.org\/entity\/P1366\n     Description: other person or item which continues the item by replacing it in its role. Use P156 (\"followed by\") if the item is not replaced nor identical, but adds to the series (e.g. books in a series).\n     Example: Canada East replaced by Quebec\n  - Label: used by\n     URI: http:\/\/www.wikidata.org\/entity\/P1535\n     Description: item or concept that makes use of the subject (use sub-properties when appropriate)\n     Example: paintbrush used by painter\n  - Label: different from\n     URI: http:\/\/www.wikidata.org\/entity\/P1889\n     Description: item that is different from another item, with which it may be confused\n     Example: coup d'\u00e9tat different from Golpe de Estado\n\nSimilar Search Results for \"parent organization\" - Search Mode [P]:\n  - Label: parent organization\n     URI: http:\/\/www.wikidata.org\/entity\/P749\n     Description: parent organization of an organization, opposite of subsidiaries (P355)\n     Example: Airbus parent organization Airbus SE\n  - Label: organizer\n     URI: http:\/\/www.wikidata.org\/entity\/P664\n     Description: person or institution organizing an event\n     Example: Eurovision Song Contest organizer European Broadcasting Union\n  - Label: chief operating officer\n     URI: http:\/\/www.wikidata.org\/entity\/P1789\n     Description: the chief operating officer of an organization\n     Example: Meta Platforms chief operating officer Sheryl Sandberg\n\n\n\n[[ ## thought_1 ## ]]\nWe've received the URIs for the entities mentioned in the text, including \"General Administration of Quality Supervision, Inspection and Quarantine,\" \"State Administration for Market Regulation,\" and \"State Council of the People's Republic of China.\" We also have the URIs for the relationship types \"replaced by\" and \"parent organization.\" With this information, we can construct triples that represent the relationships between these entities according to the given text. The next step is to use these URIs to form the triples that will be used to create the `turtle_string`. Since we have all the necessary URIs, we can proceed to construct these triples and then mark the task as complete.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "To extract triples from the given text and map them onto the underlying knowledge graph, we first identified key entities and their relationships. We then used the `uri_search_tool` to find URIs for these entities and relationship types in the knowledge graph. With the URIs obtained, we constructed triples representing the relationships between the entities as described in the text. The triples are based on the entities \"General Administration of Quality Supervision, Inspection and Quarantine,\" \"State Administration for Market Regulation,\" \"State Council of the People's Republic of China,\" and the relationships \"replaced by\" and \"parent organization.\"",
+        "turtle_string": "<http:\/\/www.wikidata.org\/entity\/Q18020434> <http:\/\/www.wikidata.org\/entity\/P1366> <http:\/\/www.wikidata.org\/entity\/Q50839256> .\n<http:\/\/www.wikidata.org\/entity\/Q50839256> <http:\/\/www.wikidata.org\/entity\/P749> <http:\/\/www.wikidata.org\/entity\/Q59261> .\n<http:\/\/www.wikidata.org\/entity\/Q18020434> <http:\/\/www.wikidata.org\/entity\/P749> <http:\/\/www.wikidata.org\/entity\/Q59261> .\n<http:\/\/www.wikidata.org\/entity\/Q50839256> <http:\/\/www.wikidata.org\/entity\/P159> <http:\/\/www.wikidata.org\/entity\/Q148> ."
+      },
+      {
+        "text": "The Journal of Colloid and Interface Science is a bibliographic review indexed in Scopus and published by Elsevier. Its main subject is chemical engineering, and it is written in the English language. It is based in the United States, and is owned by Elsevier, the same company that owns Scopus.",
+        "turtle_string": "<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P8875> <http:\/\/www.wikidata.org\/entity\/Q371467> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P921> <http:\/\/www.wikidata.org\/entity\/Q83588> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P407> <http:\/\/www.wikidata.org\/entity\/Q1860> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P123> <http:\/\/www.wikidata.org\/entity\/Q746413> .\n<http:\/\/www.wikidata.org\/entity\/Q3902043> <http:\/\/www.wikidata.org\/entity\/P495> <http:\/\/www.wikidata.org\/entity\/Q30> .\n<http:\/\/www.wikidata.org\/entity\/Q371467> <http:\/\/www.wikidata.org\/entity\/P127> <http:\/\/www.wikidata.org\/entity\/Q746413> ."
+      }
+    ],
+    "signature": {
+      "instructions": "You are an expert for closed information extraction (the extraction of triples using a given text, where the triples match an underlying knowledge graph.). You will be given a text and should extract triples out of it and map those triples onto the underlying knowledge graph.\n\nYou are given a list of tools to handle user request, and you should decide the right tool to use in order to fullfil users' request.",
+      "fields": [
+        {
+          "prefix": "Text:",
+          "description": "${text}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Turtle String:",
+          "description": "Output of the extracted triples from the text. Format: Turtle. Restricted to wd: namespace. Usage of wdt: is prohibited."
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.24",
+      "cloudpickle": "3.1"
+    }
+  }
+}
