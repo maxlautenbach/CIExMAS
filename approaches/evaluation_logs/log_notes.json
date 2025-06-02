@@ -386,5 +386,8 @@
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-02-1314.xlsx": {
         "short_description": "Optimized with DSPy"
+    },
+    "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-02-1433.xlsx": {
+        "short_description": "R/PE-R/UST"
     }
 }

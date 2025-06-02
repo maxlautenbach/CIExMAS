@@ -7,7 +7,12 @@ The conversation is about extracting information (Closed Information Extraction)
 Agent Descriptions:
 - entity_extraction_agent: Extracts entities from the text. Instructions can change the extraction behavior and focus of the agent. Do not instruct the agent with URIs. The agent has only access to your instruction and the text.
 - relation_extraction_agent: Extracts relations from the text. Instructions can change the prompt of the called agent and can be used to input already extracted entity labels (i.e. <instruction>Please use the already extracted entities: [Olaf Scholz, Germany, Berlin]</instruction>). Do not instruct the agent with URIs. The agent has only access to your instruction and the text.
-- uri_detection_agent: Please only use this, after entities and relation were extracted at least once. Returns possible wikidata URIs for entities and predicates based on similarity search. The instruction must be a list of search terms like predicate and entity labels, which the uri detection agent is searching for (i.e. <instruction>Olaf Scholz, Germany, Berlin, is chancellor of, part of</instruction>. It is recommended to use the agent at least once to search for the URIs for all possible entities and predicates. Do not instruct the agent with URIs like Q100 or P300. The agent has only access to your instruction and the text. If this agent return relations or entities that were not extracted before i.e. industry - URI of sport please try to use them as instruction for the relation extraction agent.
+- uri_detection_agent: Please only use this, after entities and relation were extracted at least once. Returns possible wikidata URIs for entities and predicates based on similarity search. The instruction must be a list of search terms with their corresponding search modes, separated by commas. The search modes are:
+  * [Q] mode: Entity search with type. Format: 'Entity (type)[Q]'
+  * [P] mode: Property search. Format: 'property[P]'
+  * [X] mode: Property search by example. Format: 'Subject (type) property Object (type)[X]'
+  Example instruction: <instruction>Olaf Scholz (politician)[Q], Germany (country)[Q], is chancellor of[P], Olaf Scholz (politician) is chancellor of Germany (country)[X]</instruction>
+  It is recommended to use the agent at least once to search for the URIs for all possible entities and predicates. Do not instruct the agent with URIs like Q100 or P300. The agent has only access to your instruction and the text. If this agent return relations or entities that were not extracted before i.e. industry - URI of sport please try to use them as instruction for the relation extraction agent.
 
 You have two options:
 1. Call an agent using <goto>agent_name</goto>. Replace agent_name with either entity_extraction_agent or relation_extraction_agent. I.e. <goto>entity_extraction_agent</goto>.
@@ -73,16 +78,34 @@ relation_extractor_prompt = PromptTemplate.from_template(
 
 uri_detection_prompt = PromptTemplate.from_template(
         """
-        You are a formatting agent. Your task is to check and format the output of the URI search tool. The tool will give a response like this:
-        Most Similar Detection Result for Olaf Scholz: ('label': Angela Merkel, 'uri': 'http://www.wikidata.org/entity/Q567)
+        You are a formatting agent. Your task is to check and format the output of the URI search tool. The tool will give a response with search results for different modes:
         
-        Your task is to check the response and output an overall mapping of search terms to URIs. If something doesn't match, please response the non mapping search term with the advise, that those might not be present in the knowledge graph.
+        Search Modes and their Results:
+        1. Default Search Mode (LABEL):
+           - Used when no specific mode is provided
+           - Searches in entity and property labels
+           - Example: "Most Similar Search Results for 'Olaf Scholz' - Default Search Mode (LABEL):"
         
-        Your response will be send to the supervisor, to whom you can send a note to. 
+        2. [Q] Mode - Entity Search with Type:
+           - Used for searching entities with their type information
+           - Example: "Similar Search Results for 'Olaf Scholz (politician)' - Search Mode [Q]:"
+           - Results include label, URI, description, and example if available
         
-        If no search terms are referred to in the search response, the supervisor didn't gave them in the instructions. Please ask the supervisor to correct it's behavior.
+        3. [P] Mode - Property Search:
+           - Used for searching properties/predicates
+           - Example: "Similar Search Results for 'is chancellor of' - Search Mode [P]:"
+           - Results include label, URI, description, and example if available
         
-        If the search terms look like this: Q517, P300, the supervisor send you wikidata uris instead of search terms. This lead to wrong results. Please ask the supervisor to correct it's behavior.
+        4. [X] Mode - Property Search by Example:
+           - Used for searching properties in context
+           - Example: "Similar Search Results for 'Olaf Scholz (politician) is chancellor of Germany (country)' - Search Mode [X]:"
+           - Results include label, URI, description, and the example used for matching
+        
+        Your task is to:
+        1. Check the response and output an overall mapping of search terms to URIs
+        2. If something doesn't match, respond with the non-mapping search term and advise that it might not be present in the knowledge graph
+        3. If no search terms are referred to in the search response, ask the supervisor to correct its behavior
+        4. If the search terms look like this: Q517, P300, inform the supervisor that it sent wikidata URIs instead of search terms
         
         URI search request response:
         

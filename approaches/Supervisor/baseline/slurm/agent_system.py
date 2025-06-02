@@ -65,7 +65,7 @@ for i in tqdm(range(len(docs))):
     trace_id = str(uuid.uuid4())
     try:
         response = graph.invoke({"text": text, "messages": [], "debug": False},
-                                config={"run_id": trace_id, "recursion_limit": 70, "callbacks": [langfuse_handler], "tags":["Baseline", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
+                                config={"run_id": trace_id, "recursion_limit": 35, "callbacks": [langfuse_handler], "tags":["Baseline", f'{os.getenv("LLM_MODEL_PROVIDER")}-{os.getenv("LLM_MODEL_ID")}']})
         turtle_string = response["messages"][-1]
         score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
                                                          triple_df=relation_df))

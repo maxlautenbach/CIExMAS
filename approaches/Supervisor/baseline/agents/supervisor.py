@@ -66,9 +66,9 @@ def agent(state: cIEState) -> Command[Literal[
 
     if state["debug"]:
         if goto == END:
-            state["messages"].append("\n-- ReAct Agent --\n" + turtle_string)
+            state["messages"].append(turtle_string)
         else:
-            state["messages"].append("\n-- ReAct Agent --\n" + response)
+            state["messages"].append("\n-- Supervisor Agent --\n" + response)
         state["instruction"] = instruction
         return state, response
 
