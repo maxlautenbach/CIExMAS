@@ -392,5 +392,8 @@
     },
     "train_text-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-02-1433.xlsx": {
         "short_description": "R/PE-R/UST"
+    },
+    "test_text-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-06-02-1631.xlsx": {
+        "short_description": "R/PE-R/UST"
     }
 }
