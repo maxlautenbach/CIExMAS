@@ -30,14 +30,15 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file:
-    match = re.match(r"(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", uploaded_file.name)
+    match = re.match(r"(?P<dataset>[\w_]+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", uploaded_file.name)
+    dataset = match.group("dataset")
     split = match.group("split")
     number_of_samples = int(match.group("num_samples"))
     try:
-        stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{split}-{number_of_samples}"]
+        stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
     except KeyError:
-        stss.relation_df, stss.entity_df, stss.docs = parser.synthie_parser(split, number_of_samples)
-        stss.dataset_cache[f"{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
+        stss.relation_df, stss.entity_df, stss.docs = parser.unified_parser(dataset, split, number_of_samples)
+        stss.dataset_cache[f"{dataset}-{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
     stss.entity_set = stss.entity_df[['entity', 'entity_uri']].drop_duplicates()
     stss.predicate_set_df = stss.relation_df[["predicate", "predicate_uri"]].drop_duplicates()
     uploaded_file_io = BytesIO(uploaded_file.read())

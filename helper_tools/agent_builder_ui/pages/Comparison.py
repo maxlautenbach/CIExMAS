@@ -61,11 +61,17 @@ def extract_model_info(file_path):
     return provider, model_id, display_model_id
 
 def extract_datasplit(file_path):
-    """Extract datasplit from file path."""
+    """Extract dataset and split information from file path."""
     filename = os.path.basename(file_path)
-    # Extract the split and number (e.g., "test-5" from "test-5-evaluation_log-...")
+    # Extract the split info (e.g., "synthie_code-train-5" from "synthie_code-train-5-evaluation_log-...")
     split_info = filename.split("-evaluation_log-")[0]
-    return split_info
+    
+    # Split by hyphen and take first two parts
+    parts = split_info.split("-")
+    dataset = parts[0]  # e.g., "synthie_code" or "rebel"
+    split = parts[1]    # e.g., "train" or "test"
+    
+    return dataset, split
 
 def extract_architecture(file_path):
     """Extract architecture name from the directory path."""
@@ -100,13 +106,25 @@ def main():
         st.error("No evaluation files found in evaluation_logs directory!")
         return
     
-    # Extract unique datasplits
-    datasplits = sorted(set(extract_datasplit(f) for f in evaluation_files))
+    # Extract unique datasets and splits
+    datasets = sorted(set(extract_datasplit(f)[0] for f in evaluation_files))
     
-    # Create dropdown for datasplit selection
-    selected_datasplit = st.selectbox(
-        "Select Datasplit",
-        datasplits
+    # Create dropdown for dataset selection
+    selected_dataset = st.selectbox(
+        "Select Dataset",
+        datasets
+    )
+    
+    # Filter files for selected dataset
+    dataset_files = [f for f in evaluation_files if extract_datasplit(f)[0] == selected_dataset]
+    
+    # Extract unique splits for the selected dataset
+    splits = sorted(set(extract_datasplit(f)[1] for f in dataset_files))
+    
+    # Create dropdown for split selection
+    selected_split = st.selectbox(
+        "Select Split",
+        splits
     )
     
     # Add dropdown for averaging mode
@@ -116,8 +134,8 @@ def main():
         index=0  # Default to Macro
     )
     
-    # Filter files for selected datasplit
-    filtered_files = [f for f in evaluation_files if extract_datasplit(f) == selected_datasplit]
+    # Filter files for selected dataset and split
+    filtered_files = [f for f in dataset_files if extract_datasplit(f)[1] == selected_split]
     
     # Track runs per architecture model combination with timestamps
     architecture_model_runs = defaultdict(list)
@@ -236,7 +254,7 @@ def main():
         ax.set_yticklabels(x_labels)
         ax.set_xlabel(selected_score)
         ax.set_xlim(0, 1)  # Set x-axis range from 0 to 1
-        ax.set_title(f"{selected_score} for '{selected_metric}' - {selected_datasplit}")
+        ax.set_title(f"{selected_score} for '{selected_metric}' - {selected_dataset} - {selected_split}")
         plt.tight_layout()
         
         # Add value labels on the right of bars

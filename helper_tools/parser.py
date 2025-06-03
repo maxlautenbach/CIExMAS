@@ -224,19 +224,34 @@ def redfm_parser(split, lang="en", number_of_samples=10):
     return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
 
 
-def synthie_parser(split, number_of_samples=10):
+def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10):
+    """
+    Base parser for SynthIE datasets.
+    
+    Args:
+        split (str): Dataset split to use ('train', 'test')
+        version (str): Dataset version ('code' or 'text')
+        number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        
+    Returns:
+        tuple: (relation_df, entity_df, docs) containing the parsed data
+        
+    Raises:
+        ValueError: If split is not supported
+    """
+    if split not in ['train', 'test']:
+        raise ValueError(f"Unsupported split: {split}. For SynthIE, use 'train' or 'test'")
+    
     file_path = snapshot_download("martinjosifoski/SynthIE", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/synthIE")
     
-    # Define the file paths based on split type
-    if split == "test_text":
-        gz_filename = f'{file_path}/sdg_text_davinci_003/test.jsonl.gz'
-        filename = f'{file_path}/sdg_text_davinci_003/test.jsonl'
-    elif split == "train_text":
-        gz_filename = f'{file_path}/sdg_text_davinci_003/val.jsonl.gz'
-        filename = f'{file_path}/sdg_text_davinci_003/val.jsonl'
-    else:
-        gz_filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl.gz'
-        filename = f'{file_path}/sdg_code_davinci_002/{split}.jsonl'
+    # Map version to directory
+    version_dir = "sdg_code_davinci_002" if version == "code" else "sdg_text_davinci_003"
+    
+    # For text version, train split is in val.jsonl.gz
+    actual_split = "val" if version == "text" and split == "train" else split
+    
+    gz_filename = f'{file_path}/{version_dir}/{actual_split}.jsonl.gz'
+    filename = f'{file_path}/{version_dir}/{actual_split}.jsonl'
     
     if not os.path.exists(filename):
         with gzip.open(gz_filename, 'rb') as f_in:
@@ -246,6 +261,64 @@ def synthie_parser(split, number_of_samples=10):
     return babelscape_parser(filename, number_of_samples)
 
 
+def synthie_code_parser(split: str, number_of_samples: int = 10):
+    """
+    Parse SynthIE code dataset.
+    
+    Args:
+        split (str): Dataset split to use ('train', 'test')
+        number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        
+    Returns:
+        tuple: (relation_df, entity_df, docs) containing the parsed data
+    """
+    return _synthie_base_parser(split, "code", number_of_samples)
+
+
+def synthie_text_parser(split: str, number_of_samples: int = 10):
+    """
+    Parse SynthIE text dataset.
+    
+    Args:
+        split (str): Dataset split to use ('train', 'test')
+        number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        
+    Returns:
+        tuple: (relation_df, entity_df, docs) containing the parsed data
+    """
+    return _synthie_base_parser(split, "text", number_of_samples)
+
+
+def unified_parser(dataset: str, split: str, number_of_samples: int = 10):
+    """
+    Unified parser for different datasets (REBEL, REDFM, SynthIE).
+    
+    Args:
+        dataset (str): Name of the dataset ('rebel', 'redfm', 'synthie_code', or 'synthie_text')
+        split (str): Dataset split to use ('train', 'test')
+        number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        
+    Returns:
+        tuple: (relation_df, entity_df, docs) containing the parsed data
+        
+    Raises:
+        ValueError: If dataset name is not supported
+    """
+    dataset = dataset.lower()
+    
+    if dataset == 'rebel':
+        return rebel_parser(split, number_of_samples)
+    elif dataset == 'redfm':
+        return redfm_parser(split, number_of_samples=number_of_samples)
+    elif dataset == 'synthie_code':
+        return synthie_code_parser(split, number_of_samples)
+    elif dataset == 'synthie_text':
+        return synthie_text_parser(split, number_of_samples)
+    else:
+        raise ValueError(f"Unsupported dataset: {dataset}. Supported datasets are: 'rebel', 'redfm', 'synthie_code', 'synthie_text'")
+
+
 if (__name__ == "__main__"):
-    relation_df, entity_df, docs = synthie_parser("test_text", 50)
+    # Example usage of unified parser
+    relation_df, entity_df, docs = unified_parser("synthie_code", "test", 50)
     print("Test Parsing Finished")
