@@ -320,5 +320,5 @@ def unified_parser(dataset: str, split: str, number_of_samples: int = 10):
 
 if (__name__ == "__main__"):
     # Example usage of unified parser
-    relation_df, entity_df, docs = unified_parser("synthie_code", "test", 50)
+    relation_df, entity_df, docs = unified_parser("rebel", "train", 5)
     print("Test Parsing Finished")

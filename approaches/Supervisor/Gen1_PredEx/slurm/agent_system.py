@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 import os
+import traceback
 
 import git
 import sys
@@ -38,12 +39,12 @@ warnings.filterwarnings("ignore")
 importlib.reload(parser)
 
 # Parse command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("--split", type=str, required=True, help="Dataset split to use")
-parser.add_argument("--num_samples", type=int, required=True, help="Number of samples to process")
-parser.add_argument("--dataset", type=str, required=True, help="Dataset to use (e.g., synthie_code, rebel, redfm)")
-parser.add_argument("--description", type=str, help="Optional description for the evaluation log")
-args = parser.parse_args()
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("--split", type=str, required=True, help="Dataset split to use")
+arg_parser.add_argument("--num_samples", type=int, required=True, help="Number of samples to process")
+arg_parser.add_argument("--dataset", type=str, required=True, help="Dataset to use (e.g., synthie_code, rebel, redfm)")
+arg_parser.add_argument("--description", type=str, help="Optional description for the evaluation log")
+args = arg_parser.parse_args()
 
 split = args.split
 number_of_samples = args.num_samples
@@ -86,8 +87,9 @@ for i in tqdm(range(len(docs))):
                                                          triple_df=triple_df))
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])
     except Exception as e:
+        error_msg = f"Error: {str(e)}\nTraceback:\n{traceback.format_exc()}"
         turtle_string = ""
-        final_result = e
+        final_result = error_msg
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
     evaluation_log.append([doc_id, *evaluate_doc(turtle_string, doc_id, triple_df), final_result, trace_id])
 

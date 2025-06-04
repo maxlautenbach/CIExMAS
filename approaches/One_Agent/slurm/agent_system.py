@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 import os
+import traceback
 
 import git
 import sys
@@ -79,9 +80,10 @@ for i in tqdm(range(len(docs))):
         score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
                                            triple_df=triple_df))
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])
-    except IndexError as e:
-        turtle_string = e
-        response = {"messages":[e]}
+    except Exception as e:
+        error_msg = f"Error: {str(e)}\nTraceback:\n{traceback.format_exc()}"
+        turtle_string = ""
+        response = {"messages":[error_msg]}
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
 
     evaluation_log.append([doc_id, *evaluate_doc(turtle_string,doc_id, triple_df), response["messages"][-1], trace_id])
