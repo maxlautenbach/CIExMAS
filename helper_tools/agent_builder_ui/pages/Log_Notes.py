@@ -49,11 +49,17 @@ def extract_architecture(file_path):
     return dir_name
 
 def extract_datasplit(file_path):
-    """Extract datasplit from file path."""
+    """Extract dataset and split information from file path."""
     filename = os.path.basename(file_path)
-    # Extract the split and number (e.g., "test-5" from "test-5-evaluation_log-...")
+    # Extract the split info (e.g., "synthie_code-train-5" from "synthie_code-train-5-evaluation_log-...")
     split_info = filename.split("-evaluation_log-")[0]
-    return split_info
+    
+    # Split by hyphen and take first two parts
+    parts = split_info.split("-")
+    dataset = parts[0]  # e.g., "synthie_code" or "rebel"
+    split = parts[1]    # e.g., "train" or "test"
+    
+    return dataset, split
 
 def extract_timestamp(file_path):
     """Extract timestamp from filename."""
@@ -73,12 +79,13 @@ def get_note_display_info(log_file):
     if not full_path:
         return None
     
-    datasplit = extract_datasplit(full_path)
+    dataset, split = extract_datasplit(full_path)
     architecture = extract_architecture(full_path)
     model_info = extract_model_info(full_path)
     
     return {
-        "datasplit": datasplit,
+        "dataset": dataset,
+        "split": split,
         "architecture": architecture,
         "model_info": model_info
     }
@@ -94,28 +101,31 @@ for root, dirs, files in os.walk(eval_logs_dir):
         if file.endswith('.xlsx'):
             log_files.append(os.path.join(root, file))
 
-# Organize files by architecture, datasplit, model, and timestamp
+# Organize files by architecture, dataset, split, model, and timestamp
 organized_files = {}
 for file_path in log_files:
     architecture = extract_architecture(file_path)
-    datasplit = extract_datasplit(file_path)
+    dataset, split = extract_datasplit(file_path)
     model_info = extract_model_info(file_path)
     timestamp = extract_timestamp(file_path)
     
     if architecture not in organized_files:
         organized_files[architecture] = {}
-    if datasplit not in organized_files[architecture]:
-        organized_files[architecture][datasplit] = {}
-    if model_info not in organized_files[architecture][datasplit]:
-        organized_files[architecture][datasplit][model_info] = []
+    if dataset not in organized_files[architecture]:
+        organized_files[architecture][dataset] = {}
+    if split not in organized_files[architecture][dataset]:
+        organized_files[architecture][dataset][split] = {}
+    if model_info not in organized_files[architecture][dataset][split]:
+        organized_files[architecture][dataset][split][model_info] = []
     
-    organized_files[architecture][datasplit][model_info].append((timestamp, file_path))
+    organized_files[architecture][dataset][split][model_info].append((timestamp, file_path))
 
 # Sort timestamps for each model
 for arch in organized_files:
-    for datasplit in organized_files[arch]:
-        for model in organized_files[arch][datasplit]:
-            organized_files[arch][datasplit][model].sort(key=lambda x: x[0])
+    for dataset in organized_files[arch]:
+        for split in organized_files[arch][dataset]:
+            for model in organized_files[arch][dataset][split]:
+                organized_files[arch][dataset][split][model].sort(key=lambda x: x[0])
 
 # Create two columns
 col1, col2 = st.columns(2)
@@ -138,22 +148,29 @@ with col1:
             architectures
         )
         
-        # Datasplit selection
-        datasplits = sorted(organized_files[selected_architecture].keys())
-        selected_datasplit = st.selectbox(
-            "Select Datasplit",
-            datasplits
+        # Dataset selection
+        datasets = sorted(organized_files[selected_architecture].keys())
+        selected_dataset = st.selectbox(
+            "Select Dataset",
+            datasets
+        )
+        
+        # Split selection
+        splits = sorted(organized_files[selected_architecture][selected_dataset].keys())
+        selected_split = st.selectbox(
+            "Select Split",
+            splits
         )
         
         # Model selection (Provider + Model ID combined)
-        models = sorted(organized_files[selected_architecture][selected_datasplit].keys())
+        models = sorted(organized_files[selected_architecture][selected_dataset][selected_split].keys())
         selected_model = st.selectbox(
             "Select Model",
             models
         )
         
         # Timestamp selection
-        timestamps = organized_files[selected_architecture][selected_datasplit][selected_model]
+        timestamps = organized_files[selected_architecture][selected_dataset][selected_split][selected_model]
         timestamp_options = [ts[0].strftime("%Y-%m-%d %H:%M") for ts in timestamps]
         selected_timestamp = st.selectbox(
             "Select Timestamp",
@@ -175,16 +192,24 @@ with col1:
             key="edit_architecture"
         )
         
-        # Datasplit selection
-        datasplits = sorted(organized_files[selected_architecture].keys())
-        selected_datasplit = st.selectbox(
-            "Select Datasplit",
-            datasplits,
-            key="edit_datasplit"
+        # Dataset selection
+        datasets = sorted(organized_files[selected_architecture].keys())
+        selected_dataset = st.selectbox(
+            "Select Dataset",
+            datasets,
+            key="edit_dataset"
+        )
+        
+        # Split selection
+        splits = sorted(organized_files[selected_architecture][selected_dataset].keys())
+        selected_split = st.selectbox(
+            "Select Split",
+            splits,
+            key="edit_split"
         )
         
         # Model selection
-        models = sorted(organized_files[selected_architecture][selected_datasplit].keys())
+        models = sorted(organized_files[selected_architecture][selected_dataset][selected_split].keys())
         selected_model = st.selectbox(
             "Select Model",
             models,
@@ -192,7 +217,7 @@ with col1:
         )
         
         # Get timestamps for the selected combination
-        timestamps = organized_files[selected_architecture][selected_datasplit][selected_model]
+        timestamps = organized_files[selected_architecture][selected_dataset][selected_split][selected_model]
         
         # Filter files_with_notes based on the selected criteria
         filtered_files = []
@@ -254,24 +279,24 @@ with col2:
     if not notes:
         st.info("No notes have been added yet.")
     else:
-        # Sort notes by datasplit, architecture, and model
+        # Sort notes by dataset, architecture, and model
         sorted_notes = []
         for log_file, note_data in notes.items():
             display_info = get_note_display_info(log_file)
             if display_info:
                 sorted_notes.append((
-                    display_info["datasplit"],
+                    display_info["dataset"],
                     display_info["architecture"],
                     display_info["model_info"],
                     log_file,
                     note_data
                 ))
         
-        # Sort by datasplit, architecture, and model
+        # Sort by dataset, architecture, and model
         sorted_notes.sort(key=lambda x: (x[0], x[1], x[2]))
         
-        for datasplit, architecture, model_info, log_file, note_data in sorted_notes:
-            display_title = f"{datasplit} - {architecture} - {model_info} - {note_data.get('short_description', 'No short description')}"
+        for dataset, architecture, model_info, log_file, note_data in sorted_notes:
+            display_title = f"{dataset} - {architecture} - {model_info} - {note_data.get('short_description', 'No short description')}"
             with st.expander(display_title):
                 st.write("**Description:**")
                 st.write(note_data.get("description", "No description")) 

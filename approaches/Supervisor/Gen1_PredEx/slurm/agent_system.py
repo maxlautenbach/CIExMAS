@@ -28,6 +28,7 @@ from approaches.Supervisor.Gen1_PredEx.agents.result_formatter import agent as r
 from approaches.Supervisor.Gen1_PredEx.agents.planner import agent as planner
 from helper_tools.evaluation import evaluate_doc, calculate_scores_from_array
 from dotenv import load_dotenv
+import argparse
 
 load_dotenv(repo.working_dir + "/.env", override=True)
 from helper_tools.base_setup import langfuse_handler, langfuse_client
@@ -36,16 +37,22 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-try:
-    split = sys.argv[1]
-    number_of_samples = int(sys.argv[2])
-    description = sys.argv[3]
-except IndexError:
-    split = "test_text"
-    number_of_samples = 50
-    description = None
+# Parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--split", type=str, required=True, help="Dataset split to use")
+parser.add_argument("--num_samples", type=int, required=True, help="Number of samples to process")
+parser.add_argument("--dataset", type=str, required=True, help="Dataset to use (e.g., synthie_code, rebel, redfm)")
+parser.add_argument("--description", type=str, help="Optional description for the evaluation log")
+args = parser.parse_args()
 
-triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
+split = args.split
+number_of_samples = args.num_samples
+dataset = args.dataset
+description = args.description
+
+# Load dataset
+triple_df, entity_df, docs = parser.unified_parser(dataset, split, number_of_samples)
+
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = triple_df[["predicate", "predicate_uri"]].drop_duplicates()
 
@@ -98,7 +105,7 @@ evaluation_log_df = pd.DataFrame(
     ]
 )
 
-excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1_PredEx/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/', '-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
+excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/Gen1_PredEx/{dataset}-{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/', '-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
 try:
     evaluation_log_df.to_excel(excel_file_path, index=False)
 except Exception as e:

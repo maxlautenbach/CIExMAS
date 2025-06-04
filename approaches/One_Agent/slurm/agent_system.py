@@ -33,16 +33,24 @@ warnings.filterwarnings("ignore")
 
 importlib.reload(parser)
 
-try:
-    split = sys.argv[1]
-    number_of_samples = int(sys.argv[2])
-    description = sys.argv[3]
-except IndexError:
-    split = "test_text"
-    number_of_samples = 10
-    description = None
+import argparse
 
-triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
+
+# Parse command line arguments
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("--split", type=str, required=True, help="Dataset split to use")
+arg_parser.add_argument("--num_samples", type=int, required=True, help="Number of samples to process")
+arg_parser.add_argument("--dataset", type=str, required=True, help="Dataset to use (e.g., synthie_code, rebel, redfm)")
+arg_parser.add_argument("--description", type=str, help="Optional description for the evaluation log")
+args = arg_parser.parse_args()
+
+split = args.split
+number_of_samples = args.num_samples
+dataset = args.dataset
+description = args.description
+
+# Load dataset
+triple_df, entity_df, docs = parser.unified_parser(dataset, split, number_of_samples)
 entity_set = entity_df[['entity', 'entity_uri']].drop_duplicates()
 predicate_set_df = triple_df[["predicate", "predicate_uri"]].drop_duplicates()
 
@@ -71,7 +79,7 @@ for i in tqdm(range(len(docs))):
         score = calculate_scores_from_array(evaluate_doc(turtle_string=turtle_string, doc_id=doc_id,
                                            triple_df=triple_df))
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=score.loc["Triple"]["F1-Score"])
-    except Exception as e:
+    except IndexError as e:
         turtle_string = e
         response = {"messages":[e]}
         langfuse_client.score(trace_id=trace_id, name="F1-Score", value=0)
@@ -85,14 +93,14 @@ evaluation_log_df = pd.DataFrame(
         "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples", "Total Triples Predicted",
         "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
         "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
-        "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
+        "Detected Predicates Doc Parent", "Detected Predicates Doc Related",
         "Correct Pred Predicates Parents", "Correct Pred Predicates Related",
         "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
         "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", "Result String", "Langfuse Trace ID"
     ]
 )
 
-excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/One_Agent/{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
+excel_file_path = f"{repo.working_dir}/approaches/evaluation_logs/One_Agent/{dataset}-{split}-{number_of_samples}-evaluation_log-{os.getenv('LLM_MODEL_PROVIDER')}_{os.getenv('LLM_MODEL_ID').replace('/','-')}-{datetime.now().strftime('%Y-%m-%d-%H%M')}.xlsx"
 try:
     evaluation_log_df.to_excel(excel_file_path, index=False)
 except Exception as e:
@@ -101,7 +109,6 @@ except Exception as e:
     evaluation_log_df.to_excel(f"Output.xlsx", index=False)
 
 import json
-import os.path
 
 if description:
     log_notes_path = f"{repo.working_dir}/approaches/evaluation_logs/log_notes.json"

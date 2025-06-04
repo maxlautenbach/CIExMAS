@@ -24,8 +24,10 @@ stss = st.session_state
 if "dataset_cache" not in stss:
     stss.dataset_cache = dict()
 
+if "dataset" not in stss:
+    stss.dataset = "synthie_code"
 if "split" not in stss:
-    stss.split = "train_text"
+    stss.split = "train"
 if "number_of_samples" not in stss:
     stss.number_of_samples = 5
 
@@ -40,23 +42,32 @@ def reset_state():
 
 
 def update_dataset():
+    dataset = stss.dataset
     split = stss.split
     number_of_samples = stss.number_of_samples
     try:
-        stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{split}-{number_of_samples}"]
+        stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
     except KeyError:
-        stss.relation_df, stss.entity_df, stss.docs = parser.synthie_parser(split, number_of_samples)
-        stss.dataset_cache[f"{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
+        stss.relation_df, stss.entity_df, stss.docs = parser.unified_parser(dataset, split, number_of_samples)
+        stss.dataset_cache[f"{dataset}-{split}-{number_of_samples}"] = (stss.relation_df, stss.entity_df, stss.docs)
     stss.entity_set = stss.entity_df[['entity', 'entity_uri']].drop_duplicates()
     stss.predicate_set_df = stss.relation_df[["predicate", "predicate_uri"]].drop_duplicates()
     stss.doc_index = 0
     reset_state()
 
 st.sidebar.selectbox(
-    "Dataset Split",
-    ("train", "test", "test_text", "train_text"),
+    "Dataset",
+    ("synthie_code", "synthie_text", "rebel", "redfm"),
+    key="dataset",
+    index=("synthie_code", "synthie_text", "rebel", "redfm").index(stss.dataset),
+    on_change=update_dataset
+)
+
+st.sidebar.selectbox(
+    "Split",
+    ("train", "test"),
     key="split",
-    index=("train", "test", "test_text", "train_text").index(stss.split),
+    index=("train", "test").index(stss.split),
     on_change=update_dataset
 )
 

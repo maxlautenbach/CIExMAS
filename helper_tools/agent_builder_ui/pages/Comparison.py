@@ -61,17 +61,18 @@ def extract_model_info(file_path):
     return provider, model_id, display_model_id
 
 def extract_datasplit(file_path):
-    """Extract dataset and split information from file path."""
+    """Extract dataset, split and number of samples information from file path."""
     filename = os.path.basename(file_path)
     # Extract the split info (e.g., "synthie_code-train-5" from "synthie_code-train-5-evaluation_log-...")
     split_info = filename.split("-evaluation_log-")[0]
     
-    # Split by hyphen and take first two parts
+    # Split by hyphen and take parts
     parts = split_info.split("-")
     dataset = parts[0]  # e.g., "synthie_code" or "rebel"
     split = parts[1]    # e.g., "train" or "test"
+    num_samples = parts[2] if len(parts) > 2 else None  # e.g., "5" or "50"
     
-    return dataset, split
+    return dataset, f"{split}-{num_samples}" if num_samples else split
 
 def extract_architecture(file_path):
     """Extract architecture name from the directory path."""
@@ -123,7 +124,7 @@ def main():
     
     # Create dropdown for split selection
     selected_split = st.selectbox(
-        "Select Split",
+        "Select Split and Number of Samples",
         splits
     )
     

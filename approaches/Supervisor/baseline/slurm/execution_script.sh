@@ -85,7 +85,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./approaches/Supervisor/baseline/slurm/agent_system.py test_text 50 'R/PE-R/UST'
+python3 ./approaches/Supervisor/baseline/slurm/agent_system.py --dataset synthie_text --split test --num_samples 50 --description 'R/PE-R/UST'
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."
