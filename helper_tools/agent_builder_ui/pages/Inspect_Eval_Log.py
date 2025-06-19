@@ -83,7 +83,7 @@ if uploaded_file:
     for _, row in filtered_df.iterrows():
         with st.container(border=True):
             score = calculate_scores_from_array(row.to_list()[1:(22-len(row))])
-            st.write(stss.docs.loc[row["Doc ID"]]["text"])
+            st.write(stss.docs[stss.docs["docid"].astype(str) == str(row["Doc ID"])].iloc[0]["text"])
             st.write(score.loc["Triple"]["F1-Score"])
             result_string = str(row["Result String"])
             turtle_string_match = re.search(r'<ttl>(.*?)</ttl>', result_string, re.DOTALL)
@@ -101,7 +101,7 @@ if uploaded_file:
                 st.write(get_uri_labels(result_df)[["subject", "predicate","object"]])
                 st.divider()
                 st.write("*Actual Triples*")
-                st.write(stss.relation_df[stss.relation_df["docid"] == row["Doc ID"]][["subject", "predicate","object"]])
+                st.write(stss.relation_df[stss.relation_df["docid"].astype(str) == str(row["Doc ID"])][["subject", "predicate","object"]])
                 st.divider()
                 st.write("*Score*")
                 st.write(score)

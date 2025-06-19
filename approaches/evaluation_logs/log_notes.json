@@ -413,5 +413,8 @@
     },
     "rebel-test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-06-05-0116.xlsx": {
         "short_description": "Init Test"
+    },
+    "redfm-train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-05-0927.xlsx": {
+        "short_description": "Init Test"
     }
 }
