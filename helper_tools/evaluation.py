@@ -1,5 +1,6 @@
 import os
 import re
+import pickle
 from pathlib import Path
 
 import pandas as pd
@@ -375,16 +376,17 @@ def calculate_scores_from_array(values_array):
 
 
 def convert_eval_log(path, dataset_cache):
-    match = re.match(r"(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", os.path.basename(path))
+    match = re.match(r"(?P<dataset>\w+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", os.path.basename(path))
 
     if match:
+        dataset = match.group("dataset")
         split = match.group("split")
         number_of_samples = int(match.group("num_samples"))
         try:
-            triple_df, entity_df, docs = dataset_cache[f"{split}-{number_of_samples}"]
+            triple_df, entity_df, docs = dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
         except KeyError:
-            triple_df, entity_df, docs = parser.synthie_parser(split, number_of_samples)
-            dataset_cache[f"{split}-{number_of_samples}"] = (triple_df, entity_df, docs)
+            triple_df, entity_df, docs = parser.unified_parser(dataset, split, number_of_samples)
+            dataset_cache[f"{dataset}-{split}-{number_of_samples}"] = (triple_df, entity_df, docs)
     else:
         print("File name does not match with the required format.")
         return
@@ -439,26 +441,93 @@ def compare_turtle_strings(predicted_turtle_string, ground_truth_turtle_string):
     return _calculate_metrics(pred_triple_df, gold_triple_df)
 
 
+def convert_pickle_eval_log(pickle_path, dataset_cache):
+    """
+    Convert a pickle file containing {docid: turtle_string} dictionary into a proper evaluation log Excel file.
+    
+    Args:
+        pickle_path (str): Path to the pickle file
+        dataset_cache (dict): Cache for dataset loading
+        
+    Returns:
+        dict: Updated dataset cache
+    """
+    # Extract dataset info from filename (similar to convert_eval_log)
+    filename = os.path.basename(pickle_path)
+    match = re.match(r"(?P<dataset>\w+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.pkl", filename)
+    
+    if not match:
+        print(f"File name {filename} does not match the required format.")
+        return dataset_cache
+    
+    dataset = match.group("dataset")
+    split = match.group("split")
+    number_of_samples = int(match.group("num_samples"))
+    
+    # Load dataset
+    try:
+        triple_df, entity_df, docs = dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
+    except KeyError:
+        triple_df, entity_df, docs = parser.unified_parser(dataset, split, number_of_samples)
+        dataset_cache[f"{dataset}-{split}-{number_of_samples}"] = (triple_df, entity_df, docs)
+    
+    # Load pickle file
+    try:
+        with open(pickle_path, 'rb') as f:
+            docid_turtle_dict = pickle.load(f)
+    except Exception as e:
+        print(f"Error loading pickle file {pickle_path}: {e}")
+        return dataset_cache
+    
+    # Convert to evaluation log format
+    evaluation_log = []
+    for doc_id, turtle_string in docid_turtle_dict.items():
+        turtle_string = turtle_string.replace("wdt:","wd:")
+        try:
+            metrics = evaluate_doc(turtle_string, doc_id, triple_df)
+            evaluation_log.append([doc_id, *metrics, turtle_string])
+        except Exception as e:
+            print(f"Error evaluating doc {doc_id}: {e}")
+            # Add row with zeros for failed evaluations
+            zero_metrics = [0] * 21  # 21 metrics from _calculate_metrics
+            evaluation_log.append([doc_id, *zero_metrics, turtle_string])
+    
+    # Create DataFrame
+    evaluation_log_df = pd.DataFrame(
+        evaluation_log,
+        columns=[
+            "Doc ID",
+            "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples",
+            "Total Triples Predicted",
+            "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
+            "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+            "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
+            "Correct Pred Predicates Parents", "Correct Pred Predicates Related", 
+            "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
+            "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", 
+            "Result String"
+        ]
+    )
+    
+    # Save as Excel file (replace .pkl with .xlsx)
+    excel_path = pickle_path.replace('.pkl', '.xlsx')
+    evaluation_log_df.to_excel(excel_path, index=False)
+    print(f"Converted {pickle_path} to {excel_path}")
+    
+    return dataset_cache
+
+
 if __name__ == "__main__":
     dataset_cache = {}
-    
-    # List of explicit file paths to process
-    explicit_paths = [
-        "../approaches/evaluation_logs/One_Agent/test-50-evaluation_log-vLLM_kosbu-Llama-3.3-70B-Instruct-AWQ-2025-04-22-0849.xlsx",
-    ]
-    
-    # Check if we should use explicit paths or walk directory
-    use_explicit_paths = True
-    
-    if use_explicit_paths:
-        for file_path in explicit_paths:
-            if file_path.endswith(".xlsx"):
-                print(f"Converting {file_path}")
-                dataset_cache = convert_eval_log(file_path, dataset_cache)
+
+    # Process pickle files in result_evaluation_logs
+    pickle_results_dir = "../results/result_evaluation_logs"
+    if os.path.exists(pickle_results_dir):
+        print(f"\nProcessing pickle files in {pickle_results_dir}")
+        for file in os.listdir(pickle_results_dir):
+            if file.endswith(".pkl"):
+                pickle_path = os.path.join(pickle_results_dir, file)
+                print(f"Converting pickle file: {pickle_path}")
+                dataset_cache = convert_pickle_eval_log(pickle_path, dataset_cache)
     else:
-        for root, dirs, files in os.walk("../approaches/evaluation_logs"):
-            for file in files:
-                if file.endswith(".xlsx"):
-                    file_path = os.path.join(root, file)
-                    print(f"Converting {file_path}")
-                    dataset_cache = convert_eval_log(file_path, dataset_cache)
+        print(f"Directory {pickle_results_dir} not found")
