@@ -12,8 +12,6 @@ from dotenv import load_dotenv
 import git
 from helper_tools.sort_jsonl import sort_jsonl_file
 
-from helper_tools.wikidata_loader import get_property_example
-
 repo = git.Repo(search_parent_directories=True)
 
 load_dotenv(repo.working_dir + "/.env")
@@ -50,6 +48,7 @@ def add_wikidata_prefix(uri):
 
 
 def upload_parsed_data(relation_df, entity_df):
+    from helper_tools.wikidata_loader import get_property_example
     """
     Upload parsed entities and predicates to the vector store using bulk upload.
     
@@ -139,7 +138,7 @@ def upload_parsed_data(relation_df, entity_df):
         print(f"No new predicates to upload. {already_uploaded_predicates} predicates were already in the database.")
 
 
-def babelscape_parser(filename, number_of_samples=10):
+def babelscape_parser(filename, number_of_samples=10, upload=True):
     doc_id_key = "docid"
     relation_key = "relations"
     if "rebel" in filename:
@@ -200,12 +199,13 @@ def babelscape_parser(filename, number_of_samples=10):
         for entity in datapoint["entities"]
     ])
 
-    upload_parsed_data(relation_df=relation_df, entity_df=entity_df)
+    if upload:
+        upload_parsed_data(relation_df=relation_df, entity_df=entity_df)
 
     return relation_df, entity_df, docs
 
 
-def rebel_parser(split, number_of_samples=10):
+def rebel_parser(split, number_of_samples=10, upload=True):
     file_path = snapshot_download("Babelscape/rebel-dataset", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/REBEL")
 
     zip_file_path = f"{file_path}/rebel_dataset.zip"
@@ -215,16 +215,16 @@ def rebel_parser(split, number_of_samples=10):
         with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
             zip_ref.extractall(target_path)
 
-    return babelscape_parser(f"{file_path}/rebel_dataset/en_{split}.jsonl", number_of_samples)
+    return babelscape_parser(f"{file_path}/rebel_dataset/en_{split}.jsonl", number_of_samples, upload=upload)
 
 
-def redfm_parser(split, lang="en", number_of_samples=10):
+def redfm_parser(split, lang="en", number_of_samples=10, upload=True):
     file_path = snapshot_download("Babelscape/REDFM", repo_type="dataset", local_dir=os.getenv("DATASET_DIR") + "/REDFM")
 
-    return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples)
+    return babelscape_parser(f"{file_path}/data/{split}.{lang}.jsonl", number_of_samples, upload=upload)
 
 
-def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10):
+def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10, upload=True):
     """
     Base parser for SynthIE datasets.
     
@@ -232,6 +232,7 @@ def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10):
         split (str): Dataset split to use ('train', 'test')
         version (str): Dataset version ('code' or 'text')
         number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        upload (bool, optional): Whether to upload parsed data. Defaults to True.
         
     Returns:
         tuple: (relation_df, entity_df, docs) containing the parsed data
@@ -258,38 +259,40 @@ def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10):
             with open(filename, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
-    return babelscape_parser(filename, number_of_samples)
+    return babelscape_parser(filename, number_of_samples, upload=upload)
 
 
-def synthie_code_parser(split: str, number_of_samples: int = 10):
+def synthie_code_parser(split: str, number_of_samples: int = 10, upload=True):
     """
     Parse SynthIE code dataset.
     
     Args:
         split (str): Dataset split to use ('train', 'test')
         number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        upload (bool, optional): Whether to upload parsed data. Defaults to True.
         
     Returns:
         tuple: (relation_df, entity_df, docs) containing the parsed data
     """
-    return _synthie_base_parser(split, "code", number_of_samples)
+    return _synthie_base_parser(split, "code", number_of_samples, upload=upload)
 
 
-def synthie_text_parser(split: str, number_of_samples: int = 10):
+def synthie_text_parser(split: str, number_of_samples: int = 10, upload=True):
     """
     Parse SynthIE text dataset.
     
     Args:
         split (str): Dataset split to use ('train', 'test')
         number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        upload (bool, optional): Whether to upload parsed data. Defaults to True.
         
     Returns:
         tuple: (relation_df, entity_df, docs) containing the parsed data
     """
-    return _synthie_base_parser(split, "text", number_of_samples)
+    return _synthie_base_parser(split, "text", number_of_samples, upload=upload)
 
 
-def unified_parser(dataset: str, split: str, number_of_samples: int = 10):
+def unified_parser(dataset: str, split: str, number_of_samples: int = 10, upload=True):
     """
     Unified parser for different datasets (REBEL, REDFM, SynthIE).
     
@@ -297,6 +300,7 @@ def unified_parser(dataset: str, split: str, number_of_samples: int = 10):
         dataset (str): Name of the dataset ('rebel', 'redfm', 'synthie_code', or 'synthie_text')
         split (str): Dataset split to use ('train', 'test')
         number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
+        upload (bool, optional): Whether to upload parsed data. Defaults to True.
         
     Returns:
         tuple: (relation_df, entity_df, docs) containing the parsed data
@@ -307,13 +311,13 @@ def unified_parser(dataset: str, split: str, number_of_samples: int = 10):
     dataset = dataset.lower()
     
     if dataset == 'rebel':
-        return rebel_parser(split, number_of_samples)
+        return rebel_parser(split, number_of_samples, upload=upload)
     elif dataset == 'redfm':
-        return redfm_parser(split, number_of_samples=number_of_samples)
+        return redfm_parser(split, number_of_samples=number_of_samples, upload=upload)
     elif dataset == 'synthie_code':
-        return synthie_code_parser(split, number_of_samples)
+        return synthie_code_parser(split, number_of_samples, upload=upload)
     elif dataset == 'synthie_text':
-        return synthie_text_parser(split, number_of_samples)
+        return synthie_text_parser(split, number_of_samples, upload=upload)
     else:
         raise ValueError(f"Unsupported dataset: {dataset}. Supported datasets are: 'rebel', 'redfm', 'synthie_code', 'synthie_text'")
 
