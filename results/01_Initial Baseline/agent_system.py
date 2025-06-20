@@ -78,7 +78,7 @@ Note:
 
 def supervisor(state: cIEState) -> Command[Literal["entity_extraction_agent", "relation_extraction_agent", "uri_detection_agent", END]]:    
     
-    response = model.invoke(state["messages"])
+    response = model.invoke("\n---\n".join([str(x) for x in state["messages"]]))
     
     print(f"-- START OF OUTPUT (supervisor) --\n\n", response.content, "\n\n-- END OF OUTPUT --\n\n")
         
