@@ -132,30 +132,31 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
     correct_pred_predicates_related = set()  # New variable for correct predicates from pred
     
     for gold_predicate in gold_predicate_set:
-        found = False
         for pred_predicate in pred_predicate_set:
             if pred_predicate == gold_predicate:
+                # Exakte Übereinstimmung
                 correct_pred_predicates_parent.add(pred_predicate)
                 correct_pred_predicates_related.add(pred_predicate)
                 detected_predicates_doc_parent.add(gold_predicate)
                 detected_predicates_doc_related.add(gold_predicate)
-                found = True
-                break
-            inter_predicate_relations = check_inter_predicate_relations(pred_predicate, gold_predicate)
-            if "parentPropertyOf" in inter_predicate_relations:
-                correct_pred_predicates_parent.add(pred_predicate)
-                detected_predicates_doc_parent.add(gold_predicate)
-                found = True
-            if len(inter_predicate_relations) > 0:
-                correct_pred_predicates_related.add(pred_predicate)
-                detected_predicates_doc_related.add(gold_predicate)
-                found = True
-                break
+            else:
+                inter_predicate_relations = check_inter_predicate_relations(pred_predicate, gold_predicate)
+                if "parentPropertyOf" in inter_predicate_relations:
+                    correct_pred_predicates_parent.add(pred_predicate)
+                    detected_predicates_doc_parent.add(gold_predicate)
+                    correct_pred_predicates_related.add(pred_predicate)
+                    detected_predicates_doc_related.add(gold_predicate)
+                elif len(inter_predicate_relations) > 0:
+                    correct_pred_predicates_related.add(pred_predicate)
+                    detected_predicates_doc_related.add(gold_predicate)
     
     detected_predicates_doc_parent_count = len(detected_predicates_doc_parent)
     detected_predicates_doc_related_count = len(detected_predicates_doc_related)
     correct_pred_predicates_parent_count = len(correct_pred_predicates_parent)
     correct_pred_predicates_related_count = len(correct_pred_predicates_related)
+
+    if detected_predicates_doc_parent_count < correct_extracted_predicates:
+        print("PROBLEM")
 
     return len(correct_triple_df), len(correct_triples_with_parent_predicates_df), len(
         correct_triples_with_related_predicates_df), len(gold_triple_df), len(
@@ -517,17 +518,102 @@ def convert_pickle_eval_log(pickle_path, dataset_cache):
     return dataset_cache
 
 
-if __name__ == "__main__":
+def convert_all_synthie_text_eval_logs(results_dir="../results/result_evaluation_logs"):
+    """
+    Convert all evaluation logs for synthie_text dataset with 50 samples and test split.
+    
+    Args:
+        results_dir (str): Path to the results_evaluation_logs directory
+        
+    Returns:
+        dict: Updated dataset cache
+    """
     dataset_cache = {}
+    dataset = "synthie_text"
+    split = "test"
+    number_of_samples = 50
+    
+    # Load dataset once and cache it
+    try:
+        triple_df, entity_df, docs = dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
+    except KeyError:
+        triple_df, entity_df, docs = parser.unified_parser(dataset, split, number_of_samples)
+        dataset_cache[f"{dataset}-{split}-{number_of_samples}"] = (triple_df, entity_df, docs)
+    
+    if not os.path.exists(results_dir):
+        print(f"Directory {results_dir} not found.")
+        return dataset_cache
+    
+    # Get all Excel files in the directory
+    excel_files = [f for f in os.listdir(results_dir) if f.endswith('.xlsx') and not f.startswith('.')]
+    
+    if not excel_files:
+        print(f"No Excel files found in {results_dir}")
+        return dataset_cache
+    
+    print(f"Found {len(excel_files)} Excel files to process:")
+    for file in excel_files:
+        print(f"  - {file}")
+    
+    # Convert each file
+    for file in excel_files:
+        file_path = os.path.join(results_dir, file)
+        print(f"\nConverting: {file}")
+        try:
+            evaluation_log_df = pd.read_excel(file_path)
+            evaluation_log = []
+            
+            for doc_id, row in tqdm(evaluation_log_df.iterrows()):
+                result_string = str(row["Result String"])
+                turtle_string_match = re.search(r'<ttl>(.*?)</ttl>', result_string, re.DOTALL)
+                if turtle_string_match:
+                    turtle_string = turtle_string_match.group(1)
+                else:
+                    turtle_string = result_string
+                
+                try:
+                    metrics = evaluate_doc(turtle_string, doc_id, triple_df)
+                    evaluation_log.append([doc_id, *metrics, result_string])
+                except Exception as e:
+                    print(f"  Error evaluating doc {doc_id}: {e}")
+                    # Add row with zeros for failed evaluations
+                    zero_metrics = [0] * 21  # 21 metrics from _calculate_metrics
+                    evaluation_log.append([doc_id, *zero_metrics, result_string])
+            
+            # Create DataFrame
+            evaluation_log_df = pd.DataFrame(
+                evaluation_log,
+                columns=[
+                    "Doc ID",
+                    "Correct Triples", "Correct Triples with Parents", "Correct Triples with Related", "Gold Standard Triples",
+                    "Total Triples Predicted",
+                    "Extracted Subjects", "Gold Standard Subjects", "Correct Extracted Subjects",
+                    "Extracted Predicates", "Gold Standard Predicates", "Correct Extracted Predicates",
+                    "Detected Predicates Doc Parent", "Detected Predicates Doc Related", 
+                    "Correct Pred Predicates Parents", "Correct Pred Predicates Related", 
+                    "Extracted Objects", "Gold Standard Objects", "Correct Extracted Objects",
+                    "Extracted Entities", "Gold Standard Entities", "Correct Extracted Entities", 
+                    "Result String"
+                ]
+            )
+            
+            # Save the converted file
+            evaluation_log_df.to_excel(file_path, index=False)
+            print(f"  Successfully converted: {file}")
+            
+        except Exception as e:
+            print(f"  Error converting {file}: {e}")
+    
+    print(f"\nConversion completed for {len(excel_files)} files.")
+    return dataset_cache
 
-    # Process pickle files in result_evaluation_logs
-    pickle_results_dir = "../results/result_evaluation_logs"
-    if os.path.exists(pickle_results_dir):
-        print(f"\nProcessing pickle files in {pickle_results_dir}")
-        for file in os.listdir(pickle_results_dir):
-            if file.endswith(".pkl"):
-                pickle_path = os.path.join(pickle_results_dir, file)
-                print(f"Converting pickle file: {pickle_path}")
-                dataset_cache = convert_pickle_eval_log(pickle_path, dataset_cache)
-    else:
-        print(f"Directory {pickle_results_dir} not found")
+
+if __name__ == "__main__":
+    # Example usage of the new function
+    dataset_cache = convert_all_synthie_text_eval_logs(results_dir="/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/folder")
+    
+    # Example of individual file conversion (commented out)
+    # dataset_cache = {}
+    # convert_eval_log("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/synthie_text-test-50-evaluation_log-synthie_large_fe.xlsx", dataset_cache)
+    # report = generate_report("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/synthie_text-test-50-evaluation_log-synthie_large_fe.xlsx", "macro")
+    # print(report.head())

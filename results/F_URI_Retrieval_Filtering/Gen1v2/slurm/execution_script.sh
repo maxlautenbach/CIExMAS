@@ -85,7 +85,7 @@ fi
 
 # === Run Agent System ===
 echo "Running agent system..."
-python3 ./results/F_URI_Retrieval_Filtering/Gen1v2/slurm/agent_system.py --dataset synthie_code --split test --num_samples 50 --description 'F_URI_Retrieval_Filtering_Gen1v2'
+python3 ./results/F_URI_Retrieval_Filtering/Gen1v2/slurm/agent_system.py --dataset synthie_text --split test --num_samples 50 --description 'F_URI_Retrieval_Filtering_Gen1v2'
 
 # === Final Cleanup ===
 echo "Job completed. Cleaning up..."

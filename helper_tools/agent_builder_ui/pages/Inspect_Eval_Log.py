@@ -30,10 +30,15 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file:
-    match = re.match(r"(?P<dataset>[\w_]+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", uploaded_file.name)
-    dataset = match.group("dataset")
-    split = match.group("split")
-    number_of_samples = int(match.group("num_samples"))
+    try:
+        match = re.match(r"(?P<dataset>[\w_]+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", uploaded_file.name)
+        dataset = match.group("dataset")
+        split = match.group("split")
+        number_of_samples = int(match.group("num_samples"))
+    except:
+        dataset = "synthIE_text"
+        split = "test"
+        number_of_samples = 50
     try:
         stss.relation_df, stss.entity_df, stss.docs = stss.dataset_cache[f"{dataset}-{split}-{number_of_samples}"]
     except KeyError:
