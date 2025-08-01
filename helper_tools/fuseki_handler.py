@@ -308,9 +308,4 @@ def reinit_db():
     logger.info("Datasets reinitialized successfully")
 
 if __name__ == "__main__":
-    client = FusekiClient("wikidata_predicates")
-    print(client.query("""
-        ASK {
-            ?s ?p ?o .
-        }
-    """))
+    init_db()

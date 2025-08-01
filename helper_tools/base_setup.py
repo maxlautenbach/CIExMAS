@@ -102,6 +102,16 @@ elif llm_provider == "Cohere":
         seed=1337
     )
 
+elif llm_provider == "Groq":
+    model = ChatOpenAI(
+        api_key=os.getenv("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1",
+        model=model_id,
+        rate_limiter=rate_limiter,
+        temperature=0,
+        seed=1337
+    )
+
 embeddings = OllamaEmbeddings(
     model=os.getenv("EMBEDDING_MODEL_ID"),
 )

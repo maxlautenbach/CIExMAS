@@ -416,5 +416,17 @@
     },
     "redfm-train-5-evaluation_log-Cerebras_llama-3.3-70b-2025-06-05-0927.xlsx": {
         "short_description": "Init Test"
+    },
+    "synthie_text-test-50-evaluation_log-SambaNova_Llama-4-Maverick-17B-128E-Instruct-2025-07-24-0907.xlsx": {
+        "short_description": "LLM Model Variation"
+    },
+    "synthie_text-test-50-evaluation_log-Groq_meta-llama-llama-4-maverick-17b-128e-instruct-2025-07-24-0934.xlsx": {
+        "short_description": "LLM Model Variation"
+    },
+    "synthie_text-test-50-evaluation_log-Groq_moonshotai-kimi-k2-instruct-2025-07-24-1004.xlsx": {
+        "short_description": "LLM Model Variation"
+    },
+    "synthie_text-test-50-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-07-29-1556.xlsx": {
+        "short_description": "LLM Model Variation"
     }
 }

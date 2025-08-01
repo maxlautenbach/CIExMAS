@@ -15,6 +15,7 @@ AVAILABLE_MODELS = {
     ],
     "DeepInfra": [
         {"model": "meta-llama/Llama-3.3-70B-Instruct", "rpm": 0},
+        {"model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8", "rpm": 0},
         {"model": "google/gemma-3-27b-it", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", "rpm": 0},
@@ -29,12 +30,17 @@ AVAILABLE_MODELS = {
     ],
     "Cerebras": [
         {"model": "llama-4-scout-17b-16e-instruct", "rpm": 30},
+        {"model": "llama-4-maverick-17b-128e-instruct", "rpm": 30},
         {"model": "llama-3.3-70b", "rpm": 30},
         {"model": "qwen-3-32b", "rpm": 30}
     ],
     "Cohere": [
         {"model": "command-a-03-2025", "rpm": 20},
     ],
+    "Groq": [
+        {"model": "moonshotai/kimi-k2-instruct", "rpm": 1000},
+        {"model": "meta-llama/llama-4-maverick-17b-128e-instruct", "rpm": 1000}
+    ]
 }
 
 def get_env_path():
