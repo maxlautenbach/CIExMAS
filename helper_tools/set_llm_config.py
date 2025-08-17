@@ -22,6 +22,7 @@ AVAILABLE_MODELS = {
         {"model": "Qwen/QwQ-32B", "rpm": 0},
         {"model": "Qwen/Qwen3-235B-A22B", "rpm": 0},
         {"model": "Qwen/Qwen3-30B-A3B", "rpm": 0},
+        {"model": "openai/gpt-oss-120b", "rpm": 0}
     ],
     "vLLM": [
         {"model": "ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g", "rpm": 0},
