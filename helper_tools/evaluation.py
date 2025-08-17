@@ -13,6 +13,15 @@ from helper_tools.wikidata_loader import get_label
 
 
 def get_uri_labels(df):
+    """
+    Convert URI references in a DataFrame to human-readable labels.
+    
+    Args:
+        df (pd.DataFrame): DataFrame containing subject_uri, predicate_uri, and object_uri columns
+        
+    Returns:
+        pd.DataFrame: Original DataFrame with additional subject, predicate, and object columns containing labels
+    """
     subjects = []
     predicates = []
     objects = []
@@ -29,6 +38,15 @@ def get_uri_labels(df):
 
 
 def parse_turtle(turtle_string):
+    """
+    Parse a Turtle string into a DataFrame of triples.
+    
+    Args:
+        turtle_string (str): Turtle format string to parse
+        
+    Returns:
+        tuple: (DataFrame with triples, "Success" or error message)
+    """
     try:
         # Load the Turtle file into an RDF graph
         result_graph = Graph()
@@ -45,6 +63,16 @@ def parse_turtle(turtle_string):
 
 
 def check_inter_predicate_relations(predicate_a, predicate_b):
+    """
+    Check for hierarchical relationships between two predicates in the Wikidata predicate graph.
+    
+    Args:
+        predicate_a (str): First predicate URI
+        predicate_b (str): Second predicate URI
+        
+    Returns:
+        list: List of relationship types found (e.g., ["subPropertyOf", "parentPropertyOf"])
+    """
     inter_predicate_relations = []
     if wikidata_predicate_graph.query(
             f'ASK {{<{predicate_a}> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>+ <{predicate_b}>.}}').askAnswer:
@@ -69,25 +97,25 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
     correct_triple_df = pred_triple_df.merge(gold_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
                                            on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
 
-    # Subjects
+    # Calculate subject metrics
     extracted_subjects = len(set(pred_triple_df["subject_uri"]))
     gold_standard_subjects = len(set(gold_triple_df["subject_uri"]))
     correct_extracted_subjects = len(
         set(pred_triple_df["subject_uri"]).intersection(set(gold_triple_df["subject_uri"])))
 
-    # Predicates
+    # Calculate predicate metrics
     extracted_predicates = len(set(pred_triple_df["predicate_uri"]))
     gold_standard_predicates = len(set(gold_triple_df["predicate_uri"]))
     correct_extracted_predicates = len(
         set(pred_triple_df["predicate_uri"]).intersection(set(gold_triple_df["predicate_uri"])))
 
-    # Objects
+    # Calculate object metrics
     extracted_objects = len(set(pred_triple_df["object_uri"]))
     gold_standard_objects = len(set(gold_triple_df["object_uri"]))
     correct_extracted_objects = len(
         set(pred_triple_df["object_uri"]).intersection(set(gold_triple_df["object_uri"])))
 
-    # Entities (Subjects + Objects)
+    # Calculate entity metrics (subjects + objects)
     extracted_entities = len(set(pred_triple_df["subject_uri"]).union(set(pred_triple_df["object_uri"])))
     gold_standard_entities = len(set(gold_triple_df["subject_uri"]).union(set(gold_triple_df["object_uri"])))
     correct_extracted_entities = len(
@@ -95,7 +123,7 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
         .intersection(set(gold_triple_df["subject_uri"]).union(set(gold_triple_df["object_uri"])))
     )
 
-    # Triples with Parent and Related Predicates
+    # Calculate triples with parent and related predicates
     correct_triples_df = pred_triple_df.merge(gold_triple_df[["subject_uri", "predicate_uri", "object_uri"]],
                                             on=["subject_uri", "predicate_uri", "object_uri"], how="inner")
     incorrect_triples_df = \
@@ -123,7 +151,7 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
     correct_triples_with_related_predicates_df = pd.concat(
         [correct_triples_with_related_predicates_df, correct_triples_df]).drop_duplicates()
 
-    # Predicates including Parent and Related Predicates
+    # Calculate predicates including parent and related predicates
     pred_predicate_set = set(pred_triple_df["predicate_uri"])
     gold_predicate_set = set(gold_triple_df["predicate_uri"])
     detected_predicates_doc_parent = set()  # For doc predicates detected through parent relationships
@@ -134,7 +162,7 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
     for gold_predicate in gold_predicate_set:
         for pred_predicate in pred_predicate_set:
             if pred_predicate == gold_predicate:
-                # Exakte Übereinstimmung
+                # Exact match
                 correct_pred_predicates_parent.add(pred_predicate)
                 correct_pred_predicates_related.add(pred_predicate)
                 detected_predicates_doc_parent.add(gold_predicate)
@@ -164,6 +192,17 @@ def _calculate_metrics(pred_triple_df, gold_triple_df):
 
 
 def evaluate_doc(turtle_string, doc_id, triple_df):
+    """
+    Evaluate a single document by comparing predicted triples with gold standard triples.
+    
+    Args:
+        turtle_string (str): Turtle string containing predicted triples
+        doc_id: Document identifier
+        triple_df (pd.DataFrame): DataFrame containing gold standard triples
+        
+    Returns:
+        tuple: Evaluation metrics for the document
+    """
     pred_triple_df, error = parse_turtle(turtle_string)
     if error != "Success":
         raise ValueError(f"Error parsing turtle string: {error}")
@@ -172,6 +211,17 @@ def evaluate_doc(turtle_string, doc_id, triple_df):
 
 
 def generate_pr_f1_score(correct, gold_standard, total_predicted):
+    """
+    Calculate precision, recall, and F1 score from raw counts.
+    
+    Args:
+        correct (int): Number of correct predictions
+        gold_standard (int): Number of items in gold standard
+        total_predicted (int): Total number of predictions made
+        
+    Returns:
+        tuple: (precision, recall, f1_score)
+    """
     try:
         precision = correct / total_predicted
     except ZeroDivisionError:
@@ -188,6 +238,18 @@ def generate_pr_f1_score(correct, gold_standard, total_predicted):
 
 
 def generate_pr_f1_score_predicates(correct_pred, detected_doc, total_predicted, gold_standard):
+    """
+    Calculate precision, recall, and F1 score for predicates with special handling.
+    
+    Args:
+        correct_pred (int): Number of correct predicted predicates
+        detected_doc (int): Number of document predicates detected
+        total_predicted (int): Total number of predicted predicates
+        gold_standard (int): Number of predicates in gold standard
+        
+    Returns:
+        tuple: (precision, recall, f1_score)
+    """
     try:
         precision = correct_pred / total_predicted
     except ZeroDivisionError:
@@ -204,9 +266,19 @@ def generate_pr_f1_score_predicates(correct_pred, detected_doc, total_predicted,
 
 
 def generate_report(excel_file_path, average_type="macro"):
+    """
+    Generate evaluation report from an Excel file containing evaluation logs.
+    
+    Args:
+        excel_file_path (str): Path to the Excel file containing evaluation logs
+        average_type (str): Type of averaging to use ("macro" or "micro")
+        
+    Returns:
+        pd.DataFrame: DataFrame containing precision, recall, and F1 scores for all metrics
+    """
     evaluation_log_df = pd.read_excel(excel_file_path)
 
-    # Mapping der Spalten zu den jeweiligen Metriken
+    # Mapping of columns to their respective metrics
     metric_map = {
         "Triple": ["Correct Triples", "Gold Standard Triples", "Total Triples Predicted"],
         "Triple with Parents": ["Correct Triples with Parents", "Gold Standard Triples",
@@ -222,10 +294,10 @@ def generate_report(excel_file_path, average_type="macro"):
     }
 
     if average_type == "macro":
-        # Dictionaries für das Aufsummieren der Scores
+        # Dictionaries for accumulating scores
         metric_scores = {metric: {"precision": [], "recall": [], "f1": []} for metric in metric_map}
 
-        # Über alle Dokumente iterieren und Einzelwerte sammeln
+        # Iterate over all documents and collect individual scores
         for _, row in evaluation_log_df.iterrows():
             for metric, columns in metric_map.items():
                 if metric in ["Predicate with Parents", "Predicate with Related"]:
@@ -242,7 +314,7 @@ def generate_report(excel_file_path, average_type="macro"):
                 metric_scores[metric]["recall"].append(recall)
                 metric_scores[metric]["f1"].append(f1)
 
-        # Macro Average berechnen
+        # Calculate macro average
         macro_scores = {
             metric: {
                 "Precision": sum(scores["precision"]) / len(scores["precision"]) if scores["precision"] else 0.0,
@@ -252,7 +324,7 @@ def generate_report(excel_file_path, average_type="macro"):
             for metric, scores in metric_scores.items()
         }
 
-        # DataFrame erstellen
+        # Create DataFrame
         scores_df = pd.DataFrame.from_dict(macro_scores, orient="index")
 
     elif average_type == "micro":
@@ -300,6 +372,18 @@ def generate_report(excel_file_path, average_type="macro"):
 
 
 def calculate_scores_from_array(values_array):
+    """
+    Calculate evaluation scores from an array of raw metric values.
+    
+    Args:
+        values_array (list): Array of 21 metric values in specific order
+        
+    Returns:
+        pd.DataFrame: DataFrame containing precision, recall, and F1 scores for all metrics
+        
+    Raises:
+        ValueError: If the array doesn't contain exactly 21 values
+    """
     if len(values_array) != 21:
         raise ValueError(f"Expected 21 values, but got {len(values_array)}")
 
@@ -333,43 +417,43 @@ def calculate_scores_from_array(values_array):
 
     result = {}
 
-    # Triple
+    # Calculate triple metrics
     precision, recall, f1 = generate_pr_f1_score(correct_triples, gold_triples, pred_triples)
     result["Triple"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Triple with Parents
+    # Calculate triple with parents metrics
     precision, recall, f1 = generate_pr_f1_score(correct_triples_with_parents, gold_triples, pred_triples)
     result["Triple with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Triple with Related
+    # Calculate triple with related metrics
     precision, recall, f1 = generate_pr_f1_score(correct_triples_with_related, gold_triples, pred_triples)
     result["Triple with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Subject
+    # Calculate subject metrics
     precision, recall, f1 = generate_pr_f1_score(correct_subjects, gold_subjects, extracted_subjects)
     result["Subject"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Predicate
+    # Calculate predicate metrics
     precision, recall, f1 = generate_pr_f1_score(correct_predicates, gold_predicates, extracted_predicates)
     result["Predicate"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Predicate with Parents - using the new function and variables
+    # Calculate predicate with parents metrics 
     precision, recall, f1 = generate_pr_f1_score_predicates(
         correct_pred_predicates_parent, detected_predicates_doc_parent, extracted_predicates, gold_predicates
     )
     result["Predicate with Parents"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Predicate with Related - using the new function and variables
+    # Calculate predicate with related metrics
     precision, recall, f1 = generate_pr_f1_score_predicates(
         correct_pred_predicates_related, detected_predicates_doc_related, extracted_predicates, gold_predicates
     )
     result["Predicate with Related"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Object
+    # Calculate object metrics
     precision, recall, f1 = generate_pr_f1_score(correct_objects, gold_objects, extracted_objects)
     result["Object"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
-    # Entity
+    # Calculate entity metrics
     precision, recall, f1 = generate_pr_f1_score(correct_entities, gold_entities, extracted_entities)
     result["Entity"] = {"Precision": precision, "Recall": recall, "F1-Score": f1}
 
@@ -377,6 +461,16 @@ def calculate_scores_from_array(values_array):
 
 
 def convert_eval_log(path, dataset_cache):
+    """
+    Convert an evaluation log Excel file by recalculating metrics for each document.
+    
+    Args:
+        path (str): Path to the evaluation log Excel file
+        dataset_cache (dict): Cache for dataset loading
+        
+    Returns:
+        dict: Updated dataset cache
+    """
     match = re.match(r"(?P<dataset>\w+)-(?P<split>\w+)-(?P<num_samples>\d+)-evaluation_log-.*\.xlsx", os.path.basename(path))
 
     if match:

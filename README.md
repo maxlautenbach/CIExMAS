@@ -70,6 +70,28 @@ CIExMAS is a sophisticated framework that leverages multiple AI agents to perfor
    python -c "from helper_tools.base_setup import *; print('Setup complete!')"
    ```
 
+### Alternative: SLURM Cluster Setup (Step 1 Alternative)
+
+For running CIExMAS on a SLURM cluster, you can use the provided setup script as an alternative to Step 1:
+
+```bash
+# Run the SLURM setup script (alternative to Step 1)
+git clone <repository-url>
+cd CIExMAS
+bash infrastructure/setup_slurm.sh
+```
+
+This script will:
+
+- Install Miniconda3
+- Clone the CIExMAS repository
+- Create a conda environment with Python 3.11
+- Install all required dependencies including vLLM and FlashInfer
+- Set up model and dataset directories
+- Install Ollama for local model serving
+
+**Note**: The SLURM setup is designed for Linux environments with CUDA support. Make sure you have appropriate permissions and GPU access on your cluster. After running this script, continue with Steps 2-6 from above.
+
 ### Run Your First Evaluation
 
 ```bash
