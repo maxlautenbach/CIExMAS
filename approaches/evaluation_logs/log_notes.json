@@ -428,5 +428,14 @@
     },
     "synthie_text-test-50-evaluation_log-SambaNova_Meta-Llama-3.3-70B-Instruct-2025-07-29-1556.xlsx": {
         "short_description": "LLM Model Variation"
+    },
+    "synthie_text-test-50-evaluation_log-Cerebras-Paid_llama-3.3-70b-2026-01-18-0958.xlsx": {
+        "short_description": "ESWC Results"
+    },
+    "synthie_text-test-50-evaluation_log-Cerebras-Paid_llama-3.3-70b-2026-01-18-1013.xlsx": {
+        "short_description": "ESWC Results"
+    },
+    "synthie_text-test-50-evaluation_log-Cerebras-Paid_llama-3.3-70b-2026-01-18-1054.xlsx": {
+        "short_description": "ESWC Results"
     }
 }

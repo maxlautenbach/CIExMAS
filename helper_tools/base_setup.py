@@ -105,6 +105,16 @@ elif llm_provider == "Cerebras":
         seed=1337
     )
 
+elif llm_provider == "Cerebras-Paid":
+    model = ChatOpenAI(
+        api_key=os.getenv("CEREBRAS_PAID_API_KEY"),
+        base_url="https://api.cerebras.ai/v1",
+        model=model_id,
+        rate_limiter=rate_limiter,
+        temperature=0,
+        seed=1337
+    )
+
 elif llm_provider == "Cohere":
     model = ChatOpenAI(
         api_key=os.getenv("COHERE_API_KEY"),

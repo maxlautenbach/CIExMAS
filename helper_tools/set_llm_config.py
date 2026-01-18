@@ -34,6 +34,9 @@ AVAILABLE_MODELS = {
         {"model": "llama-3.3-70b", "rpm": 30},
         {"model": "qwen-3-32b", "rpm": 30}
     ],
+    "Cerebras-Paid": [
+        {"model": "llama-3.3-70b", "rpm": 3000}
+    ],
     "Cohere": [
         {"model": "command-a-03-2025", "rpm": 20},
     ],
