@@ -5,7 +5,7 @@
 
 > **Multi-Agent Systems for Closed Information Extraction on Wikidata**
 
-CIExMAS explores multi-agent system (MAS) architectures for closed information extraction (cIE). Given unstructured text, the system extracts structured knowledge triples (subject, predicate, object) and maps them to Wikidata URIs. We systematically compare three MAS architectures - Supervisor, ReAct, and Network - and show that the Network Architecture achieves the best performance, reaching an F1 score of 0.693 on the Wiki-cIE benchmark.
+CIExMAS explores multi-agent system (MAS) architectures for closed information extraction (cIE). Given unstructured text, the system extracts structured knowledge triples (subject, predicate, object) and maps them to Wikidata URIs. We systematically compare three MAS architectures - Supervisor, ReAct, and Network - and show that the Network Architecture achieves the best performance, reaching a triple-level F1 score of 0.693 on 50 samples from the Wiki-cIE text test split.
 
 **Paper:** *Closed Information Extraction with Multi-Agent Systems* (ESWC 2026)
 
@@ -83,7 +83,7 @@ These represent intermediate development steps and are included for reproducibil
 
 ## Results
 
-All results are evaluated on the **Wiki-cIE text** dataset (test split, 50 samples) using **Llama 3.3 70B**.
+All results are evaluated on **50 samples from the Wiki-cIE text test split** using **Llama 3.3 70B**.
 
 ### Table 1: Triple-Level Performance on Wiki-cIE
 
@@ -244,6 +244,20 @@ python ./approaches/Network/slurm/agent_system.py \
 ```
 
 > **Note**: For running the synthIE and GenIE benchmark notebooks, refer to [https://github.com/epfl-dlab/SynthIE](https://github.com/epfl-dlab/SynthIE).
+
+### Running synthIE / GenIE Baselines
+
+The fine-tuned synthIE and GenIE model evaluations are run via dedicated notebooks in `results/`:
+
+| Notebook | Model | Evaluation |
+|---|---|---|
+| `synthIE-large-fe.ipynb` | synthIE T5-large | Full extraction |
+| `synthIE-base-fe.ipynb` | synthIE T5-base | Full extraction |
+| `synthIE-base-sc.ipynb` | synthIE T5-base | Set constrained |
+| `genIE-base-fe.ipynb` | GenIE T5-base | Full extraction |
+| `genIE-base-sc.ipynb` | GenIE T5-base | Set constrained |
+
+These notebooks require the model checkpoints from the [SynthIE repository](https://github.com/epfl-dlab/SynthIE). Follow their setup instructions to download the pretrained models, then run the notebooks to generate evaluation logs in `approaches/evaluation_logs/`.
 
 ---
 
