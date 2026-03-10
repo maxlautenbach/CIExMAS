@@ -40,7 +40,7 @@ def sort_jsonl_file(input_file, output_file=None):
     
     print("Sorting complete!")
 
-def sort_synthie_text_splits():
+def sort_wiki_cie_text_splits():
     """
     Sort all splits from sdg_text_davinci_003 dataset.
     """
@@ -75,4 +75,4 @@ def sort_synthie_text_splits():
         print(f"Completed processing {split} split!")
 
 if __name__ == "__main__":
-    sort_synthie_text_splits() 
+    sort_wiki_cie_text_splits() 

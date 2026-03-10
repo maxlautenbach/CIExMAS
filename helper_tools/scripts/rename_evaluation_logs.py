@@ -6,17 +6,17 @@ from pathlib import Path
 def rename_evaluation_logs():
     """
     Rename evaluation log files and update their contents according to the new naming scheme:
-    - test_text- -> synthie_text-test
-    - test- -> synthie_code-test
-    - train_text- -> synthie_text-train
-    - train- -> synthie_code-train
+    - test_text- -> wiki_cie_text-test
+    - test- -> wiki_cie_code-test
+    - train_text- -> wiki_cie_text-train
+    - train- -> wiki_cie_code-train
     """
     # Mapping for file name changes
     name_mapping = {
-        'test_text-': 'synthie_text-test-',
-        'test-': 'synthie_code-test-',
-        'train_text-': 'synthie_text-train-',
-        'train-': 'synthie_code-train-'
+        'test_text-': 'wiki_cie_text-test-',
+        'test-': 'wiki_cie_code-test-',
+        'train_text-': 'wiki_cie_text-train-',
+        'train-': 'wiki_cie_code-train-'
     }
     
     # Get the project root directory (two levels up from this script)
@@ -63,17 +63,17 @@ def rename_evaluation_logs():
 def rename_log_notes():
     """
     Update the log_notes.json file to use the new naming scheme:
-    - test_text- -> synthie_text-test
-    - test- -> synthie_code-test
-    - train_text- -> synthie_text-train
-    - train- -> synthie_code-train
+    - test_text- -> wiki_cie_text-test
+    - test- -> wiki_cie_code-test
+    - train_text- -> wiki_cie_text-train
+    - train- -> wiki_cie_code-train
     """
     # Mapping for file name changes
     name_mapping = {
-        'test_text-': 'synthie_text-test-',
-        'test-': 'synthie_code-test-',
-        'train_text-': 'synthie_text-train-',
-        'train-': 'synthie_code-train-'
+        'test_text-': 'wiki_cie_text-test-',
+        'test-': 'wiki_cie_code-test-',
+        'train_text-': 'wiki_cie_text-train-',
+        'train-': 'wiki_cie_code-train-'
     }
     
     # Get the project root directory (two levels up from this script)

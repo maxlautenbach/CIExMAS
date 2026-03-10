@@ -262,7 +262,7 @@ def _synthie_base_parser(split: str, version: str, number_of_samples: int = 10, 
     return babelscape_parser(filename, number_of_samples, upload=upload)
 
 
-def synthie_code_parser(split: str, number_of_samples: int = 10, upload=True):
+def wiki_cie_code_parser(split: str, number_of_samples: int = 10, upload=True):
     """
     Parse SynthIE code dataset.
     
@@ -277,7 +277,7 @@ def synthie_code_parser(split: str, number_of_samples: int = 10, upload=True):
     return _synthie_base_parser(split, "code", number_of_samples, upload=upload)
 
 
-def synthie_text_parser(split: str, number_of_samples: int = 10, upload=True):
+def wiki_cie_text_parser(split: str, number_of_samples: int = 10, upload=True):
     """
     Parse SynthIE text dataset.
     
@@ -297,7 +297,7 @@ def unified_parser(dataset: str, split: str, number_of_samples: int = 10, upload
     Unified parser for different datasets (REBEL, REDFM, SynthIE).
     
     Args:
-        dataset (str): Name of the dataset ('rebel', 'redfm', 'synthie_code', or 'synthie_text')
+        dataset (str): Name of the dataset ('rebel', 'redfm', 'wiki_cie_code', or 'wiki_cie_text')
         split (str): Dataset split to use ('train', 'test')
         number_of_samples (int, optional): Number of samples to parse. Defaults to 10.
         upload (bool, optional): Whether to upload parsed data. Defaults to True.
@@ -314,12 +314,12 @@ def unified_parser(dataset: str, split: str, number_of_samples: int = 10, upload
         return rebel_parser(split, number_of_samples, upload=upload)
     elif dataset == 'redfm':
         return redfm_parser(split, number_of_samples=number_of_samples, upload=upload)
-    elif dataset == 'synthie_code':
-        return synthie_code_parser(split, number_of_samples, upload=upload)
-    elif dataset == 'synthie_text':
-        return synthie_text_parser(split, number_of_samples, upload=upload)
+    elif dataset == 'wiki_cie_code':
+        return wiki_cie_code_parser(split, number_of_samples, upload=upload)
+    elif dataset == 'wiki_cie_text':
+        return wiki_cie_text_parser(split, number_of_samples, upload=upload)
     else:
-        raise ValueError(f"Unsupported dataset: {dataset}. Supported datasets are: 'rebel', 'redfm', 'synthie_code', 'synthie_text'")
+        raise ValueError(f"Unsupported dataset: {dataset}. Supported datasets are: 'rebel', 'redfm', 'wiki_cie_code', 'wiki_cie_text'")
 
 
 if (__name__ == "__main__"):
