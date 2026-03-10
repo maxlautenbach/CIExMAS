@@ -63,12 +63,12 @@ def extract_model_info(file_path):
 def extract_datasplit(file_path):
     """Extract dataset, split and number of samples information from file path."""
     filename = os.path.basename(file_path)
-    # Extract the split info (e.g., "synthie_code-train-5" from "synthie_code-train-5-evaluation_log-...")
+    # Extract the split info (e.g., "wiki_cie_code-train-5" from "wiki_cie_code-train-5-evaluation_log-...")
     split_info = filename.split("-evaluation_log-")[0]
     
     # Split by hyphen and take parts
     parts = split_info.split("-")
-    dataset = parts[0]  # e.g., "synthie_code" or "rebel"
+    dataset = parts[0]  # e.g., "wiki_cie_code" or "rebel"
     split = parts[1]    # e.g., "train" or "test"
     num_samples = parts[2] if len(parts) > 2 else None  # e.g., "5" or "50"
     

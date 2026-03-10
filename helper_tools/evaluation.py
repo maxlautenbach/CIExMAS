@@ -612,9 +612,9 @@ def convert_pickle_eval_log(pickle_path, dataset_cache):
     return dataset_cache
 
 
-def convert_all_synthie_text_eval_logs(results_dir="../results/result_evaluation_logs"):
+def convert_all_wiki_cie_text_eval_logs(results_dir="../results/result_evaluation_logs"):
     """
-    Convert all evaluation logs for synthie_text dataset with 50 samples and test split.
+    Convert all evaluation logs for wiki_cie_text dataset with 50 samples and test split.
     
     Args:
         results_dir (str): Path to the results_evaluation_logs directory
@@ -623,7 +623,7 @@ def convert_all_synthie_text_eval_logs(results_dir="../results/result_evaluation
         dict: Updated dataset cache
     """
     dataset_cache = {}
-    dataset = "synthie_text"
+    dataset = "wiki_cie_text"
     split = "test"
     number_of_samples = 50
     
@@ -704,10 +704,10 @@ def convert_all_synthie_text_eval_logs(results_dir="../results/result_evaluation
 
 if __name__ == "__main__":
     # Example usage of the new function
-    dataset_cache = convert_all_synthie_text_eval_logs(results_dir="/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/folder")
+    dataset_cache = convert_all_wiki_cie_text_eval_logs(results_dir="/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/folder")
     
     # Example of individual file conversion (commented out)
     # dataset_cache = {}
-    # convert_eval_log("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/synthie_text-test-50-evaluation_log-synthie_large_fe.xlsx", dataset_cache)
-    # report = generate_report("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/synthie_text-test-50-evaluation_log-synthie_large_fe.xlsx", "macro")
+    # convert_eval_log("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/wiki_cie_text-test-50-evaluation_log-synthie_large_fe.xlsx", dataset_cache)
+    # report = generate_report("/Users/i538914/Documents/Uni/Masterarbeit/CIExMAS/results/result_evaluation_logs/wiki_cie_text-test-50-evaluation_log-synthie_large_fe.xlsx", "macro")
     # print(report.head())

@@ -25,7 +25,7 @@ if "dataset_cache" not in stss:
     stss.dataset_cache = dict()
 
 if "dataset" not in stss:
-    stss.dataset = "synthie_code"
+    stss.dataset = "wiki_cie_code"
 if "split" not in stss:
     stss.split = "train"
 if "number_of_samples" not in stss:
@@ -57,9 +57,9 @@ def update_dataset():
 
 st.sidebar.selectbox(
     "Dataset",
-    ("synthie_code", "synthie_text", "rebel", "redfm"),
+    ("wiki_cie_code", "wiki_cie_text", "rebel", "redfm"),
     key="dataset",
-    index=("synthie_code", "synthie_text", "rebel", "redfm").index(stss.dataset),
+    index=("wiki_cie_code", "wiki_cie_text", "rebel", "redfm").index(stss.dataset),
     on_change=update_dataset
 )
 
