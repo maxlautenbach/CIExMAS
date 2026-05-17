@@ -191,7 +191,7 @@ def get_property_example(property_uri):
             "object_uri": binding["exampleObject"]["value"],
             "object_label": binding["exampleObjectLabel"]["value"],
         }
-    except (IndexError, KeyError):
+    except (IndexError, KeyError, TypeError):
         return {}
 
 if __name__ == "__main__":

@@ -1,0 +1,17 @@
+{
+  "mode": "offline",
+  "dataset": "wiki_cie_text",
+  "provider": "DeepInfra",
+  "model_id": "google/gemma-4-31B-it",
+  "train_split": "auto",
+  "test_split": "test",
+  "val_ratio": 0.3,
+  "num_train": 20,
+  "num_val": 10,
+  "num_test": 5,
+  "max_rounds": 2,
+  "curator_frequency": 1,
+  "eval_steps": 10,
+  "playbook_token_budget": 80000,
+  "timestamp": "2026-05-16T12:08:44.272300"
+}

@@ -57,7 +57,9 @@ if llm_provider == "DeepInfra":
         base_url="https://api.deepinfra.com/v1/openai",
         model=model_id,
         temperature=0,
-        seed=1337
+        seed=1337,
+        timeout=90,
+        max_retries=2
     )
 
 elif llm_provider == "SambaNova":

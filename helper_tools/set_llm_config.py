@@ -17,6 +17,7 @@ AVAILABLE_MODELS = {
         {"model": "meta-llama/Llama-3.3-70B-Instruct", "rpm": 0},
         {"model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8", "rpm": 0},
         {"model": "google/gemma-3-27b-it", "rpm": 0},
+        {"model": "google/gemma-4-31B-it", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", "rpm": 0},
         {"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", "rpm": 0},
         {"model": "Qwen/QwQ-32B", "rpm": 0},
@@ -40,6 +41,9 @@ AVAILABLE_MODELS = {
     "Groq": [
         {"model": "moonshotai/kimi-k2-instruct", "rpm": 1000},
         {"model": "meta-llama/llama-4-maverick-17b-128e-instruct", "rpm": 1000}
+    ],
+    "Ollama": [
+        {"model": "gemma4:31b", "rpm": 0}
     ]
 }
 

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACE Pipeline Results</title>
+<style>
+:root {
+  --bg: #0f0f13;
+  --surface: #1a1a24;
+  --surface2: #22222f;
+  --border: #2a2a3a;
+  --text: #e4e4ef;
+  --muted: #8888a0;
+  --accent: #6c63ff;
+  --accent2: #a78bfa;
+  --green: #34d399;
+  --red: #f87171;
+  --orange: #fbbf24;
+  --blue: #60a5fa;
+  --pink: #f472b6;
+  --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(167,139,250,0.04));
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(108,99,255,0.06) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+header h1 {
+  position: relative;
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent2), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+header p { position: relative; color: var(--muted); font-size: 0.9rem; }
+
+.run-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.run-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  text-align: left;
+}
+.run-btn:hover { border-color: var(--accent); background: var(--surface2); }
+.run-btn.active {
+  border-color: var(--accent);
+  background: rgba(108,99,255,0.15);
+  box-shadow: 0 0 24px rgba(108,99,255,0.12);
+}
+.run-btn .status {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.run-btn .status.complete { background: var(--green); }
+.run-btn .status.incomplete { background: var(--orange); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.25s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+.card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.75rem; }
+.card .value { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; }
+.card .sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+
+.f1-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface2);
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+.f1-bar .fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+.section h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section h2 .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.playbook-section {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  background: var(--surface2);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+.playbook-section h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent2);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+.bullet {
+  padding: 0.6rem 0.85rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  background: rgba(108,99,255,0.04);
+  border: 1px solid var(--border);
+  font-size: 0.83rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: all 0.15s;
+}
+.bullet:hover { background: rgba(108,99,255,0.08); border-color: rgba(108,99,255,0.3); }
+.bullet .id {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  white-space: nowrap;
+  padding: 3px 7px;
+  background: rgba(108,99,255,0.12);
+  border-radius: 4px;
+  margin-top: 1px;
+  font-weight: 600;
+}
+.bullet .text { flex: 1; }
+.bullet .counts {
+  display: flex;
+  gap: 0.6rem;
+  white-space: nowrap;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+.bullet .counts .helpful { color: var(--green); }
+.bullet .counts .harmful { color: var(--red); }
+
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--border));
+}
+.timeline-item {
+  position: relative;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--surface2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+.timeline-item:hover { border-color: rgba(108,99,255,0.3); }
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.65rem;
+  top: 1.5rem;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 8px rgba(108,99,255,0.4);
+}
+.timeline-item .meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.timeline-item .content { font-size: 0.83rem; line-height: 1.5; }
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.tag.add { background: rgba(52,211,153,0.12); color: var(--green); }
+.tag.remove { background: rgba(248,113,113,0.12); color: var(--red); }
+.tag.modify { background: rgba(251,191,36,0.12); color: var(--orange); }
+.tag.reflector { background: rgba(96,165,250,0.12); color: var(--blue); }
+.tag.curator { background: rgba(244,114,182,0.12); color: var(--pink); }
+
+.comparison-bar { display: flex; align-items: center; gap: 1rem; margin: 0.4rem 0; }
+.comparison-bar .label { width: 50px; font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+.comparison-bar .bar-bg {
+  flex: 1; height: 28px;
+  background: var(--surface2);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.comparison-bar .bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 40px;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+.config-item {
+  padding: 0.85rem;
+  background: var(--surface2);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.config-item:hover { border-color: var(--border); }
+.config-item .key { color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.config-item .val { font-weight: 700; margin-top: 0.3rem; }
+
+.llm-calls-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.llm-calls-table th {
+  text-align: left;
+  padding: 0.85rem;
+  border-bottom: 2px solid var(--border);
+  color: var(--muted);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.llm-calls-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid rgba(42,42,58,0.5);
+}
+.llm-calls-table tr { transition: background 0.1s; }
+.llm-calls-table tr:hover { background: var(--surface2); }
+
+.cost-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--surface2);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.cost-item { text-align: center; }
+.cost-item .num { font-size: 1.4rem; font-weight: 800; color: var(--accent2); }
+.cost-item .label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; letter-spacing: 0.05em; }
+
+.empty-state { text-align: center; padding: 4rem; color: var(--muted); }
+
+.fade-in { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.drop-hint {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: none;
+}
+.drop-hint.show { display: block; }
+.drop-hint:hover { border-color: var(--accent); background: rgba(108,99,255,0.03); }
+.drop-hint p { color: var(--muted); font-size: 0.85rem; }
+
+.delta-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+.delta-badge.positive { background: rgba(52,211,153,0.12); color: var(--green); }
+.delta-badge.negative { background: rgba(248,113,113,0.12); color: var(--red); }
+.delta-badge.neutral { background: rgba(136,136,160,0.12); color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>ACE Pipeline Results</h1>
+    <p>Agentic Context Engineering &middot; CIExMAS Information Extraction</p>
+  </header>
+
+  <div class="drop-hint" id="drop-zone">
+    <p><strong>Drop additional run folders</strong> or click to pick</p>
+    <input type="file" id="file-input" webkitdirectory multiple style="margin-top:0.75rem;font-size:0.8rem">
+  </div>
+
+  <div class="run-selector" id="run-selector"></div>
+  <div id="dashboard"></div>
+</div>
+
+<script>
+// ──── Embedded Data ────
+const RAW_DATA = {"ace_offline_wiki_cie_text_20260516_120051": {"run_config.json": {"mode": "offline", "dataset": "wiki_cie_text", "provider": "DeepInfra", "model_id": "google/gemma-4-31B-it", "train_split": "auto", "test_split": "test", "val_ratio": 0.3, "num_train": 20, "num_val": 10, "num_test": 5, "max_rounds": 2, "curator_frequency": 1, "eval_steps": 10, "playbook_token_budget": 80000, "timestamp": "2026-05-16T12:08:44.272300"}, "initial_test_results.json": {"accuracy": 0.30130718954248364, "correct": 2, "total": 5, "f1_scores": [0.0, 0.22222222222222224, 0.6666666666666666, 0.5, 0.11764705882352941]}, "operations": [{"timestamp": "2026-05-16T12:10:25.027859", "operation_type": "ADD", "reason": "", "section": "TRIPLE FORMATION RULES", "content": "Strictly map only explicit relations mentioned in the text; avoid 'entity chaining' or logical inferences (e.g., if X is in Y and Y is in Z, do not create a triple X is in Z unless explicitly stated).", "content_length": 200, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T12:10:25.028902", "operation_type": "ADD", "reason": "", "section": "ENTITY EXTRACTION STRATEGIES", "content": "Identify descriptive classifications (e.g., 'is a government agency') and map them as formal triples using appropriate 'instance of' or 'type' predicates.", "content_length": 154, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T12:10:25.029760", "operation_type": "ADD", "reason": "", "section": "COMMON MISTAKES TO AVOID", "content": "Avoid adding redundant or inferred triples that are logically true but not explicitly provided in the source text, as this decreases precision and F1 score.", "content_length": 156, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T12:12:26.254659", "operation_type": "ADD", "reason": "", "section": "TRIPLE FORMATION RULES", "content": "Maintain a strict 1:1 mapping between explicit textual statements and triples; do not use multiple similar predicates (e.g., using both P31 and P123) to describe a single relationship unless the text explicitly supports both distinct meanings.", "content_length": 243, "call_id": "train_curate_s_2"}, {"timestamp": "2026-05-16T12:12:26.255816", "operation_type": "ADD", "reason": "", "section": "COMMON MISTAKES TO AVOID", "content": "Avoid 'over-mapping' by attempting to be exhaustive with Wikidata properties; prioritize precision over recall by selecting the single most accurate predicate rather than multiple overlapping ones.", "content_length": 197, "call_id": "train_curate_s_2"}, {"timestamp": "2026-05-16T12:15:08.166549", "operation_type": "ADD", "reason": "", "section": "TRIPLE FORMATION RULES", "content": "Base triples exclusively on the predicate-argument structure of the sentence; ignore information contained within entity labels or parentheses (e.g., 'Entity (Film)') as a basis for creating 'instance of' or 'type' triples.", "content_length": 223, "call_id": "train_curate_s_3"}, {"timestamp": "2026-05-16T12:15:08.167588", "operation_type": "ADD", "reason": "", "section": "COMMON MISTAKES TO AVOID", "content": "Do not confuse 'entity labeling' with 'explicit textual assertions'. Avoid creating triples based on the descriptive name of an entity if that relationship is not explicitly stated as a fact in the sentence body.", "content_length": 212, "call_id": "train_curate_s_3"}], "llmLogs": [{"role": "curator", "call_id": "train_curate_s_1", "model": "google/gemma-4-31B-it", "prompt_time": 7.152557373046875e-07, "response_time": 15.271255254745483, "total_time": 15.27125597000122, "call_time": 15.271249294281006, "prompt_length": 5899, "response_length": 1512, "prompt_num_tokens": 1460, "response_num_tokens": 354, "timestamp": "20260516_121025_026", "datetime": "2026-05-16T12:10:25.026687"}, {"role": "curator", "call_id": "train_curate_s_2", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 16.99769687652588, "total_time": 16.99769687652588, "call_time": 16.997693300247192, "prompt_length": 6650, "response_length": 1182, "prompt_num_tokens": 1744, "response_num_tokens": 274, "timestamp": "20260516_121226_252", "datetime": "2026-05-16T12:12:26.252744"}, {"role": "curator", "call_id": "train_curate_s_3", "model": "google/gemma-4-31B-it", "prompt_time": 7.152557373046875e-07, "response_time": 15.922072172164917, "total_time": 15.922072887420654, "call_time": 15.922063827514648, "prompt_length": 6692, "response_length": 1334, "prompt_num_tokens": 1738, "response_num_tokens": 312, "timestamp": "20260516_121508_164", "datetime": "2026-05-16T12:15:08.164864"}, {"role": "reflector", "call_id": "train_reflect_correct", "model": "google/gemma-4-31B-it", "prompt_time": 1.1920928955078125e-06, "response_time": 31.848093032836914, "total_time": 31.84809422492981, "call_time": 31.848082065582275, "prompt_length": 3261, "response_length": 2749, "prompt_num_tokens": 921, "response_num_tokens": 719, "timestamp": "20260516_121009_754", "datetime": "2026-05-16T12:10:09.754361"}, {"role": "reflector", "call_id": "train_reflect_correct", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 45.040488958358765, "total_time": 45.040488958358765, "call_time": 45.040483236312866, "prompt_length": 4079, "response_length": 2595, "prompt_num_tokens": 1273, "response_num_tokens": 720, "timestamp": "20260516_121209_253", "datetime": "2026-05-16T12:12:09.253328"}, {"role": "reflector", "call_id": "train_reflect_round_0", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 40.53977608680725, "total_time": 40.53977608680725, "call_time": 40.5397686958313, "prompt_length": 4058, "response_length": 2240, "prompt_num_tokens": 1060, "response_num_tokens": 621, "timestamp": "20260516_121339_677", "datetime": "2026-05-16T12:13:39.677975"}, {"role": "reflector", "call_id": "train_reflect_round_1", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 26.79160714149475, "total_time": 26.79160714149475, "call_time": 26.79159188270569, "prompt_length": 4120, "response_length": 2311, "prompt_num_tokens": 1110, "response_num_tokens": 626, "timestamp": "20260516_121430_160", "datetime": "2026-05-16T12:14:30.160696"}]}, "ace_offline_wiki_cie_text_20260516_195854": {"run_config.json": {"mode": "offline", "dataset": "wiki_cie_text", "provider": "DeepInfra", "model_id": "google/gemma-4-31B-it", "train_split": "auto", "test_split": "test", "val_ratio": 0.3, "num_train": 2, "num_val": 1, "num_test": 2, "max_rounds": 1, "curator_frequency": 1, "eval_steps": 10, "playbook_token_budget": 80000, "timestamp": "2026-05-16T19:58:57.945620"}, "initial_test_results.json": {"accuracy": 0.21111111111111114, "correct": 0, "total": 2, "f1_scores": [0.22222222222222224, 0.2]}, "final_test_results.json": {"accuracy": 0.11111111111111112, "correct": 0, "total": 2, "f1_scores": [0.22222222222222224, 0.0]}, "playbook": "## ENTITY EXTRACTION STRATEGIES
+
+## TRIPLE FORMATION RULES
+
+## URI MAPPING HEURISTICS
+
+## TURTLE GENERATION PATTERNS
+
+## COMMON MISTAKES TO AVOID
+
+## OTHERS", "operations": [{"timestamp": "2026-05-16T20:01:00.319362", "operation_type": "ADD", "reason": "", "section": "ENTITY EXTRACTION STRATEGIES", "content": "Perform a comprehensive first pass of the text to identify all unique entities (organizations, locations, people) before attempting to define the relationships between them.", "content_length": 173, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T20:01:00.320443", "operation_type": "ADD", "reason": "", "section": "TRIPLE FORMATION RULES", "content": "Maintain a strict 1:1 mapping between each distinct textual claim and its corresponding RDF triple (Subject -> Predicate -> Object) to maximize precision and F1 scores.", "content_length": 168, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T20:01:00.321227", "operation_type": "ADD", "reason": "", "section": "URI MAPPING HEURISTICS", "content": "Map extracted entities and relations to standardized identifiers (e.g., Wikidata Q-ids for entities and P-ids for properties) to ensure semantic interoperability.", "content_length": 162, "call_id": "train_curate_s_1"}, {"timestamp": "2026-05-16T20:03:20.034883", "operation_type": "ADD", "reason": "", "section": "TRIPLE FORMATION RULES", "content": "Distinguish between semantically similar but distinct relations (e.g., 'published by' vs 'owned by') by assigning them to separate, specific predicates to ensure the granularity of the knowledge graph matches the source text.", "content_length": 225, "call_id": "train_curate_s_2"}], "llmLogs": [{"role": "curator", "call_id": "train_curate_s_1", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 17.203299045562744, "total_time": 17.203299045562744, "call_time": 17.20328712463379, "prompt_length": 4927, "response_length": 1373, "prompt_num_tokens": 1215, "response_num_tokens": 319, "timestamp": "20260516_200100_317", "datetime": "2026-05-16T20:01:00.317235"}, {"role": "curator", "call_id": "train_curate_s_2", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 17.964145183563232, "total_time": 17.964145183563232, "call_time": 17.96414017677307, "prompt_length": 6558, "response_length": 1274, "prompt_num_tokens": 1850, "response_num_tokens": 269, "timestamp": "20260516_200320_034", "datetime": "2026-05-16T20:03:20.034179"}, {"role": "reflector", "call_id": "train_reflect_correct", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 30.30677080154419, "total_time": 30.30677080154419, "call_time": 30.306756258010864, "prompt_length": 3277, "response_length": 1778, "prompt_num_tokens": 929, "response_num_tokens": 475, "timestamp": "20260516_200043_111", "datetime": "2026-05-16T20:00:43.111541"}, {"role": "reflector", "call_id": "train_reflect_correct", "model": "google/gemma-4-31B-it", "prompt_time": 0.0, "response_time": 62.66858220100403, "total_time": 62.66858220100403, "call_time": 62.66857886314392, "prompt_length": 4008, "response_length": 2513, "prompt_num_tokens": 1210, "response_num_tokens": 839, "timestamp": "20260516_200302_068", "datetime": "2026-05-16T20:03:02.068407"}]}};
+
+// ──── App Logic ────
+const runs = {};
+let activeRun = null;
+
+function initFromEmbedded() {
+  for (const [name, raw] of Object.entries(RAW_DATA)) {
+    runs[name] = {
+      name,
+      config: raw['run_config.json'] || null,
+      initial: raw['initial_test_results.json'] || null,
+      final: raw['final_test_results.json'] || null,
+      playbook: raw['playbook'] || null,
+      operations: raw['operations'] || [],
+      llmLogs: raw['llmLogs'] || [],
+    };
+  }
+  renderSelector();
+  const keys = Object.keys(runs);
+  if (keys.length) selectRun(keys[keys.length - 1]);
+}
+
+function renderSelector() {
+  const sel = document.getElementById('run-selector');
+  sel.innerHTML = Object.keys(runs).map(name => {
+    const r = runs[name];
+    const mode = r.config?.mode || '?';
+    const nTrain = r.config?.num_train || '?';
+    const nTest = r.config?.num_test || '?';
+    const complete = !!r.final;
+    const date = r.config?.timestamp?.split('T')[0] || '';
+    const time = r.config?.timestamp?.split('T')[1]?.slice(0,5) || '';
+    return `<button class="run-btn ${name === activeRun ? 'active' : ''}" onclick="selectRun('${name}')">
+      <span class="status ${complete ? 'complete' : 'incomplete'}"></span>
+      <strong>${mode}</strong> &middot; ${nTrain}T/${nTest}E<br>
+      <span style="font-size:0.7rem;color:var(--muted)">${date} ${time} &middot; ${r.config?.model_id?.split('/').pop() || ''}</span>
+    </button>`;
+  }).join('');
+}
+
+function selectRun(name) {
+  activeRun = name;
+  renderSelector();
+  renderDashboard(runs[name]);
+}
+
+function renderDashboard(run) {
+  const d = document.getElementById('dashboard');
+  if (!run) { d.innerHTML = '<div class="empty-state">No run selected</div>'; return; }
+
+  const initialF1 = run.initial?.accuracy || 0;
+  const finalF1 = run.final?.accuracy ?? null;
+  const delta = finalF1 !== null ? finalF1 - initialF1 : null;
+  const isComplete = finalF1 !== null;
+
+  const totalLLMTime = run.llmLogs.reduce((s, l) => s + (l.total_time || 0), 0);
+  const totalPromptTokens = run.llmLogs.reduce((s, l) => s + (l.prompt_num_tokens || 0), 0);
+  const totalRespTokens = run.llmLogs.reduce((s, l) => s + (l.response_num_tokens || 0), 0);
+  const reflectorCalls = run.llmLogs.filter(l => l.role === 'reflector');
+  const curatorCalls = run.llmLogs.filter(l => l.role === 'curator');
+
+  let html = `<div class="fade-in">`;
+
+  // ── KPI Cards ──
+  html += `<div class="grid">
+    <div class="card">
+      <h3>Initial Test F1</h3>
+      <div class="value" style="color:${initialF1 >= 0.5 ? 'var(--green)' : initialF1 >= 0.3 ? 'var(--orange)' : 'var(--red)'}">${(initialF1 * 100).toFixed(1)}%</div>
+      <div class="sub">${run.initial?.correct || 0}/${run.initial?.total || 0} samples above threshold</div>
+      <div class="f1-bar"><div class="fill" style="width:${initialF1*100}%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+    </div>
+    <div class="card">
+      <h3>Final Test F1</h3>
+      ${isComplete ? `
+        <div class="value" style="color:${finalF1 >= 0.5 ? 'var(--green)' : finalF1 >= 0.3 ? 'var(--orange)' : 'var(--red)'}">${(finalF1 * 100).toFixed(1)}%
+          <span class="delta-badge ${delta > 0.01 ? 'positive' : delta < -0.01 ? 'negative' : 'neutral'}">${delta > 0 ? '+' : ''}${(delta*100).toFixed(1)}pp</span>
+        </div>
+        <div class="sub">${run.final?.correct || 0}/${run.final?.total || 0} samples above threshold</div>
+        <div class="f1-bar"><div class="fill" style="width:${finalF1*100}%;background:linear-gradient(90deg,var(--green),var(--blue))"></div></div>
+      ` : `<div class="value" style="color:var(--muted)">&mdash;</div><div class="sub">Run incomplete (killed)</div>`}
+    </div>
+    <div class="card">
+      <h3>Playbook Evolution</h3>
+      <div class="value" style="color:var(--accent2)">${run.operations.length}<span style="font-size:0.9rem;color:var(--muted)"> ops</span></div>
+      <div class="sub">${run.operations.filter(o=>o.operation_type==='ADD').length} added &middot; ${run.operations.filter(o=>o.operation_type==='REMOVE').length} removed &middot; ${run.operations.filter(o=>o.operation_type==='MODIFY').length} modified</div>
+    </div>
+    <div class="card">
+      <h3>Compute Cost</h3>
+      <div class="value">${totalLLMTime.toFixed(0)}<span style="font-size:0.9rem;color:var(--muted)">s</span></div>
+      <div class="sub">${run.llmLogs.length} LLM calls &middot; ${((totalPromptTokens+totalRespTokens)/1000).toFixed(1)}k tokens</div>
+    </div>
+  </div>`;
+
+  // ── Per-Sample F1 Comparison ──
+  if (run.initial?.f1_scores) {
+    html += `<div class="section"><h2><span class="dot" style="background:var(--accent)"></span>Per-Sample F1 Breakdown</h2>`;
+    const maxSamples = Math.max(run.initial?.f1_scores?.length || 0, run.final?.f1_scores?.length || 0);
+    for (let i = 0; i < maxSamples; i++) {
+      const iF1 = run.initial?.f1_scores?.[i] ?? 0;
+      const fF1 = run.final?.f1_scores?.[i];
+      const sampleDelta = fF1 !== undefined ? fF1 - iF1 : null;
+      html += `<div style="margin-bottom:1rem">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between">
+          <span>Sample ${i+1}</span>
+          ${sampleDelta !== null ? `<span style="color:${sampleDelta > 0 ? 'var(--green)' : sampleDelta < 0 ? 'var(--red)' : 'var(--muted)'}">${sampleDelta > 0 ? '+' : ''}${(sampleDelta*100).toFixed(1)}pp</span>` : ''}
+        </div>
+        <div class="comparison-bar">
+          <span class="label">Before</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:${Math.max(iF1*100,4)}%;background:linear-gradient(90deg,var(--accent),var(--accent2))">${(iF1*100).toFixed(0)}%</div></div>
+        </div>
+        ${fF1 !== undefined ? `<div class="comparison-bar">
+          <span class="label">After</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:${Math.max(fF1*100,4)}%;background:linear-gradient(90deg,var(--green),var(--blue))">${(fF1*100).toFixed(0)}%</div></div>
+        </div>` : ''}
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // ── Evolved Playbook ──
+  if (run.playbook) {
+    html += `<div class="section"><h2><span class="dot" style="background:var(--accent2)"></span>Evolved Playbook</h2>`;
+    const sections = parsePlaybook(run.playbook);
+    let hasContent = false;
+    for (const [title, bullets] of Object.entries(sections)) {
+      if (bullets.length === 0) continue;
+      hasContent = true;
+      html += `<div class="playbook-section"><h4>${escapeHtml(title)}</h4>`;
+      for (const b of bullets) {
+        html += `<div class="bullet">
+          <span class="id">${b.id}</span>
+          <span class="text">${escapeHtml(b.text)}</span>
+          <span class="counts">
+            <span class="helpful">+${b.helpful}</span>
+            <span class="harmful">&minus;${b.harmful}</span>
+          </span>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+    if (!hasContent) html += `<p style="color:var(--muted)">Empty playbook (no bullets yet)</p>`;
+    html += `</div>`;
+  }
+
+  // ── Curator Timeline ──
+  if (run.operations.length > 0) {
+    html += `<div class="section"><h2><span class="dot" style="background:var(--pink)"></span>Curator Operations Timeline</h2>
+      <div class="timeline">`;
+    for (const op of run.operations) {
+      const time = op.timestamp?.split('T')[1]?.split('.')[0] || '';
+      const typeClass = op.operation_type.toLowerCase();
+      html += `<div class="timeline-item">
+        <div class="meta">
+          <span class="tag ${typeClass}">${op.operation_type}</span>
+          <span style="color:var(--accent2)">${op.section}</span>
+          <span>${time}</span>
+          <span style="font-family:monospace">${op.call_id || ''}</span>
+        </div>
+        <div class="content">${escapeHtml(op.content || '')}</div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // ── LLM Call Summary ──
+  if (run.llmLogs.length > 0) {
+    html += `<div class="section"><h2><span class="dot" style="background:var(--blue)"></span>LLM Calls</h2>`;
+    html += `<div class="cost-summary">
+      <div class="cost-item"><div class="num">${reflectorCalls.length}</div><div class="label">Reflector</div></div>
+      <div class="cost-item"><div class="num">${curatorCalls.length}</div><div class="label">Curator</div></div>
+      <div class="cost-item"><div class="num">${(totalPromptTokens/1000).toFixed(1)}k</div><div class="label">Prompt Tokens</div></div>
+      <div class="cost-item"><div class="num">${(totalRespTokens/1000).toFixed(1)}k</div><div class="label">Response Tokens</div></div>
+      <div class="cost-item"><div class="num">${(totalLLMTime/run.llmLogs.length).toFixed(1)}s</div><div class="label">Avg Latency</div></div>
+    </div>`;
+    html += `<table class="llm-calls-table"><thead><tr>
+      <th>Role</th><th>Call ID</th><th>Time</th><th>In</th><th>Out</th><th>Duration</th>
+    </tr></thead><tbody>`;
+    for (const log of run.llmLogs.sort((a,b) => (a.datetime||'').localeCompare(b.datetime||''))) {
+      const tagClass = log.role === 'reflector' ? 'reflector' : 'curator';
+      const time = log.datetime?.split('T')[1]?.slice(0,8) || '';
+      html += `<tr>
+        <td><span class="tag ${tagClass}">${log.role}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${log.call_id || ''}</td>
+        <td style="color:var(--muted)">${time}</td>
+        <td>${log.prompt_num_tokens || 0}</td>
+        <td>${log.response_num_tokens || 0}</td>
+        <td style="font-weight:600">${(log.total_time || 0).toFixed(1)}s</td>
+      </tr>`;
+    }
+    html += `</tbody></table></div>`;
+  }
+
+  // ── Config ──
+  if (run.config) {
+    html += `<div class="section"><h2><span class="dot" style="background:var(--muted)"></span>Run Configuration</h2>
+      <div class="config-grid">`;
+    const display = {
+      mode: 'Mode', dataset: 'Dataset', provider: 'Provider', model_id: 'Model',
+      num_train: 'Train Samples', num_val: 'Val Samples', num_test: 'Test Samples',
+      max_rounds: 'Max Rounds', curator_frequency: 'Curator Freq', eval_steps: 'Eval Steps',
+      val_ratio: 'Val Ratio', train_split: 'Train Split', test_split: 'Test Split',
+      playbook_token_budget: 'Token Budget', timestamp: 'Started'
+    };
+    for (const [k, label] of Object.entries(display)) {
+      if (run.config[k] !== undefined) {
+        html += `<div class="config-item"><div class="key">${label}</div><div class="val">${run.config[k]}</div></div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+  d.innerHTML = html;
+}
+
+function parsePlaybook(text) {
+  const sections = {};
+  let currentSection = null;
+  for (const line of text.split('\n')) {
+    if (line.startsWith('## ')) {
+      currentSection = line.slice(3).trim();
+      sections[currentSection] = [];
+    } else if (currentSection && line.trim().startsWith('[')) {
+      const match = line.match(/\[([a-z]+-\d+)\]\s*helpful=(\d+)\s+harmful=(\d+)\s*::\s*(.*)/);
+      if (match) {
+        sections[currentSection].push({
+          id: match[1], helpful: parseInt(match[2]), harmful: parseInt(match[3]), text: match[4]
+        });
+      }
+    }
+  }
+  return sections;
+}
+
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── File drop for additional runs ──
+const dropZone = document.getElementById('drop-zone');
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  await loadDroppedFiles(files);
+});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent)'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; });
+dropZone.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  dropZone.style.borderColor = '';
+  const items = Array.from(e.dataTransfer.items);
+  const allFiles = [];
+  for (const item of items) {
+    const entry = item.webkitGetAsEntry?.();
+    if (entry) allFiles.push(...await readEntry(entry));
+  }
+  if (allFiles.length) await loadDroppedFiles(allFiles);
+});
+
+async function readEntry(entry, path='') {
+  if (entry.isFile) return new Promise(r => entry.file(f => { f.fullPath = path+f.name; r([f]); }));
+  if (entry.isDirectory) {
+    const reader = entry.createReader();
+    const entries = await new Promise(r => reader.readEntries(r));
+    const files = [];
+    for (const e of entries) files.push(...await readEntry(e, path+entry.name+'/'));
+    return files;
+  }
+  return [];
+}
+
+async function loadDroppedFiles(files) {
+  // group by directory
+  const grouped = {};
+  for (const file of files) {
+    const path = file.webkitRelativePath || file.fullPath || file.name;
+    const parts = path.split('/');
+    const aceIdx = parts.findIndex(p => p.startsWith('ace_'));
+    const runName = aceIdx >= 0 ? parts[aceIdx] : parts[0];
+    const relPath = aceIdx >= 0 ? parts.slice(aceIdx+1).join('/') : file.name;
+    if (!grouped[runName]) grouped[runName] = {};
+    grouped[runName][relPath] = file;
+  }
+  for (const [name, fileMap] of Object.entries(grouped)) {
+    if (fileMap['run_config.json']) {
+      const raw = {};
+      for (const [fname, file] of Object.entries(fileMap)) {
+        const text = await file.text();
+        if (fname === 'run_config.json') raw['run_config.json'] = JSON.parse(text);
+        else if (fname === 'initial_test_results.json') raw['initial_test_results.json'] = JSON.parse(text);
+        else if (fname === 'final_test_results.json') raw['final_test_results.json'] = JSON.parse(text);
+        else if (fname.includes('playbook')) raw['playbook'] = text;
+        else if (fname === 'curator_operations_diff.jsonl') raw['operations'] = text.trim().split('\n').filter(l=>l).map(l=>JSON.parse(l));
+        else if (fname.endsWith('.json') && (fname.includes('reflector') || fname.includes('curator'))) {
+          if (!raw['llmLogs']) raw['llmLogs'] = [];
+          const log = JSON.parse(text);
+          delete log.prompt; delete log.response;
+          raw['llmLogs'].push(log);
+        }
+      }
+      runs[name] = { name, config: raw['run_config.json'], initial: raw['initial_test_results.json']||null, final: raw['final_test_results.json']||null, playbook: raw['playbook']||null, operations: raw['operations']||[], llmLogs: raw['llmLogs']||[] };
+    }
+  }
+  renderSelector();
+  const keys = Object.keys(runs);
+  if (keys.length) selectRun(keys[keys.length-1]);
+}
+
+// ── Init ──
+initFromEmbedded();
+</script>
+</body>
+</html>
